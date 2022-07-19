@@ -1,7 +1,15 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using WebProject.Data;
+using WebProject.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+
+builder.Services.AddDbContext<WebProjectSQL>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("WebProjectSQL") ?? throw new InvalidOperationException("Connection string 'WebProjectSQL' not found.")));
 
 var app = builder.Build();
 

@@ -10,7 +10,7 @@ namespace WebProject.Models
         /// </summary>
         public int Id { get; set; }
         /// <summary>
-        /// User's identification name { nvarchar(150) }.
+        /// User's identification name { nvarchar(200) }.
         /// </summary>
         [Required]
         [StringLength(200, MinimumLength = 5, ErrorMessage = "Username must be at least 5 characters")]
