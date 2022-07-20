@@ -18,14 +18,16 @@ namespace WebProject.Models
         /// <summary>
         /// User's first name { nvarchar(200) }.
         /// </summary>
-        [Display(Name = "First Name")]
+        [Required]
         [StringLength(200)]
+        [Display(Name = "First Name")]
         public string FirstName { get; set; } = String.Empty;
         /// <summary>
         /// User's last name { nvarchar(200) }.
         /// </summary>
-        [Display(Name = "Last Name")]
+        [Required]
         [StringLength(200)]
+        [Display(Name = "Last Name")]
         public string LastName { get; set; } = String.Empty;
         /// <summary>
         /// User's date of birth { datetime2(7) }.
@@ -39,7 +41,7 @@ namespace WebProject.Models
         /// </summary>
         [Required]
         [DataType(DataType.EmailAddress)]
-        public string Email { get; set; } = String.Empty;
+        public string EmailAddress { get; set; } = String.Empty;
         /// <summary>
         /// User's personal password { nvarchar(250) }.
         /// </summary>
@@ -47,6 +49,12 @@ namespace WebProject.Models
         [DataType(DataType.Password)]
         [StringLength(250, MinimumLength = 8, ErrorMessage = "Username must be at least 8 characters")]
         public string Password { get; set; } = String.Empty;
+        /// <summary>
+        /// Confirm password field.
+        /// </summary>
+        [Required]
+        [DataType(DataType.Password)]
+        public string ConfirmPassword { get; set; } = String.Empty;
         /// <summary>
         /// User's description { nvarchar(1000) }.
         /// </summary>
@@ -64,6 +72,5 @@ namespace WebProject.Models
         /// User's favorite posts { Table }
         /// </summary>
         public List<PostModel> FavoritePost { get; set; } = new List<PostModel>();
-
     }
 }
