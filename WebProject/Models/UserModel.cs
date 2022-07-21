@@ -18,14 +18,12 @@ namespace WebProject.Models
         /// <summary>
         /// User's first name { nvarchar(200) }.
         /// </summary>
-        [Required]
         [StringLength(200)]
         [Display(Name = "First Name")]
         public string FirstName { get; set; } = String.Empty;
         /// <summary>
         /// User's last name { nvarchar(200) }.
         /// </summary>
-        [Required]
         [StringLength(200)]
         [Display(Name = "Last Name")]
         public string LastName { get; set; } = String.Empty;
@@ -53,6 +51,7 @@ namespace WebProject.Models
         /// Confirm password field.
         /// </summary>
         [Required]
+        [NotMapped]
         [DataType(DataType.Password)]
         public string ConfirmPassword { get; set; } = String.Empty;
         /// <summary>
@@ -63,14 +62,17 @@ namespace WebProject.Models
         /// <summary>
         /// User's profile picture { image }.
         /// </summary>
+        [NotMapped]
         public byte[]? ProfilePicture { get; set; }
         /// <summary>
         /// User's publish posts { Table }
         /// </summary>
+        [NotMapped]
         public List<PostModel> Posts { get; set; } = new List<PostModel>();
         /// <summary>
         /// User's favorite posts { Table }
         /// </summary>
+        [NotMapped]
         public List<PostModel> FavoritePost { get; set; } = new List<PostModel>();
     }
 }
