@@ -52,6 +52,7 @@ namespace WebProject.Models
         /// </summary>
         [Required]
         [NotMapped]
+        [Compare("Password")]
         [DataType(DataType.Password)]
         public string ConfirmPassword { get; set; } = String.Empty;
         /// <summary>

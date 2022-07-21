@@ -26,11 +26,6 @@ namespace WebProject.Pages
 
         public async Task<IActionResult> OnPostAsync()
         {
-            if (CreateUser.ConfirmPassword != CreateUser.Password)
-            {
-                return Page();
-            }
-
             if (!ModelState.IsValid)
             {
                 return Page();
