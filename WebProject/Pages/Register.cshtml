@@ -1,0 +1,44 @@
+﻿@page
+@model WebProject.Pages.RegisterModel
+
+@{
+	ViewData["Title"] = "Register";
+}
+
+<link rel="stylesheet" href="~/css/RegisterCSS.css" asp-append-version="true"/>
+
+<div class="CentralContainer">
+	<form method="post">
+		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+		<div class="FieldContainer">
+			<label asp-for="CreateUser.EmailAddress">Email address:</label>
+			<input asp-for="CreateUser.EmailAddress"/>
+			<span asp-validation-for="CreateUser.EmailAddress" class="text-danger"></span>
+
+			<label asp-for="CreateUser.Username">Username:</label>
+			<input asp-for="CreateUser.Username"/>
+			<span asp-validation-for="CreateUser.Username" class="text-danger"></span>
+
+			<label asp-for="CreateUser.DateofBirth">Date of birth:</label>
+			<input asp-for="CreateUser.DateofBirth"/>
+			<span asp-validation-for="CreateUser.DateofBirth" class="text-danger"></span>
+
+			<label asp-for="CreateUser.Password">Password:</label>
+			<input asp-for="CreateUser.Password" id="Password"/>
+			<span asp-validation-for="CreateUser.Password" class="text-danger"></span>
+
+			<label>Confirm Password:</label>
+			<input asp-for="CreateUser.ConfirmPassword" id="ConfirmPassword"/>
+			<span asp-validation-for="CreateUser.ConfirmPassword" class="text-danger"></span>
+		</div>
+
+		<div class="ButtonContainer">
+			<input type="submit" value="Create Account"/>
+		</div>
+	</form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

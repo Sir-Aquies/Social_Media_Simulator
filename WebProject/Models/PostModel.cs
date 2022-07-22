@@ -16,6 +16,7 @@ namespace WebProject.Models
         /// <summary>
         /// Represents the id of the user of the post { int }.
         /// </summary>
+        [NotMapped]
         public UserModel User { get; set; } = new UserModel();
         /// <summary>
         /// Represents the description of the post { nvarchar(MAX) }.
@@ -24,6 +25,7 @@ namespace WebProject.Models
         /// <summary>
         /// Represents the images, videos attach to the post { Table }.
         /// </summary>
+        [NotMapped]
         public List<byte[]>? Media { get; set; }
         /// <summary>
         /// Represents the amount of likes the post has received { int }.
@@ -33,10 +35,11 @@ namespace WebProject.Models
         /// <summary>
         /// Represent if the post has been edited { BIT }.
         /// </summary>
+        [NotMapped]
         public bool IsEdited { get; set; } = false;
         /// <summary>
         /// Represents the comments the post has received { Table }
         /// </summary>
-        public List<CommentModel> Comments { get; set; } = new List<CommentModel>();
+        public ICollection<CommentModel> Comments { get; set; }
     }
 }
