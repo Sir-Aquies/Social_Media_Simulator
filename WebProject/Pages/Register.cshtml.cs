@@ -26,15 +26,22 @@ namespace WebProject.Pages
 
         public async Task<IActionResult> OnPostAsync()
         {
+            var emptyUser = new UserModel();
+
             if (!ModelState.IsValid)
             {
                 return Page();
             }
 
-            _Models.UserModel.Add(CreateUser);
-            await _Models.SaveChangesAsync();
+            if (await TryUpdateModelAsync<UserModel>(
+                emptyUser, "CreateUser", u => u.EmailAddress, u => u.Username, u => u.DateofBirth, u => u.Password, u => u.ConfirmPassword))
+            {
+                _Models.UserModel.Add(emptyUser);
+                await _Models.SaveChangesAsync();
+                return RedirectToPage("./Index");
+            }
 
-            return RedirectToPage("./Index");
+            return Page();
         }
     }
 }

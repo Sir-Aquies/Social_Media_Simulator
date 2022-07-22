@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿#nullable disable
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebProject.Models
@@ -33,7 +34,7 @@ namespace WebProject.Models
         [Required]
         [DataType(DataType.Date)]
         [Display(Name = "Date of Birth")]
-        public DateTime DateofBirth { get; set; } = DateTime.MinValue;
+        public DateTime DateofBirth { get; set; }
         /// <summary>
         /// User's personal email { nvarchar(200) }.
         /// </summary>
@@ -45,14 +46,14 @@ namespace WebProject.Models
         /// </summary>
         [Required]
         [DataType(DataType.Password)]
-        [StringLength(250, MinimumLength = 8, ErrorMessage = "Username must be at least 8 characters")]
+        [StringLength(250, MinimumLength = 8, ErrorMessage = "Password must be at least 8 characters.")]
         public string Password { get; set; } = String.Empty;
         /// <summary>
         /// Confirm password field.
         /// </summary>
         [Required]
         [NotMapped]
-        [Compare("Password")]
+        [Compare("Password", ErrorMessage = "Passwords do not match.")]
         [DataType(DataType.Password)]
         public string ConfirmPassword { get; set; } = String.Empty;
         /// <summary>
@@ -64,16 +65,14 @@ namespace WebProject.Models
         /// User's profile picture { image }.
         /// </summary>
         [NotMapped]
-        public byte[]? ProfilePicture { get; set; }
+        public byte[] ProfilePicture { get; set; }
         /// <summary>
         /// User's publish posts { Table }
         /// </summary>
-        [NotMapped]
-        public List<PostModel> Posts { get; set; } = new List<PostModel>();
+        public ICollection<PostModel> Posts { get; set; }
         /// <summary>
         /// User's favorite posts { Table }
         /// </summary>
-        [NotMapped]
-        public List<PostModel> FavoritePost { get; set; } = new List<PostModel>();
+        public ICollection<PostModel> FavoritePost { get; set; }
     }
 }
