@@ -20,14 +20,6 @@
 			<input asp-for="CreateUser.Username"/>
 			<span asp-validation-for="CreateUser.Username" class="text-danger"></span>
 
-			<label asp-for="CreateUser.FirstName">First name:</label>
-			<input asp-for="CreateUser.FirstName"/>
-			<span asp-validation-for="CreateUser.FirstName" class="text-danger"></span>
-
-			<label asp-for="CreateUser.LastName">Last name:</label>
-			<input asp-for="CreateUser.LastName"/>
-			<span asp-validation-for="CreateUser.LastName" class="text-danger"></span>
-
 			<label asp-for="CreateUser.DateofBirth">Date of birth:</label>
 			<input asp-for="CreateUser.DateofBirth"/>
 			<span asp-validation-for="CreateUser.DateofBirth" class="text-danger"></span>
@@ -41,22 +33,12 @@
 			<span asp-validation-for="CreateUser.ConfirmPassword" class="text-danger"></span>
 		</div>
 
-			<div class="ButtonContainer">
-				<input type="submit" value="Create Account"/>
-			</div>
+		<div class="ButtonContainer">
+			<input type="submit" value="Create Account"/>
+		</div>
 	</form>
 </div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
-<script>
-var password = document.getElementById("Password");
-var confirmPassword = document.getElementById("ConfirmPassword");
-
-function ConfirmPass() {
-	if (confirmPassword != password) {
-
-	}
-}
-</script>

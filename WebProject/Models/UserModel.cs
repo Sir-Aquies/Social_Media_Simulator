@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿#nullable disable
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebProject.Models
@@ -18,14 +19,12 @@ namespace WebProject.Models
         /// <summary>
         /// User's first name { nvarchar(200) }.
         /// </summary>
-        [Required]
         [StringLength(200)]
         [Display(Name = "First Name")]
         public string FirstName { get; set; } = String.Empty;
         /// <summary>
         /// User's last name { nvarchar(200) }.
         /// </summary>
-        [Required]
         [StringLength(200)]
         [Display(Name = "Last Name")]
         public string LastName { get; set; } = String.Empty;
@@ -35,7 +34,7 @@ namespace WebProject.Models
         [Required]
         [DataType(DataType.Date)]
         [Display(Name = "Date of Birth")]
-        public DateTime DateofBirth { get; set; } = DateTime.MinValue;
+        public DateTime DateofBirth { get; set; }
         /// <summary>
         /// User's personal email { nvarchar(200) }.
         /// </summary>
@@ -47,12 +46,14 @@ namespace WebProject.Models
         /// </summary>
         [Required]
         [DataType(DataType.Password)]
-        [StringLength(250, MinimumLength = 8, ErrorMessage = "Username must be at least 8 characters")]
+        [StringLength(250, MinimumLength = 8, ErrorMessage = "Password must be at least 8 characters.")]
         public string Password { get; set; } = String.Empty;
         /// <summary>
         /// Confirm password field.
         /// </summary>
         [Required]
+        [NotMapped]
+        [Compare("Password", ErrorMessage = "Passwords do not match.")]
         [DataType(DataType.Password)]
         public string ConfirmPassword { get; set; } = String.Empty;
         /// <summary>
@@ -63,14 +64,15 @@ namespace WebProject.Models
         /// <summary>
         /// User's profile picture { image }.
         /// </summary>
-        public byte[]? ProfilePicture { get; set; }
+        [NotMapped]
+        public byte[] ProfilePicture { get; set; }
         /// <summary>
         /// User's publish posts { Table }
         /// </summary>
-        public List<PostModel> Posts { get; set; } = new List<PostModel>();
+        public ICollection<PostModel> Posts { get; set; }
         /// <summary>
         /// User's favorite posts { Table }
         /// </summary>
-        public List<PostModel> FavoritePost { get; set; } = new List<PostModel>();
+        public ICollection<PostModel> FavoritePost { get; set; }
     }
 }
