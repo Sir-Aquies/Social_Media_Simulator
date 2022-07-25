@@ -7,6 +7,10 @@
 
 <link rel="stylesheet" href="~/css/RegisterCSS.css" asp-append-version="true"/>
 
+<h1 class="CenterOb">Register</h1>
+
+<br />
+
 <div class="CentralContainer">
 	<form method="post">
 		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -28,13 +32,14 @@
 			<input asp-for="CreateUser.Password" id="Password"/>
 			<span asp-validation-for="CreateUser.Password" class="text-danger"></span>
 
-			<label>Confirm Password:</label>
+			<label asp-for="CreateUser.ConfirmPassword">Confirm Password:</label>
 			<input asp-for="CreateUser.ConfirmPassword" id="ConfirmPassword"/>
 			<span asp-validation-for="CreateUser.ConfirmPassword" class="text-danger"></span>
 		</div>
 
 		<div class="ButtonContainer">
 			<input type="submit" value="Create Account"/>
+			<a style="margin-left:auto; margin-right:auto; display:block" asp-area="" asp-page="/Login">Already have an account?</a>
 		</div>
 	</form>
 </div>

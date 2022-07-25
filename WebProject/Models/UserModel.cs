@@ -39,6 +39,7 @@ namespace WebProject.Models
         /// User's personal email { nvarchar(200) }.
         /// </summary>
         [Required]
+        //[EmailAddress]
         [DataType(DataType.EmailAddress)]
         public string EmailAddress { get; set; } = String.Empty;
         /// <summary>

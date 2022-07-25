@@ -1,43 +1,43 @@
 #nullable disable
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using WebProject.Data;
 using WebProject.Models;
 
 namespace WebProject.Pages
 {
-    public class RegisterModel : PageModel
+    public class LoginModel : PageModel
     {
         private readonly WebProject.Data.WebProjectSQL _Models;
 
-        public RegisterModel(WebProject.Data.WebProjectSQL Models)
+        public LoginModel(WebProject.Data.WebProjectSQL Models)
         {
             _Models = Models;
         }
 
-        public IActionResult OnGet()    
+        public IActionResult OnGetAsync()
         {
             return Page();
         }
-        
+
         [BindProperty]
-        public UserModel CreateUser { get; set; }
+        public UserModel LoginUser { get; set; }
+        public string loginError { get; set; } = String.Empty;
 
         public async Task<IActionResult> OnPostAsync()
         {
             var emptyUser = new UserModel();
+            emptyUser = await _Models.Users.FirstOrDefaultAsync(u => (u.EmailAddress == LoginUser.EmailAddress) && (u.Password == LoginUser.Password));
 
-            if (!ModelState.IsValid)
+            if (emptyUser == null)
             {
+                loginError = "Either the password or the email are wrong";
                 return Page();
             }
 
-            if (await TryUpdateModelAsync<UserModel>(
-                emptyUser, "CreateUser", u => u.EmailAddress, u => u.Username, u => u.DateofBirth, u => u.Password, u => u.ConfirmPassword))
+            if (emptyUser != null)
             {
-                _Models.Users.Add(emptyUser);
-                await _Models.SaveChangesAsync();
                 return RedirectToPage("./Index");
             }
 

@@ -46,7 +46,10 @@ div.FieldContainer input{
 div.ButtonContainer {
     background-color: var(--white);
     border-radius: 3rem;
-    width: 100%;
+    width: 85%;
+    margin-right: auto;
+    margin-left: auto;
+    /*border: 1px solid black;*/
 }
 
 div.ButtonContainer input {
@@ -54,8 +57,25 @@ div.ButtonContainer input {
     background-color: var(--magenta);
     color: var(--white);
     margin: 0.5rem auto;
-    padding: 1.3rem 1rem;
+    padding: 1rem 1rem;
     border: 1px solid var(--white);
     border-radius: 1.5rem;
     font-size: 1.6rem;
+    text-align: center;
+}
+
+div.ButtonContainer a {
+    font-size: 1.6rem;
+    text-align: center;
+    margin-right: 7rem;
+}
+
+div.ButtonContainer input.loginbutton {
+    display: inline;
+    width: 40%;
+    margin: 0.5rem 0;
+}
+
+.CenterOb {
+    text-align: center;
 }
