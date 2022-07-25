@@ -1,0 +1,46 @@
+﻿@page
+@model WebProject.Pages.LoginModel
+
+@{
+	ViewData["Title"] = "Login";
+}
+
+<link rel="stylesheet" href="~/css/RegisterCSS.css" asp-append-version="true"/>
+
+<h1 class="CenterOb">Log in</h1>
+
+<br />
+
+<div class="CentralContainer">
+	<form method="post" autocomplete="on">
+		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+		<div class="FieldContainer">
+			<label asp-for="LoginUser.EmailAddress"></label>
+			<input asp-for="LoginUser.EmailAddress" onfocus="CleanErrorMessage()"/>
+			<span asp-validation-for="LoginUser.EmailAddress" class="text-danger"></span>
+			<span id="error" class="text-danger">@Model.loginError</span>
+
+			<label asp-for="LoginUser.Password"></label>
+			<input asp-for="LoginUser.Password">
+			<span asp-validation-for="LoginUser.Password" class="text-danger"></span>
+		</div>
+
+		<div class="ButtonContainer">
+			<a asp-area="" asp-page="/Register">Create an account</a>
+			<input type="submit" value="Log in"/>
+		</div>
+	</form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+<script>
+var error = document.getElementById("error");
+
+function CleanErrorMessage() {
+    error.innerHTML = "";
+}
+</script>

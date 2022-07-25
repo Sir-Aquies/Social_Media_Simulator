@@ -15,8 +15,8 @@ namespace WebProject.Data
         {
         }
 
-        public DbSet<UserModel> UserModel { get; set; }
-        public DbSet<PostModel> PostModel { get; set; }
+        public DbSet<UserModel> Users { get; set; }
+        public DbSet<PostModel> Posts { get; set; }
         //public DbSet<CommentModel> CommentModel { get; set; }
         //public DbSet<ReplyModel> ReplyModel { get; set; }
 

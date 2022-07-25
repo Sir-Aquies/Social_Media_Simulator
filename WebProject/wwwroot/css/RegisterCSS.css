@@ -7,10 +7,8 @@
     --white: white;
 }
 
-div.CentralContainer {
-    margin-right: auto;
-    margin-left: auto;   
-    width: 50%;
+div.CentralContainer { 
+    width: 100%;
 }
 
 div.FieldContainer {
@@ -45,8 +43,13 @@ div.FieldContainer input{
 
 div.ButtonContainer {
     background-color: var(--white);
-    border-radius: 3rem;
-    width: 100%;
+    width: 90%;
+    margin-right: auto;
+    margin-left: auto;
+    /*border: 1px solid black;*/
+
+    display: flex;
+    flex-wrap: wrap-reverse;
 }
 
 div.ButtonContainer input {
@@ -54,8 +57,45 @@ div.ButtonContainer input {
     background-color: var(--magenta);
     color: var(--white);
     margin: 0.5rem auto;
-    padding: 1.3rem 1rem;
+    padding: 1rem 1rem;
     border: 1px solid var(--white);
     border-radius: 1.5rem;
     font-size: 1.6rem;
+    text-align: center;
+    width: 70%;
+}
+
+div.ButtonContainer a {
+    display: block;
+    font-size: 1.4rem;
+    text-align: center;
+    margin: 0.5rem auto;
+    width: 70%;
+}
+
+.CenterOb {
+    text-align: center;
+}
+
+@media only screen and (min-width: 990px) {
+    div.CentralContainer {
+        margin-right: auto;
+        margin-left: auto;
+        width: 60%;
+    }
+
+    div.ButtonContainer a {
+        width: 50%;
+    }
+
+    div.ButtonContainer input {
+        width: 40%;
+    }
+
+    div.ButtonContainer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: nowrap;
+    }
 }

@@ -7,33 +7,38 @@
 
 <link rel="stylesheet" href="~/css/RegisterCSS.css" asp-append-version="true"/>
 
+<h1 class="CenterOb">Register</h1>
+
+<br />
+
 <div class="CentralContainer">
 	<form method="post">
 		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
 		<div class="FieldContainer">
-			<label asp-for="CreateUser.EmailAddress">Email address:</label>
+			<label asp-for="CreateUser.EmailAddress"></label>
 			<input asp-for="CreateUser.EmailAddress"/>
 			<span asp-validation-for="CreateUser.EmailAddress" class="text-danger"></span>
 
-			<label asp-for="CreateUser.Username">Username:</label>
+			<label asp-for="CreateUser.Username"></label>
 			<input asp-for="CreateUser.Username"/>
 			<span asp-validation-for="CreateUser.Username" class="text-danger"></span>
 
-			<label asp-for="CreateUser.DateofBirth">Date of birth:</label>
+			<label asp-for="CreateUser.DateofBirth"></label>
 			<input asp-for="CreateUser.DateofBirth"/>
 			<span asp-validation-for="CreateUser.DateofBirth" class="text-danger"></span>
 
-			<label asp-for="CreateUser.Password">Password:</label>
+			<label asp-for="CreateUser.Password"></label>
 			<input asp-for="CreateUser.Password" id="Password"/>
 			<span asp-validation-for="CreateUser.Password" class="text-danger"></span>
 
-			<label>Confirm Password:</label>
+			<label asp-for="CreateUser.ConfirmPassword"></label>
 			<input asp-for="CreateUser.ConfirmPassword" id="ConfirmPassword"/>
 			<span asp-validation-for="CreateUser.ConfirmPassword" class="text-danger"></span>
 		</div>
 
 		<div class="ButtonContainer">
+			<a display:block" asp-area="" asp-page="/Login">Already have an account?</a>
 			<input type="submit" value="Create Account"/>
 		</div>
 	</form>
