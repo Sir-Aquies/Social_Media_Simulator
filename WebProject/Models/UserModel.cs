@@ -14,26 +14,27 @@ namespace WebProject.Models
         /// User's identification name { nvarchar(200) }.
         /// </summary>
         [Required]
+        [Display(Name = "Username:")]
         [StringLength(200, MinimumLength = 5, ErrorMessage = "Username must be at least 5 characters")]
         public string Username { get; set; } = String.Empty;
         /// <summary>
         /// User's first name { nvarchar(200) }.
         /// </summary>
         [StringLength(200)]
-        [Display(Name = "First Name")]
+        [Display(Name = "First name:")]
         public string FirstName { get; set; } = String.Empty;
         /// <summary>
         /// User's last name { nvarchar(200) }.
         /// </summary>
         [StringLength(200)]
-        [Display(Name = "Last Name")]
+        [Display(Name = "Last name:")]
         public string LastName { get; set; } = String.Empty;
         /// <summary>
         /// User's date of birth { datetime2(7) }.
         /// </summary>
         [Required]
         [DataType(DataType.Date)]
-        [Display(Name = "Date of Birth")]
+        [Display(Name = "Date of birth:")]
         public DateTime DateofBirth { get; set; }
         /// <summary>
         /// User's personal email { nvarchar(200) }.
@@ -47,6 +48,7 @@ namespace WebProject.Models
         /// </summary>
         [Required]
         [DataType(DataType.Password)]
+        [Display(Name = "Password:")]
         [StringLength(250, MinimumLength = 8, ErrorMessage = "Password must be at least 8 characters.")]
         public string Password { get; set; } = String.Empty;
         /// <summary>
@@ -54,8 +56,9 @@ namespace WebProject.Models
         /// </summary>
         [Required]
         [NotMapped]
-        [Compare("Password", ErrorMessage = "Passwords do not match.")]
         [DataType(DataType.Password)]
+        [Display(Name = "Confirm Password:")]
+        [Compare("Password", ErrorMessage = "Passwords do not match.")]  
         public string ConfirmPassword { get; set; } = String.Empty;
         /// <summary>
         /// User's description { nvarchar(1000) }.
