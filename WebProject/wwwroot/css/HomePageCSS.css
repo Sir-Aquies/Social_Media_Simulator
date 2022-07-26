@@ -1,27 +1,28 @@
 ﻿
 
-div.CenterBox {
+div.AllContainer {
     position: absolute;
     left: 0px;
     width: 100%;
+    height: max-content;
+
+    display: flex;
+    flex-wrap: nowrap;
 }
 
+div.LeftBox {
+    display: none;
+}
 
+div.CenterBox {
+    border: 1px solid green;
+    height: 10rem;
+    width: 100%;
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+div.RightBox {
+    display: none;
+}
 
 .col-1 {width: 8.33%;}
 .col-2 {width: 16.66%;}
@@ -35,3 +36,27 @@ div.CenterBox {
 .col-10 {width: 83.33%;}
 .col-11 {width: 91.66%;}
 .col-12 {width: 100%;}
+
+@media only screen and (min-width: 990px) {
+    div.LeftBox {
+        display: block;
+        width: 25%;
+
+        border: 1px solid blue;
+        height: 10rem;
+    }
+
+    div.CenterBox {
+        border: 1px solid green;
+        height: 10rem;
+        width: 55%;
+    }
+
+    div.RightBox {
+        display: block;
+        width: 20%;
+
+        border: 1px solid red;
+        height: 10rem;
+    }
+}

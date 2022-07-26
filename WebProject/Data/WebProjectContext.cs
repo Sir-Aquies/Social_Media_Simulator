@@ -8,9 +8,9 @@ using WebProject.Models;
 
 namespace WebProject.Data
 {
-    public class WebProjectSQL : DbContext
+    public class WebProjectContext : DbContext
     {
-        public WebProjectSQL(DbContextOptions<WebProjectSQL> options)
+        public WebProjectContext (DbContextOptions<WebProjectContext> options)
             : base(options)
         {
         }
@@ -27,6 +27,5 @@ namespace WebProject.Data
             modelBuilder.Entity<CommentModel>().ToTable("Comments");
             //modelBuilder.Entity<ReplyModel>().ToTable("Replies");
         }
-
     }
 }

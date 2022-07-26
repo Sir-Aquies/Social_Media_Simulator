@@ -68,7 +68,6 @@ namespace WebProject.Models
         /// <summary>
         /// User's profile picture { image }.
         /// </summary>
-        [NotMapped]
         public byte[] ProfilePicture { get; set; }
         /// <summary>
         /// User's publish posts { Table }
@@ -77,6 +76,7 @@ namespace WebProject.Models
         /// <summary>
         /// User's favorite posts { Table }
         /// </summary>
+        [NotMapped]
         public ICollection<PostModel> FavoritePost { get; set; }
     }
 }

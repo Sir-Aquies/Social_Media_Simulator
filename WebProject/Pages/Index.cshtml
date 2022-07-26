@@ -6,19 +6,38 @@
 
 <link rel="stylesheet" href="~/css/HomePageCSS.css" />
 
-<div>
-    <a asp-area="" asp-page="/Register">Register</a>
-    <p><a asp-area="" asp-page="/Login">Login</a></p>
-</div>
+<div class="AllContainer">
+    <div class="LeftBox">
 
-<div class="CenterBox">
+    </div>
 
-</div>
+    <div class="CenterBox">
+        @foreach (var p in Model.PageUser.Posts)
+        {
+            <div class="Post">
+                <div class="PostInfo">
+                    <img />
+                    <span>@Model.PageUser.Username</span>
+                </div>
 
-<div>
+                <div class="PostCotent">
+                    <div>
+                        @p.PostContent
+                    </div>
+                </div>
 
-</div>
+                <div class="PostStats">
+                    <button type="button" >Likes:</button>
+                    <span>@p.Likes</span>
 
-<div>
+                    <button type="button">Comments:</button>
+                    <span>0</span>
+                </div>
+            </div>
+        }
+    </div>
 
+    <div class="RightBox">
+
+    </div>
 </div>
