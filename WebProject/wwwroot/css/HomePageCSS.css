@@ -125,25 +125,39 @@ div.RightBox {
     display: none;
 }
 
-.col-1 {width: 8.33%;}
-.col-2 {width: 16.66%;}
-.col-3 {width: 25%;}
-.col-4 {width: 33.33%;}
-.col-5 {width: 41.66%;}
-.col-6 {width: 50%;}
-.col-7 {width: 58.33%;}
-.col-8 {width: 66.66%;}
-.col-9 {width: 75%;}
-.col-10 {width: 83.33%;}
-.col-11 {width: 91.66%;}
-.col-12 {width: 100%;}
+#PostDiv {
+    width: 50%;
+    height: max-content;
+    padding: 1rem;
+    background-color: var(--magenta);
+    border: 1px solid var(--postBorder);
+    border-radius: 1.5rem;
+    color: var(--colotext);
+    font-size:var(--textsize);
+    display: none;
+    z-index: 20;
+}
+
+#PostDiv textarea {
+    width: 100%;
+    margin: 0.3rem auto;
+    resize: block;
+}
+
+#PostDiv input {
+    width: 14rem;
+    display: block;
+    background-color: var(--magenta);
+    border: 1px solid var(--white);
+    margin: 0.5rem 0.5rem;
+}
 
 @media only screen and (min-width: 990px) {
     div.LeftBox {
         display: block;
         width: 25%;
 
-        border: 1px solid blue;
+        border-right: 1px solid var(--postBorder);
         height: max-content;
     }
 
@@ -151,10 +165,8 @@ div.RightBox {
         width: 100%;
         height: max-content;
         color: var(--colotext);
-        font-size: 2.1rem;
+        font-size: 1.5rem;
         padding: 0.3rem;
-
-        border: 1px solid green;
     }
 
     img.UserProfilePic {
@@ -168,7 +180,12 @@ div.RightBox {
     }
 
     div.UserInfo p {
-        margin: 0 0.5rem;
+        margin: 0.3rem 0.5rem;
+        display: block;
+    }
+
+    div.UserInfo p.UserDescription {
+        font-size: 1.2rem;
     }
 
     div.CenterBox {

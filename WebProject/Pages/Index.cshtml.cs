@@ -20,6 +20,8 @@ namespace WebProject.Pages
 
         [BindProperty]
         public UserModel PageUser { get; set; }
+        [BindProperty]
+        public PostModel CreatePost { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? userid)
         {

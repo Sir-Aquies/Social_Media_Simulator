@@ -10,21 +10,17 @@
     <div class="LeftBox">
         <div class="UserInfo">
             <img class="UserProfilePic"/>
-            <p>@Model.PageUser.Username</p>
+            <p style="font-size: 2.5rem;">@Model.PageUser.Username</p>
 
-            @if (@Model.PageUser.FirstName != null || @Model.PageUser.FirstName != String.Empty)
+            @if ((@Model.PageUser.FirstName != null || @Model.PageUser.FirstName != String.Empty) ||
+            (@Model.PageUser.LastName != null || @Model.PageUser.LastName != String.Empty))
             {
-                <p>@Model.PageUser.FirstName</p>
-            }
-
-            @if (@Model.PageUser.LastName != null || @Model.PageUser.LastName != String.Empty)
-            {
-                <p>@Model.PageUser.LastName</p>
+                <p>@Model.PageUser.FirstName @Model.PageUser.LastName</p>
             }
 
             @if (@Model.PageUser.Description != null || @Model.PageUser.Description != String.Empty)
             {
-                <p>@Model.PageUser.Description</p>
+                <p class="UserDescription">@Model.PageUser.Description</p>
             }
             <p>Born: @Model.PageUser.DateofBirth.ToShortDateString()</p>
         </div>
@@ -32,7 +28,7 @@
 
     <div class="CenterBox">
         <div class="Post">
-            <button type="button" class="CreatePostButton">Create New Post</button>
+            <button type="button" class="CreatePostButton" onclick="CreatePostWindow()">Create New Post</button>
         </div>
 
         @foreach (var p in Model.PageUser.Posts)
@@ -44,9 +40,12 @@
                 </div>
 
                 <div class="PostContent">
-                    <div>
-                        @p.PostContent
-                    </div>
+                    @if (p.PostContent != null || p.PostContent != String.Empty)
+                    {
+                        <div>
+                            @p.PostContent
+                        </div>
+                    }                  
                 </div>
 
                 <div class="PostStats">
@@ -54,7 +53,6 @@
                         <p>@p.Likes</p><span>Likes</span>
                     </button>
                     
-
                     <button type="button">
                         <p>0</p><span>Comments</span>
                     </button>  
@@ -67,3 +65,20 @@
 
     </div>
 </div>
+
+<div id="PostDiv" onclick="event.stopPropagation()">
+    <form method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <textarea asp-for="CreatePost.PostContent"></textarea>
+        <span asp-validation-for="CreatePost.PostContent" class="text-danger"></span>
+
+        <input type="submit" value="Create post"/>
+    </form>
+</div>
+
+<script src="~/js/CreatePostTab.js" asp-append-version="true"></script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
