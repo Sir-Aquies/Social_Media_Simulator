@@ -1,4 +1,16 @@
-﻿
+﻿body {
+    box-sizing: border-box;
+    background-color: var(--magenta);
+}
+
+:root {
+    --magenta: rgb(51, 0, 102);
+    --white: white;
+    --colotext: white;
+    --bodercolor: rgb(51, 0, 102);
+    --postBorder: rgb(128, 128, 128);
+    --textsize: 1.4rem;
+}
 
 div.AllContainer {
     position: absolute;
@@ -15,9 +27,98 @@ div.LeftBox {
 }
 
 div.CenterBox {
-    border: 1px solid green;
-    height: 10rem;
+    /*border: 1px solid green;*/
+    height: max-content;
     width: 100%;
+    padding: 1rem 0;
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+button.CreatePostButton {
+    width: 50%;
+    background-color: var(--magenta);
+    border: 1px solid var(--postBorder);
+    height: max-content;
+    margin: 0 auto;
+    display: block;
+    color: var(--colotext);
+    border-radius: 2rem;
+    font-size: var(--textsize);
+}
+
+div.Post {
+    display: block;
+    width: 100%;
+    height: max-content;
+    border-top: 1px solid var(--postBorder);
+    border-bottom: 1px solid var(--postBorder);
+    padding: 0.8rem;
+    margin-bottom: 1rem;
+    color: var(--colotext);
+    font-size: var(--textsize);
+}
+
+div.PostInfo {
+    width: 100%;
+    height: max-content;
+    padding: 0.3rem;
+    padding-bottom: 0.7rem;
+    border-bottom: 1px solid var(--bodercolor);
+}
+
+div.PostInfo img {
+    display: inline;
+    width: 3.3rem;
+    height: 3.3rem;
+    background-color: var(--white);
+    border-radius: 50%;
+    margin-right: 0.5rem;
+}
+
+div.PostContent {
+    width: 100%;
+    height: max-content;
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+
+    display: flex;
+    justify-content: center;
+
+    /*border: 1px solid yellow;*/
+}
+
+div.PostStats {
+    width: 100%;
+    height: max-content;
+    padding: 0.5rem;
+    padding-top: 0.7rem;
+    display: flex;
+    justify-content: left;
+    border-top: 1px solid var(--bodercolor);
+}
+
+div.PostStats button {
+    display: inline;
+    background-color: var(--magenta);
+    border: 1px solid var(--bodercolor);
+    width: max-content;
+    height: 3rem;
+    color: var(--colotext);
+    font-size: 1.2rem;
+    margin-right: 0.8rem;
+}
+
+div.PostStats button p{
+    display: inline;
+    margin-right: 0.6rem;
+}
+
+div.PostStats button span{
+    font-size: 1.1rem;
 }
 
 div.RightBox {
@@ -43,18 +144,40 @@ div.RightBox {
         width: 25%;
 
         border: 1px solid blue;
-        height: 10rem;
+        height: max-content;
+    }
+
+    div.UserInfo {
+        width: 100%;
+        height: max-content;
+        color: var(--colotext);
+        font-size: 2.1rem;
+        padding: 0.3rem;
+
+        border: 1px solid green;
+    }
+
+    img.UserProfilePic {
+        width: 17rem;
+        height: 17rem;
+        background-color: var(--white);
+        border: 1px solid var(--magenta);
+        border-radius: 50%;
+        margin: 0.5rem;
+        display: block;
+    }
+
+    div.UserInfo p {
+        margin: 0 0.5rem;
     }
 
     div.CenterBox {
-        border: 1px solid green;
-        height: 10rem;
-        width: 55%;
+        width: 50%;
     }
 
     div.RightBox {
         display: block;
-        width: 20%;
+        width: 25%;
 
         border: 1px solid red;
         height: 10rem;

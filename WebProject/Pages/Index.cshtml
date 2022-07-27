@@ -8,10 +8,33 @@
 
 <div class="AllContainer">
     <div class="LeftBox">
+        <div class="UserInfo">
+            <img class="UserProfilePic"/>
+            <p>@Model.PageUser.Username</p>
 
+            @if (@Model.PageUser.FirstName != null || @Model.PageUser.FirstName != String.Empty)
+            {
+                <p>@Model.PageUser.FirstName</p>
+            }
+
+            @if (@Model.PageUser.LastName != null || @Model.PageUser.LastName != String.Empty)
+            {
+                <p>@Model.PageUser.LastName</p>
+            }
+
+            @if (@Model.PageUser.Description != null || @Model.PageUser.Description != String.Empty)
+            {
+                <p>@Model.PageUser.Description</p>
+            }
+            <p>Born: @Model.PageUser.DateofBirth.ToShortDateString()</p>
+        </div>
     </div>
 
     <div class="CenterBox">
+        <div class="Post">
+            <button type="button" class="CreatePostButton">Create New Post</button>
+        </div>
+
         @foreach (var p in Model.PageUser.Posts)
         {
             <div class="Post">
@@ -20,18 +43,21 @@
                     <span>@Model.PageUser.Username</span>
                 </div>
 
-                <div class="PostCotent">
+                <div class="PostContent">
                     <div>
                         @p.PostContent
                     </div>
                 </div>
 
                 <div class="PostStats">
-                    <button type="button" >Likes:</button>
-                    <span>@p.Likes</span>
+                    <button type="button">
+                        <p>@p.Likes</p><span>Likes</span>
+                    </button>
+                    
 
-                    <button type="button">Comments:</button>
-                    <span>0</span>
+                    <button type="button">
+                        <p>0</p><span>Comments</span>
+                    </button>  
                 </div>
             </div>
         }
