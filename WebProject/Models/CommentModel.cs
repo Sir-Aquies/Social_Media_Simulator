@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿#nullable disable
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebProject.Models
@@ -16,6 +17,7 @@ namespace WebProject.Models
         /// <summary>
         /// Represents the id of the user of the comment { int }.
         /// </summary>
+        [NotMapped]
         public UserModel User { get; set; } = new UserModel();
         /// <summary>
         /// Represents the id of the post for SQL database { int }.
@@ -26,7 +28,7 @@ namespace WebProject.Models
         /// </summary>
         [Required]
         [StringLength(int.MaxValue, MinimumLength = 0)]
-        public string Content { get; set; } = String.Empty;
+        public string CommentContent { get; set; } = String.Empty;
         /// <summary>
         /// Represents the amount of likes the comment has received { int }.
         /// </summary>
@@ -35,6 +37,7 @@ namespace WebProject.Models
         /// <summary>
         /// Represents the replies the comment has received { Table }
         /// </summary>
-        public List<ReplyModel> Replies { get; set; } = new List<ReplyModel>();
+        [NotMapped]
+        public ICollection<ReplyModel> Replies { get; set; }
     }
 }

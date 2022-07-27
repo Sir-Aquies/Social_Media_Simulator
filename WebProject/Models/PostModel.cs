@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿#nullable disable
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebProject.Models
@@ -12,21 +13,21 @@ namespace WebProject.Models
         /// <summary>
         /// Represents the id of the user for SQL database { int }.
         /// </summary>
-        public int UserId { get; set; }
+        public int UserModelId { get; set; }
         /// <summary>
         /// Represents the id of the user of the post { int }.
         /// </summary>
         [NotMapped]
-        public UserModel User { get; set; } = new UserModel();
+        public UserModel User { get; set; }
         /// <summary>
         /// Represents the description of the post { nvarchar(MAX) }.
         /// </summary>
-        public string Content { get; set; } = String.Empty;
+        public string PostContent { get; set; } = String.Empty;
         /// <summary>
         /// Represents the images, videos attach to the post { Table }.
         /// </summary>
         [NotMapped]
-        public List<byte[]>? Media { get; set; }
+        public List<byte[]> Media { get; set; }
         /// <summary>
         /// Represents the amount of likes the post has received { int }.
         /// </summary>

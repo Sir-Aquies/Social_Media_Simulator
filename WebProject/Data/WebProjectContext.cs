@@ -8,25 +8,24 @@ using WebProject.Models;
 
 namespace WebProject.Data
 {
-    public class WebProjectSQL : DbContext
+    public class WebProjectContext : DbContext
     {
-        public WebProjectSQL(DbContextOptions<WebProjectSQL> options)
+        public WebProjectContext (DbContextOptions<WebProjectContext> options)
             : base(options)
         {
         }
 
         public DbSet<UserModel> Users { get; set; }
         public DbSet<PostModel> Posts { get; set; }
-        //public DbSet<CommentModel> CommentModel { get; set; }
+        public DbSet<CommentModel> CommentModel { get; set; }
         //public DbSet<ReplyModel> ReplyModel { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<UserModel>().ToTable("Users");
             modelBuilder.Entity<PostModel>().ToTable("Posts");
-            //modelBuilder.Entity<CommentModel>().ToTable("Comments");
+            modelBuilder.Entity<CommentModel>().ToTable("Comments");
             //modelBuilder.Entity<ReplyModel>().ToTable("Replies");
         }
-
     }
 }

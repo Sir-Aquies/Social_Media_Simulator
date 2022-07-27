@@ -9,9 +9,9 @@ namespace WebProject.Pages
 {
     public class RegisterModel : PageModel
     {
-        private readonly WebProject.Data.WebProjectSQL _Models;
+        private readonly WebProject.Data.WebProjectContext _Models;
 
-        public RegisterModel(WebProject.Data.WebProjectSQL Models)
+        public RegisterModel(WebProject.Data.WebProjectContext Models)
         {
             _Models = Models;
         }

@@ -9,9 +9,9 @@ namespace WebProject.Pages
 {
     public class LoginModel : PageModel
     {
-        private readonly WebProject.Data.WebProjectSQL _Models;
+        private readonly WebProject.Data.WebProjectContext _Models;
 
-        public LoginModel(WebProject.Data.WebProjectSQL Models)
+        public LoginModel(WebProject.Data.WebProjectContext Models)
         {
             _Models = Models;
         }
