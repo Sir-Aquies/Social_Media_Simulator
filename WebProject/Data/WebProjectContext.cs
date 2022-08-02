@@ -10,8 +10,7 @@ namespace WebProject.Data
 {
     public class WebProjectContext : DbContext
     {
-        public WebProjectContext (DbContextOptions<WebProjectContext> options)
-            : base(options)
+        public WebProjectContext(DbContextOptions<WebProjectContext> options) : base(options)
         {
         }
 

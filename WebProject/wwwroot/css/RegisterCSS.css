@@ -1,5 +1,7 @@
 ﻿body {
     box-sizing: border-box;
+    background-color: var(--magenta);
+    color: var(--white);
 }
 
 :root {
@@ -9,6 +11,9 @@
 
 div.CentralContainer { 
     width: 100%;
+    border: 1px solid var(--white);
+    border-radius: 3rem;
+    padding: 0.5rem;
 }
 
 div.FieldContainer {
@@ -42,7 +47,6 @@ div.FieldContainer input{
 }
 
 div.ButtonContainer {
-    background-color: var(--white);
     width: 90%;
     margin-right: auto;
     margin-left: auto;

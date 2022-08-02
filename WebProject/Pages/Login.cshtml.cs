@@ -38,7 +38,7 @@ namespace WebProject.Pages
 
             if (emptyUser != null)
             {
-                return RedirectToPage("./Index");
+                return RedirectToPage("./Index", new {userid = emptyUser.Id});
             }
 
             return Page();

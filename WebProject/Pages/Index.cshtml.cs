@@ -18,24 +18,46 @@ namespace WebProject.Pages
             _Models = Models;
         }
 
-        [BindProperty]
-        public UserModel PageUser { get; set; }
-        [BindProperty]
+        [ModelBinder]
         public PostModel CreatePost { get; set; }
+        public UserModel PageUser { get; set; }
+        public bool IsthereUser { get; set; } = true;
 
         public async Task<IActionResult> OnGetAsync(int? userid)
         {
-            userid = 1;
+
             if (userid == null)
             {
-                return NotFound();
+                IsthereUser = false;
+                return Page();
             }
 
             PageUser = await _Models.Users.Include(u => u.Posts).AsNoTracking().FirstOrDefaultAsync(us => us.Id == userid);
+            CreatePost.UserModelId = (int)userid;
 
             if (PageUser == null)
             {
                 return NotFound();
+            }
+
+            return Page();
+        }
+
+        public async Task<IActionResult> OnPostAsync()
+        {
+            var emptypost = new PostModel();
+
+            if (!ModelState.IsValid)
+            {
+                return Page();
+            }
+
+            if (await TryUpdateModelAsync<PostModel>(
+                emptypost, "CreatePost", u => u.UserModelId, u => u.PostContent))
+            {
+                _Models.Posts.Add(emptypost);
+                await _Models.SaveChangesAsync();
+                return RedirectToPage("./Index", new {userid = emptypost.UserModelId});
             }
 
             return Page();

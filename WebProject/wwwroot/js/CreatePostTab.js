@@ -1,10 +1,11 @@
 ﻿var postdiv = document.getElementById("PostDiv");
 var tab = document.createElement("div");
+var postclone;
 
 function CreatePostWindow() { 
     tab.style.position = "absolute";
-    tab.style.width = window.innerWidth + "px";
-    tab.style.height = window.innerHeight + "px";
+    tab.style.width = "100%";
+    tab.style.height = "100%";
     tab.style.left = "0px";
     tab.style.top = "0px";
     tab.style.backgroundColor = "rgba(0, 0, 0, 0.65)";
@@ -12,13 +13,15 @@ function CreatePostWindow() {
     tab.style.display = "flex";
     tab.style.justifyContent = "center";
     tab.style.alignItems = "center";
-    tab.addEventListener("click", () => { RemoveTab() })
+    tab.addEventListener("dblclick", () => { RemoveTab() })
     document.body.appendChild(tab);
 
-    tab.appendChild(postdiv);
-    postdiv.style.display = "block";
+    postclone = postdiv.cloneNode(true);
+    tab.appendChild(postclone);
+    postclone.style.display = "block";
 }
 
 function RemoveTab() {
-    tab.remove();
+    postclone.remove();
+    tab.remove();   
 }

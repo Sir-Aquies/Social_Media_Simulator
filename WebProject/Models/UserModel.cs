@@ -35,6 +35,7 @@ namespace WebProject.Models
         [Required]
         [DataType(DataType.Date)]
         [Display(Name = "Date of birth:")]
+        //[Range(typeof(DateTime), "1/1/1900", "7/29/2022", ErrorMessage = "Date if out of range")]
         public DateTime DateofBirth { get; set; }
         /// <summary>
         /// User's personal email { nvarchar(200) }.

@@ -1,0 +1,55 @@
+﻿:root {
+    --magenta: rgb(51, 0, 102);
+    --white: white;
+    --colortext: white;
+    --bodercolor: rgb(51, 0, 102);
+    --postBorder: rgb(128, 128, 128);
+    --SmallTextsize: 1.2rem;
+    --textsize: 1.4rem;
+    --BigTextsize: 2rem;
+}
+
+nav.HeadBar {
+    background-color: rgb(32, 0, 82);
+    color: var(--colortext);
+    width: 100%;
+    height: max-content;
+    padding: 0.7rem 0 0.7rem 0;
+    margin-bottom: 0.5rem;
+}
+
+div.HeadContainer {
+    width: 100%;
+    max-width: 82.5rem;
+    height: max-content;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: normal;
+}
+
+div.HeadHome {
+    width: max-content;
+    margin: 0;
+    padding: 0;
+}
+
+div.HeadHome a {
+    text-decoration: none;
+    font-size: var(--BigTextsize);
+    color: var(--colortext);
+    margin: 0.5rem;
+}
+
+div.HeadList {
+    width: max-content;
+    margin: 0;
+    padding: 0;
+}
+
+div.HeadList a {
+    text-decoration: none;
+    font-size: var(--textsize);
+    color: var(--colortext);
+    margin: 0.5rem;
+}

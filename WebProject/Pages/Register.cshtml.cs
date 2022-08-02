@@ -38,7 +38,7 @@ namespace WebProject.Pages
             {
                 _Models.Users.Add(emptyUser);
                 await _Models.SaveChangesAsync();
-                return RedirectToPage("./Index");
+                return RedirectToPage("./Login");
             }
 
             return Page();
