@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Pages\Views\**" />
+    <Content Remove="Pages\Views\**" />
+    <EmbeddedResource Remove="Pages\Views\**" />
+    <None Remove="Pages\Views\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="wwwroot\css\_WebLayout.css" />
   </ItemGroup>
 
@@ -19,11 +26,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.7" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Controllers\" />
-    <Folder Include="Pages\Views\" />
   </ItemGroup>
 
 </Project>
