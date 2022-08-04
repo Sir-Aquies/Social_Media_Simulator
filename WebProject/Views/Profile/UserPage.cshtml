@@ -3,7 +3,7 @@
 @model UserModel
 
 @{
-    ViewData["Title"] = "Home";
+    ViewData["Title"] = @Model.Username;
     Layout = "WebLayout";
 }
 
@@ -95,23 +95,17 @@
 </div>
 
 <div id="PostDiv" onclick="event.stopPropagation()">
-    <form method="post">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <input type="hidden" asp-for="CreatePost.UserModelId"/>
 
-        <textarea asp-for="CreatePost.PostContent"></textarea>
-        <span asp-validation-for="CreatePost.PostContent" class="text-danger"></span>
+    <form method="post" action="CreatePost">
+
+        <textarea asp-for="PostContent"></textarea>
 
         <div class="ButtonHolder">
             <input type="button" value="Cancel" onclick="RemoveTab()"/>
-            <input type="file"/>
-            <input type="submit" value="Post"/>s
+            <input type="submit" value="Post"/>
         </div>
     </form>
+
 </div>
 
 <script src="~/js/CreatePostTab.js" asp-append-version="true"></script>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}

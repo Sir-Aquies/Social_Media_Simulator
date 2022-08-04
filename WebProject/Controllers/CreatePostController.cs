@@ -1,16 +1,15 @@
-﻿#nullable disable
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using WebProject.Models;
 using WebProject.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace WebProject.Controllers
 {
-    public class Profile : Controller
+    public class CreatePostController : Controller
     {
         private readonly WebProjectContext _Models;
 
-        public Profile(WebProjectContext Models)
+        public CreatePostController(WebProjectContext Models)
         {
             _Models = Models;
         }
@@ -20,28 +19,10 @@ namespace WebProject.Controllers
             return View();
         }
 
-        public IActionResult UserPage(int? userId)
-        {
-            UserModel userModel = new UserModel();
-
-            if (userId == null)
-            {
-                return NotFound();
-            }
-
-            userModel = _Models.Users.Include(u => u.Posts).AsNoTracking().FirstOrDefault(us => us.Id == userId);
-
-            if (userModel == null)
-            {
-                return NotFound();
-            }
-
-            return View(userModel);
-        }
-
         [HttpPost]
         public async Task<IActionResult> CreatePost(PostModel model)
         {
+
             if (!ModelState.IsValid)
             {
                 return View();

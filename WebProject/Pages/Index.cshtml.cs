@@ -17,7 +17,7 @@ namespace WebProject.Pages
             _logger = logger;
             _Models = Models;
         }
-
+        
         [ModelBinder]
         public PostModel CreatePost { get; set; }
         public UserModel PageUser { get; set; }
@@ -51,7 +51,7 @@ namespace WebProject.Pages
             {
                 return Page();
             }
-
+            
             if (await TryUpdateModelAsync<PostModel>(
                 emptypost, "CreatePost", u => u.UserModelId, u => u.PostContent))
             {
