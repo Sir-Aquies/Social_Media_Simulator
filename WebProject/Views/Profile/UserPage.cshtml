@@ -3,7 +3,15 @@
 @model UserModel
 
 @{
-    ViewData["Title"] = @Model.Username;
+    if (@Model != null)
+    {
+        ViewData["Title"] = @Model.Username;
+    } 
+    else
+    {
+        ViewData["Title"] = "Home";
+    }
+
     Layout = "WebLayout";
 }
 
@@ -61,9 +69,7 @@
                         <div class="PostContent">
                             @if (p.PostContent != null || p.PostContent != String.Empty)
                             {
-                                <div>
-                                    @p.PostContent
-                                </div>
+                                <div>@p.PostContent</div>
                             }                  
                         </div>
 
@@ -97,8 +103,9 @@
 <div id="PostDiv" onclick="event.stopPropagation()">
 
     <form method="post" action="CreatePost">
+        <input type="hidden" name="UserId" value="@Model.Id"/>
 
-        <textarea asp-for="PostContent"></textarea>
+        <textarea name="Content"></textarea>
 
         <div class="ButtonHolder">
             <input type="button" value="Cancel" onclick="RemoveTab()"/>

@@ -26,7 +26,7 @@ namespace WebProject.Controllers
 
             if (userId == null)
             {
-                return NotFound();
+                return View(null);
             }
 
             userModel = _Models.Users.Include(u => u.Posts).AsNoTracking().FirstOrDefault(us => us.Id == userId);
@@ -40,17 +40,21 @@ namespace WebProject.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreatePost(PostModel model)
+        public async Task<IActionResult> CreatePost(string Content, int UserId)
         {
+            PostModel post = new PostModel();
+            post.UserModelId = UserId;
+            post.PostContent = Content;
+
             if (!ModelState.IsValid)
             {
-                return View();
+                return RedirectToAction("UserPage", "Profile", new { userId = UserId });
             }
 
-            _Models.Posts.Add(model);
+            _Models.Posts.Add(post);
             await _Models.SaveChangesAsync();
 
-            return View();
+            return RedirectToAction("UserPage", "Profile", new { userId = UserId });
         }
     }
 }
