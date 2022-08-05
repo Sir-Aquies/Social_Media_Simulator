@@ -70,7 +70,12 @@
                             @if (p.PostContent != null || p.PostContent != String.Empty)
                             {
                                 <div>@p.PostContent</div>
-                            }                  
+                            }
+
+                            @if (p.Media != null)
+                            {
+                                <img src="data:image/png;base64,@Convert.ToBase64String(p.Media)"/>
+                            }
                         </div>
 
                         <div class="PostStats">
@@ -102,13 +107,14 @@
 
 <div id="PostDiv" onclick="event.stopPropagation()">
 
-    <form method="post" action="CreatePost">
+    <form method="post" action="CreatePost" enctype="multipart/form-data">
         <input type="hidden" name="UserId" value="@Model.Id"/>
 
         <textarea name="Content"></textarea>
 
         <div class="ButtonHolder">
             <input type="button" value="Cancel" onclick="RemoveTab()"/>
+            <input type="file" name="photo" />
             <input type="submit" value="Post"/>
         </div>
     </form>

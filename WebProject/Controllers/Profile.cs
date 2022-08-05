@@ -40,11 +40,12 @@ namespace WebProject.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreatePost(string Content, int UserId)
+        public async Task<IActionResult> CreatePost(string Content, int UserId, IFormFile photo)
         {
             PostModel post = new PostModel();
             post.UserModelId = UserId;
             post.PostContent = Content;
+            post.Media = await GetBytes(photo);
 
             if (!ModelState.IsValid)
             {
@@ -55,6 +56,13 @@ namespace WebProject.Controllers
             await _Models.SaveChangesAsync();
 
             return RedirectToAction("UserPage", "Profile", new { userId = UserId });
+        }
+
+        public async Task<byte[]> GetBytes(IFormFile formFile)
+        {
+            await using var memoryStream = new MemoryStream();
+            await formFile.CopyToAsync(memoryStream);
+            return memoryStream.ToArray();
         }
     }
 }

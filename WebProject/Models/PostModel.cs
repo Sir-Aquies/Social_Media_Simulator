@@ -28,8 +28,7 @@ namespace WebProject.Models
         /// <summary>
         /// Represents the images, videos attach to the post { Table }.
         /// </summary>
-        [NotMapped]
-        public List<byte[]> Media { get; set; }
+        public byte[] Media { get; set; }
         /// <summary>
         /// Represents the amount of likes the post has received { int }.
         /// </summary>
@@ -43,6 +42,7 @@ namespace WebProject.Models
         /// <summary>
         /// Represents the comments the post has received { Table }
         /// </summary>
+        [NotMapped]
         public ICollection<CommentModel> Comments { get; set; }
     }
 }
