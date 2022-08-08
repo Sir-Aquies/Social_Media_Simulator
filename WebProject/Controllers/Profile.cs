@@ -9,15 +9,17 @@ namespace WebProject.Controllers
     public class Profile : Controller
     {
         private readonly WebProjectContext _Models;
+        private readonly ILogger<Profile> _Logger;
 
-        public Profile(WebProjectContext Models)
+        public Profile(WebProjectContext Models, ILogger<Profile> logger)
         {
             _Models = Models;
+            _Logger = logger;
         }
 
         public IActionResult Index()
         {
-            return View();
+            return UserPage(null);
         }
 
         public IActionResult UserPage(int? userId)
@@ -46,6 +48,7 @@ namespace WebProject.Controllers
             post.UserModelId = UserId;
             post.PostContent = Content;
             post.Media = await GetBytes(photo);
+            //TODO - change the byte[] to nvarchar(MAX).
 
             if (!ModelState.IsValid)
             {

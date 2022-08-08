@@ -36,14 +36,15 @@
                 {
                     <p class="UserDescription">@Model.Description</p>
                 }
+
                 <p>Born: @Model.DateofBirth.ToShortDateString()</p>
             } 
             else
             {
                 <p>Don't miss the opportunity to post something.</p>
-                <a asp-area="" asp-page="/Register">Create a new account here.</a>
+                <a asp-area="" href="/Register">Create a new account here.</a>
                 <p>or</p>
-                <a asp-area="" asp-page="/Login">Login to your account here.</a>
+                <a asp-area="" href="/Login">Login to your account here.</a>
             }
         </div>
     </div>
@@ -108,15 +109,24 @@
 <div id="PostDiv" onclick="event.stopPropagation()">
 
     <form method="post" action="CreatePost" enctype="multipart/form-data">
-        <input type="hidden" name="UserId" value="@Model.Id"/>
+
+        @if (@Model != null)
+        {
+            <input type="hidden" name="UserId" value="@Model.Id"/>
+        }
 
         <textarea name="Content"></textarea>
+        
+        <div class="PictureHolder">
+
+        </div>
 
         <div class="ButtonHolder">
             <input type="button" value="Cancel" onclick="RemoveTab()"/>
-            <input type="file" name="photo" />
+            <input type="file" name="photo" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" multiple/>
             <input type="submit" value="Post"/>
         </div>
+
     </form>
 
 </div>
