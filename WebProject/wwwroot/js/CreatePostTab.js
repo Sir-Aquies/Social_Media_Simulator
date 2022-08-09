@@ -13,7 +13,7 @@ function CreatePostWindow() {
     tab.style.display = "flex";
     tab.style.justifyContent = "center";
     tab.style.alignItems = "center";
-    tab.addEventListener("dblclick", () => { RemoveTab() })
+    tab.addEventListener("click", () => { RemoveTab() })
     document.body.appendChild(tab);
 
     postclone = postdiv.cloneNode(true);

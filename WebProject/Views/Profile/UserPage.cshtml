@@ -42,9 +42,9 @@
             else
             {
                 <p>Don't miss the opportunity to post something.</p>
-                <a asp-area="" href="/Register">Create a new account here.</a>
+                <a asp-area="" asp-page="/Register">Create a new account here.</a>
                 <p>or</p>
-                <a asp-area="" href="/Login">Login to your account here.</a>
+                <a asp-area="" asp-page="/Login">Login to your account here.</a>
             }
         </div>
     </div>
@@ -115,16 +115,18 @@
             <input type="hidden" name="UserId" value="@Model.Id"/>
         }
 
-        <textarea name="Content"></textarea>
-        
-        <div class="PictureHolder">
+        <div id="ContentHolder">
+            <textarea name="Content"></textarea>
 
+            <div class="ButtonHolder">
+                <input type="button" value="Cancel" onclick="RemoveTab()"/>
+                <input type="file" name="photo" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" onchange="ImagePreview(this)"/>
+                <input type="submit" value="Post"/>
+            </div>
         </div>
 
-        <div class="ButtonHolder">
-            <input type="button" value="Cancel" onclick="RemoveTab()"/>
-            <input type="file" name="photo" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" multiple/>
-            <input type="submit" value="Post"/>
+        <div id="ImageHolder">
+
         </div>
 
     </form>
@@ -132,3 +134,4 @@
 </div>
 
 <script src="~/js/CreatePostTab.js" asp-append-version="true"></script>
+<script src="~/js/ImagePrev.js" asp-append-version="true" ></script>
