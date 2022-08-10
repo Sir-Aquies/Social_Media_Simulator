@@ -19,7 +19,7 @@ namespace WebProject.Controllers
 
         public IActionResult Index()
         {
-            return UserPage(null);
+            return RedirectToAction("Userpage");
         }
 
         public IActionResult UserPage(int? userId)
@@ -42,13 +42,16 @@ namespace WebProject.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreatePost(string Content, int UserId, IFormFile photo)
+        public async Task<IActionResult> CreatePost(string Content, int UserId, IFormFile pic)
         {
             PostModel post = new PostModel();
             post.UserModelId = UserId;
             post.PostContent = Content;
-            post.Media = await GetBytes(photo);
-            //TODO - change the byte[] to nvarchar(MAX).
+            if (pic != null)
+            {
+                post.Media = await GetBytes(pic);
+                //TODO - change the byte[] to nvarchar(MAX).
+            }
 
             if (!ModelState.IsValid)
             {

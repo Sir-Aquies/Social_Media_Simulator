@@ -115,20 +115,21 @@
             <input type="hidden" name="UserId" value="@Model.Id"/>
         }
 
-        <div id="ContentHolder">
+        <div id="ContentHolder" class="ContentDiv">
             <textarea name="Content"></textarea>
 
             <div class="ButtonHolder">
                 <input type="button" value="Cancel" onclick="RemoveTab()"/>
-                <input type="file" name="photo" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" onchange="ImagePreview(this)"/>
+                <label>Image</label>
+                <input type="file" name="pic" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" onchange="ImagePreview(this, document.getElementById('CurrentImageHolder'))" style="position:absolute; opacity:0;" />
                 <input type="submit" value="Post"/>
             </div>
         </div>
 
-        <div id="ImageHolder">
+        <div id="ImageHolder" class="ImageDiv">
 
         </div>
-
+        
     </form>
 
 </div>

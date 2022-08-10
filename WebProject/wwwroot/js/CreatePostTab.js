@@ -19,6 +19,10 @@ function CreatePostWindow() {
     postclone = postdiv.cloneNode(true);
     tab.appendChild(postclone);
     postclone.style.display = "block";
+
+    var collection = postclone.children[0].children;
+    collection[2].id = "CurrentImageHolder";
+    collection[1].id = "CurrentContentHolder"
 }
 
 function RemoveTab() {

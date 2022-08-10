@@ -1,20 +1,11 @@
-﻿:root {
-    --magenta: rgb(51, 0, 102);
-    --white: white;
-    --colortext: white;
-    --bodercolor: rgb(51, 0, 102);
-    --postBorder: rgb(128, 128, 128);
-    --SmallTextsize: 1.2rem;
-    --textsize: 1.4rem;
-    --BigTextsize: 2rem;
-}
-
+﻿
 nav.HeadBar {
-    background-color: rgb(32, 0, 82);
+    background-color: rgb(18, 18, 18);
     color: var(--colortext);
     width: 100%;
     height: max-content;
     padding: 0.7rem 0 0.7rem 0;
+    margin: 0;
     margin-bottom: 0.5rem;
 }
 
