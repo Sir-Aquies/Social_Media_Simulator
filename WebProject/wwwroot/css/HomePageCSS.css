@@ -110,7 +110,7 @@ div.PostStats {
 
 div.PostStats button {
     display: inline;
-    background-color: var(--BackgroundColor);
+    background-color: Transparent;
     width: max-content;
     height: 3rem;
     color: var(--colortext);
@@ -180,7 +180,7 @@ div.RightBox {
 #PostDiv input {
     width: 10rem;
     display: inline;
-    background-color: var(--BackgroundColor);
+    background-color: Transparent;
     border: 1px solid var(--white);
     padding: 0.25rem 1rem;
     font-size: var(--BigTextsize);
