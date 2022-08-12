@@ -17,7 +17,7 @@ namespace WebProject.Controllers
             _Logger = logger;
         }
 
-        public IActionResult Index(int? userId)
+        public async Task<IActionResult> Index(int? userId)
         {
             UserModel userModel = new UserModel();
 
@@ -26,7 +26,7 @@ namespace WebProject.Controllers
                 return View(null);
             }
 
-            userModel = _Models.Users.Include(u => u.Posts).AsNoTracking().FirstOrDefault(us => us.Id == userId);
+            userModel = await _Models.Users.Include(u => u.Posts).AsNoTracking().FirstOrDefaultAsync(us => us.Id == userId);
 
             if (userModel == null)
             {
@@ -58,6 +58,40 @@ namespace WebProject.Controllers
             await _Models.SaveChangesAsync();
 
             return RedirectToActionPermanent("Index", new { userId = UserId });
+        }
+
+        public async void EditPost(int? PostId, int UserId, string Content, IFormFile pic)
+        {
+            PostModel postModel = new PostModel();
+
+            if (PostId == null)
+            {
+                return;
+            }
+
+            postModel = await _Models.Posts.FirstOrDefaultAsync(us => us.Id == PostId);
+
+            if (postModel == null)
+            {
+                return;
+            }
+
+            if (Content != null && Content != postModel.PostContent)
+            {
+                postModel.PostContent = Content;
+            }
+
+            if (pic != null)
+            {
+                postModel.Media = await GetBytes(pic);
+            }
+
+            //TODO - add the is edited;
+        }
+
+        public async void DeletePost(int? PostId, int UserId)
+        {
+
         }
 
         private async Task<byte[]> GetBytes(IFormFile formFile)
