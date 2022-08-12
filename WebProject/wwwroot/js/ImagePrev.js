@@ -1,4 +1,5 @@
-﻿//var holder = document.getElementById("CurrentHolder");
+﻿var emptyinput = document.createElement("input");
+emptyinput.type = "file";
 
 function ImagePreview(input, holder) {
     const [file] = input.files;
@@ -65,7 +66,7 @@ function DeleteImagePreview() {
     Img.remove();
     this.remove();
 
-    File.files[0] = "";
+    File.files = emptyinput.files;
 
     holder.style.float = "none";
 

@@ -46,7 +46,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Profile}/{action=UserPage}/{id?}");
+    pattern: "{controller=Profile}/{action=Index}/{id?}");
 
 app.MapRazorPages();
 

@@ -38,8 +38,8 @@ namespace WebProject.Pages
 
             if (emptyUser != null)
             {
-                //return RedirectToPage("/Index", new { userid = emptyUser.Id});
-                return RedirectToAction("UserPage", "Profile", new { userId = emptyUser.Id });
+                //return RedirectToActionPermanent("Index", "Profile", new { userId = emptyUser.Id });
+                return RedirectToRoutePermanent(new { controller = "Profile", action = "Index", userId = emptyUser.Id });
             }
 
             return Page();
