@@ -42,9 +42,9 @@
             else
             {
                 <p>Don't miss the opportunity to post something.</p>
-                <a asp-area="" href="/Register">Create a new account here.</a>
+                <a asp-area="" asp-page="/Register">Create a new account here.</a>
                 <p>or</p>
-                <a asp-area="" href="/Login">Login to your account here.</a>
+                <a asp-area="" asp-page="/Login">Login to your account here.</a>
             }
         </div>
     </div>
@@ -108,27 +108,31 @@
 
 <div id="PostDiv" onclick="event.stopPropagation()">
 
-    <form method="post" action="CreatePost" enctype="multipart/form-data">
+    <form method="post" enctype="multipart/form-data">
 
         @if (@Model != null)
         {
             <input type="hidden" name="UserId" value="@Model.Id"/>
         }
 
-        <textarea name="Content"></textarea>
+        <div id="ContentHolder" class="ContentDiv">
+            <textarea name="Content"></textarea>
+
+            <div class="ButtonHolder">
+                <input type="button" value="Cancel" onclick="RemoveTab()"/>
+                <label>Image</label>
+                <input type="file" id="File" name="pic" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" onchange="ImagePreview(this, document.getElementById('CurrentImageHolder'))" style="position:absolute; opacity:0;" />
+                <input type="submit" value="Post"/>
+            </div>
+        </div>
+
+        <div id="ImageHolder" class="ImageDiv">
+
+        </div>
         
-        <div class="PictureHolder">
-
-        </div>
-
-        <div class="ButtonHolder">
-            <input type="button" value="Cancel" onclick="RemoveTab()"/>
-            <input type="file" name="photo" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" multiple/>
-            <input type="submit" value="Post"/>
-        </div>
-
     </form>
 
 </div>
 
 <script src="~/js/CreatePostTab.js" asp-append-version="true"></script>
+<script src="~/js/ImagePrev.js" asp-append-version="true" ></script>

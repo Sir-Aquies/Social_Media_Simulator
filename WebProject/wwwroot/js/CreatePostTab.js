@@ -13,12 +13,17 @@ function CreatePostWindow() {
     tab.style.display = "flex";
     tab.style.justifyContent = "center";
     tab.style.alignItems = "center";
-    tab.addEventListener("dblclick", () => { RemoveTab() })
+    tab.addEventListener("click", () => { RemoveTab() })
     document.body.appendChild(tab);
 
     postclone = postdiv.cloneNode(true);
     tab.appendChild(postclone);
     postclone.style.display = "block";
+
+    var collection = postclone.children[0].children;
+    collection[2].id = "CurrentImageHolder";
+    collection[1].id = "CurrentContentHolder"
+    collection[1].children[1].children[2].id = "CurrentFile";
 }
 
 function RemoveTab() {

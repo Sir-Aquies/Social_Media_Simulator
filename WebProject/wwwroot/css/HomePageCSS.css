@@ -1,17 +1,6 @@
 ﻿body {
     box-sizing: border-box;
-    background-color: var(--magenta);
-}
-
-:root {
-    --magenta: rgb(47, 0, 102);
-    --white: white;
-    --colotext: white;
-    --bodercolor: rgb(51, 0, 102);
-    --postBorder: rgb(128, 128, 128);
-    --SmallTextsize: 1.2rem;
-    --textsize: 1.4rem;
-    --BigTextsize: 2rem;
+    background-color: var(--BackgroundColor);
 }
 
 div.AllContainer {
@@ -43,12 +32,12 @@ div.CenterBox {
 
 button.CreatePostButton {
     width: 50%;
-    background-color: var(--magenta);
+    background-color: var(--BackgroundColor);
     border: 1px solid var(--postBorder);
     height: max-content;
     margin: 0 auto;
     display: block;
-    color: var(--colotext);
+    color: var(--colortext);
     border-radius: 2rem;
     font-size: var(--textsize);
 }
@@ -61,7 +50,7 @@ div.Post {
     border-bottom: 1px solid var(--postBorder);
     padding: 0.8rem;
     margin-bottom: 0.6rem;
-    color: var(--colotext);
+    color: var(--colortext);
     font-size: var(--textsize);
 }
 
@@ -70,7 +59,6 @@ div.PostInfo {
     height: max-content;
     padding: 0.3rem;
     padding-bottom: 0.7rem;
-    border-bottom: 1px solid var(--bodercolor);
 }
 
 div.PostInfo img {
@@ -118,17 +106,16 @@ div.PostStats {
     padding: 0.5rem;
     display: flex;
     justify-content: left;
-    border-top: 1px solid var(--bodercolor);
 }
 
 div.PostStats button {
     display: inline;
-    background-color: var(--magenta);
-    border: 1px solid var(--bodercolor);
+    background-color: Transparent;
     width: max-content;
     height: 3rem;
-    color: var(--colotext);
+    color: var(--colortext);
     font-size: var(--SmallTextsize);
+    border: 0;
     margin-right: 0.8rem;
 }
 
@@ -148,24 +135,40 @@ div.RightBox {
 /*Hidden Post tab*/
 
 #PostDiv {
-    min-width: 40rem;
-    min-height: 20rem;
+    width: 50rem;
+    height: max-content;
     padding: 1rem;
-    background-color: var(--magenta);
+    background-color: var(--BackgroundColor);
     border: 1px solid var(--postBorder);
     border-radius: 1.5rem;
-    color: var(--colotext);
-    font-size:var(--textsize);
+    color: var(--colortext);
+    font-size: var(--textsize);
     display: none;
     z-index: 20;
 }
 
+#PostDiv .ContentDiv {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    height: 100%;
+}
+
 #PostDiv textarea {
     width: 100%;
-    height: 20rem;
     min-height: min-content;
-    margin: 0.3rem auto;
+    height: 15rem;
     resize: none;
+    margin: 0.3rem 0;
+}
+
+#PostDiv .ImageDiv {
+    width: 20%;
+    padding: 0;
+    margin: 0;
+    max-height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 #PostDiv .ButtonHolder {
@@ -177,12 +180,22 @@ div.RightBox {
 #PostDiv input {
     width: 10rem;
     display: inline;
-    background-color: var(--magenta);
+    background-color: Transparent;
     border: 1px solid var(--white);
-    margin: 0.5rem;
     padding: 0.25rem 1rem;
     font-size: var(--BigTextsize);
-    color: var(--colotext);
+    color: var(--colortext);
+    z-index: 100;
+}
+
+.ButtonHolder label {
+    width: 10rem;
+    display: inline;
+    border: 1px solid var(--white);
+    padding: 0.25rem 1rem;
+    font-size: var(--BigTextsize);
+    cursor: pointer;
+    text-align: center;
 }
 
 /*Hidden Post tab*/

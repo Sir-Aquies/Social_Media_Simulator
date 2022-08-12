@@ -6,23 +6,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WebProject.Controllers
 {
-    public class Profile : Controller
+    public class ProfileController : Controller
     {
         private readonly WebProjectContext _Models;
-        private readonly ILogger<Profile> _Logger;
+        private readonly ILogger<ProfileController> _Logger;
 
-        public Profile(WebProjectContext Models, ILogger<Profile> logger)
+        public ProfileController(WebProjectContext Models, ILogger<ProfileController> logger)
         {
             _Models = Models;
             _Logger = logger;
         }
 
-        public IActionResult Index()
-        {
-            return UserPage(null);
-        }
-
-        public IActionResult UserPage(int? userId)
+        public IActionResult Index(int? userId)
         {
             UserModel userModel = new UserModel();
 
@@ -42,13 +37,17 @@ namespace WebProject.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreatePost(string Content, int UserId, IFormFile photo)
+        public async Task<IActionResult> Index(string Content, int UserId, IFormFile pic)
         {
             PostModel post = new PostModel();
             post.UserModelId = UserId;
             post.PostContent = Content;
-            post.Media = await GetBytes(photo);
-            //TODO - change the byte[] to nvarchar(MAX).
+
+            if (pic != null)
+            {
+                post.Media = await GetBytes(pic);
+                //TODO - change the byte[] to nvarchar(MAX).
+            }
 
             if (!ModelState.IsValid)
             {
@@ -58,10 +57,10 @@ namespace WebProject.Controllers
             _Models.Posts.Add(post);
             await _Models.SaveChangesAsync();
 
-            return RedirectToAction("UserPage", "Profile", new { userId = UserId });
+            return RedirectToActionPermanent("Index", new { userId = UserId });
         }
 
-        public async Task<byte[]> GetBytes(IFormFile formFile)
+        private async Task<byte[]> GetBytes(IFormFile formFile)
         {
             await using var memoryStream = new MemoryStream();
             await formFile.CopyToAsync(memoryStream);
