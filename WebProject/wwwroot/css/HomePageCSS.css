@@ -46,12 +46,31 @@ div.Post {
     display: block;
     width: 100%;
     height: max-content;
-    border-top: 1px solid var(--postBorder);
-    border-bottom: 1px solid var(--postBorder);
     padding: 0.8rem;
-    margin-bottom: 0.6rem;
+    border-top: 1px solid var(--postBorder);
+    /*border-bottom: 1px solid var(--postBorder);
+    margin-bottom: 0.6rem;*/
     color: var(--colortext);
     font-size: var(--textsize);
+}
+
+.PostForm {
+    display: none;
+    position: absolute;
+    background-color: rgb(30, 30, 30);
+    justify-content: left;
+    flex-direction: column;
+    width: 7rem;
+    height: fit-content;
+}
+
+.PostForm input{
+    background-color: transparent;
+    border: 0;
+    width: 100%;
+    height: fit-content;
+    margin: 0;
+    color: var(--colortext);
 }
 
 div.PostInfo {
@@ -59,6 +78,17 @@ div.PostInfo {
     height: max-content;
     padding: 0.3rem;
     padding-bottom: 0.7rem;
+}
+
+div.PostInfo #PostOptionButton{
+    width: 1rem;
+    height: 1rem;
+    padding: 0;
+    margin-right: 1.2rem;
+    float: right;
+    background-color: transparent;
+    border: 0;
+    color: var(--colortext);
 }
 
 div.PostInfo img {
@@ -134,7 +164,7 @@ div.RightBox {
 
 /*Hidden Post tab*/
 
-#PostDiv {
+.PostDiv {
     width: 50rem;
     height: max-content;
     padding: 1rem;
@@ -147,14 +177,14 @@ div.RightBox {
     z-index: 20;
 }
 
-#PostDiv .ContentDiv {
+.PostDiv .ContentDiv {
     width: 100%;
     padding: 0;
     margin: 0;
     height: 100%;
 }
 
-#PostDiv textarea {
+.PostDiv textarea {
     width: 100%;
     min-height: min-content;
     height: 15rem;
@@ -162,7 +192,7 @@ div.RightBox {
     margin: 0.3rem 0;
 }
 
-#PostDiv .ImageDiv {
+.PostDiv .ImageDiv {
     width: 20%;
     padding: 0;
     margin: 0;
@@ -171,13 +201,13 @@ div.RightBox {
     overflow-y: auto;
 }
 
-#PostDiv .ButtonHolder {
+.PostDiv .ButtonHolder {
     display: flex;
     font-size: var(--textsize);
     justify-content: space-around;
 }
 
-#PostDiv input {
+.PostDiv input {
     width: 10rem;
     display: inline;
     background-color: Transparent;

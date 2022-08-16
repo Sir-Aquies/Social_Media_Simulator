@@ -1,5 +1,4 @@
 ﻿@using WebProject.Models;
-
 @model UserModel
 
 @{
@@ -60,42 +59,46 @@
             {
                 foreach (var p in Model.Posts.Reverse())
                 {
-                    <form id="PostForm" enctype="multipart/form-data">
-                        <input type="hidden" name="PostId" value="@p.Id"/>
-                        <input type="hidden" name="UserId" value="@Model.Id"/>
+                    <div class="Post">
 
-                        <div class="Post">
+                        <div class="PostInfo">
+                            <img />
+                            <span>@Model.Username</span>
+                            <button type="button" id="PostOptionButton" onclick="OptionButton(@p.Id)">#</button>
+                            @*<button type="button" onclick="EditPostWindow()">Edit</button>*@
 
-                            <div class="PostInfo">
-                                <img />
-                                <span>@Model.Username</span>
-                            </div>
+                            <form id="Post@(p.Id)" enctype="multipart/form-data" class="PostForm">
+                                <input type="hidden" name="PostId" value="@p.Id"/>
+                                <input type="hidden" name="UserId" value="@Model.Id"/>
 
-                            <div class="PostContent">
-                                @if (p.PostContent != null || p.PostContent != String.Empty)
-                                {
-                                    <div>@p.PostContent</div>
-                                }
-
-                                @if (p.Media != null)
-                                {
-                                    <img src="data:image/png;base64,@Convert.ToBase64String(p.Media)"/>
-                                }
-                            </div>
-
-                            <div class="PostStats">
-                                <button type="button">
-                                    <p>@p.Likes</p><span>Likes</span>
-                                </button>
-                    
-                                <button type="button">
-                                    <p>0</p><span>Comments</span>
-                                </button>
-                            </div>
-
+                                <input type="submit" value="Edit" formaction="@Url.Action("EditPost")"/>
+                                <input type="submit" value="Delete" formaction="@Url.Action("DeletePost")"/>
+                            </form>
                         </div>
 
-                    </form>
+                        <div class="PostContent">
+                            @if (p.PostContent != null || p.PostContent != String.Empty)
+                            {
+                                <div>@p.PostContent</div>
+                            }
+
+                            @if (p.Media != null)
+                            {
+                                <img src="data:image/png;base64,@Convert.ToBase64String(p.Media)" />
+                            }
+                        </div>
+
+                        <div class="PostStats">
+                            <button type="button">
+                                <p>@p.Likes</p><span>Likes</span>
+                            </button>
+
+                            <button type="button">
+                                <p>0</p><span>Comments</span>
+                            </button>
+                        </div>
+
+                    </div>
                 }
             }
 
@@ -112,31 +115,13 @@
     </div>
 </div>
 
-<div id="PostDiv" onclick="event.stopPropagation()">
-    <form method="post" enctype="multipart/form-data">
-
-        @if (@Model != null)
-        {
-            <input type="hidden" name="UserId" value="@Model.Id"/>
-        }
-
-        <div id="ContentHolder" class="ContentDiv">
-            <textarea name="Content"></textarea>
-
-            <div class="ButtonHolder">
-                <input type="button" value="Cancel" onclick="RemoveTab()"/>
-                <label>Image</label>
-                <input type="file" id="File" name="pic" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" onchange="ImagePreview(this, document.getElementById('CurrentImageHolder'))" style="position:absolute; opacity:0;" />
-                <input type="submit" value="Post"/>
-            </div>
-        </div>
-
-        <div id="ImageHolder" class="ImageDiv">
-
-        </div>
-        
-    </form>
+<div id="PostDiv" class="PostDiv" onclick="event.stopPropagation()">
+    @await Html.PartialAsync("CreatePost")
 </div>
 
-<script src="~/js/CreatePostTab.js" asp-append-version="true"></script>
+@*<div id="EditPostDiv" class="PostDiv" onclick="event.stopPropagation()" style="display:block;">
+    @await Html.PartialAsync("PartialEditPost", new PostModel())
+</div>*@
+
+<script src="~/js/PostWindows.js" asp-append-version="true"></script>
 <script src="~/js/ImagePrev.js" asp-append-version="true" ></script>
