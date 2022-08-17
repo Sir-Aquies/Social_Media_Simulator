@@ -60,7 +60,7 @@ namespace WebProject.Controllers
             _Models.Posts.Add(post);
             await _Models.SaveChangesAsync();
 
-            return RedirectToActionPermanent("Index", new { userId = UserId });
+            return RedirectToAction("Index", new { userId = UserId });
         }
 
         public async Task<IActionResult> EditPost(int? PostId, int UserId)
@@ -108,15 +108,15 @@ namespace WebProject.Controllers
 
             if (postModel != null)
             {
+                //postModel.PostContent = null;
+                //postModel.UserModelId = 0;
+                //postModel.Media = null;
+                //.Attach(postModel).State = EntityState.Modified;
                 _Models.Remove(postModel);
                 await _Models.SaveChangesAsync();
             }
 
-            //postModel.PostContent = null;
-            //postModel.UserModelId = 0;
-            //postModel.Media = null;
-
-            return RedirectToActionPermanent("Index", new { userId = UserId });
+            return RedirectToAction("Index", new { userId = UserId });
         }
 
         private async Task<byte[]> GetBytes(IFormFile formFile)

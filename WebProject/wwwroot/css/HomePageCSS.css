@@ -7,11 +7,12 @@ div.AllContainer {
     position: relative;
     left: 0px;
     width: 100%;
-    height: 100vh;
+    height: max-content;
     padding: 0;
     margin: 0;
 
     display: flex;
+    /*border: 1px solid red;*/
 }
 
 div.LeftBox {
@@ -56,7 +57,9 @@ div.Post {
 
 .PostForm {
     display: none;
-    position: absolute;
+    position: fixed;
+    left: 0;
+    top: 0;
     background-color: rgb(30, 30, 30);
     justify-content: left;
     flex-direction: column;
@@ -71,6 +74,10 @@ div.Post {
     height: fit-content;
     margin: 0;
     color: var(--colortext);
+}
+
+.PostForm input:hover {
+    background-color: rgb(24, 24, 24);
 }
 
 div.PostInfo {
@@ -234,7 +241,6 @@ div.RightBox {
     div.LeftBox {
         display: block;
         width: 24%;
-        height: max-content;
     }
 
     img.UserProfilePic {
@@ -254,6 +260,6 @@ div.RightBox {
         width: 25%;
         height: 100%;
 
-        /*border: 1px solid red;*/
+        /*border: 1px solid yellow !important;*/
     }
 }

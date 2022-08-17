@@ -67,12 +67,12 @@
                             <button type="button" id="PostOptionButton" onclick="OptionButton(@p.Id)">#</button>
                             @*<button type="button" onclick="EditPostWindow()">Edit</button>*@
 
-                            <form id="Post@(p.Id)" enctype="multipart/form-data" class="PostForm">
+                            <form id="Post@(p.Id)" enctype="multipart/form-data" onmousedown="event.stopPropagation()" class="PostForm">
                                 <input type="hidden" name="PostId" value="@p.Id"/>
                                 <input type="hidden" name="UserId" value="@Model.Id"/>
 
                                 <input type="submit" value="Edit" formaction="@Url.Action("EditPost")"/>
-                                <input type="submit" value="Delete" formaction="@Url.Action("DeletePost")"/>
+                                <input type="submit" value="Delete" formaction="@Url.Action("DeletePost")" />
                             </form>
                         </div>
 
