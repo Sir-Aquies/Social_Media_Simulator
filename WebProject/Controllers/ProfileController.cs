@@ -49,6 +49,8 @@ namespace WebProject.Controllers
             if (pic != null)
             {
                 post.Media = await GetBytes(pic);
+                //var picbyte = await GetBytes(pic);
+                //post.Media = Convert.ToBase64String(picbyte);
                 //TODO - change the byte[] to nvarchar(MAX).
             }
 

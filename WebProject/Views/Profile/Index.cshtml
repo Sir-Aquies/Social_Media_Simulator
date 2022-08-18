@@ -71,7 +71,7 @@
                                 <input type="hidden" name="PostId" value="@p.Id"/>
                                 <input type="hidden" name="UserId" value="@Model.Id"/>
 
-                                <input type="submit" value="Edit" formaction="@Url.Action("EditPost")"/>
+                                <input type="submit" value="Edit" @*formaction="@Url.Action("EditPost")"*@/>
                                 <input type="submit" value="Delete" formaction="@Url.Action("DeletePost")" />
                             </form>
                         </div>
