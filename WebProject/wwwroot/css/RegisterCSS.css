@@ -1,26 +1,26 @@
 ﻿body {
     box-sizing: border-box;
-}
-
-:root {
-    --magenta: rgb(51, 0, 102);
-    --white: white;
+    background-color: var(--BackgroundColor);
+    color: var(--white);
 }
 
 div.CentralContainer { 
     width: 100%;
+    border: 1px solid var(--white);
+    border-radius: 3rem;
+    padding: 0.5rem;
 }
 
 div.FieldContainer {
-    background-color: var(--magenta);
-    border: 1px solid var(--magenta);
+    background-color: var(--BackgroundColor);
+    border: 1px solid var(--BackgroundColor);
     border-radius: 3rem;
     width: 100%;
     padding: 1.5rem;
 }
 
 div.FieldContainer label{
-    background-color: var(--magenta);
+    background-color: var(--BackgroundColor);
     display: block;
     margin: 0rem auto;
     color: white;
@@ -35,14 +35,13 @@ div.FieldContainer input{
     width: 100%;
     height: 3.0rem;
     color: black;
-    border: 1px solid var(--magenta);
+    border: 1px solid var(--BackgroundColor);
     border-radius: 3rem;
     padding-left: 0.8rem;
     padding-right: 0.8rem;
 }
 
 div.ButtonContainer {
-    background-color: var(--white);
     width: 90%;
     margin-right: auto;
     margin-left: auto;
@@ -54,7 +53,7 @@ div.ButtonContainer {
 
 div.ButtonContainer input {
     display: block;
-    background-color: var(--magenta);
+    background-color: var(--BackgroundColor);
     color: var(--white);
     margin: 0.5rem auto;
     padding: 1rem 1rem;

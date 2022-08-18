@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿#nullable disable
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebProject.Models
@@ -12,34 +13,36 @@ namespace WebProject.Models
         /// <summary>
         /// Represents the id of the user for SQL database { int }.
         /// </summary>
-        public int UserId { get; set; }
+        [Required]
+        public int UserModelId { get; set; }
         /// <summary>
         /// Represents the id of the user of the post { int }.
         /// </summary>
         [NotMapped]
-        public UserModel User { get; set; } = new UserModel();
+        public UserModel User { get; set; }
         /// <summary>
         /// Represents the description of the post { nvarchar(MAX) }.
         /// </summary>
-        public string Content { get; set; } = String.Empty;
+        [Required]
+        public string PostContent { get; set; } = string.Empty;
         /// <summary>
         /// Represents the images, videos attach to the post { Table }.
         /// </summary>
-        [NotMapped]
-        public List<byte[]>? Media { get; set; }
+        public byte[] Media { get; set; }
         /// <summary>
         /// Represents the amount of likes the post has received { int }.
         /// </summary>
         [Range(0, int.MaxValue)]
-        public int Likes { get; set; } = 0;
+        public int Likes { get; set; }
         /// <summary>
         /// Represent if the post has been edited { BIT }.
         /// </summary>
         [NotMapped]
-        public bool IsEdited { get; set; } = false;
+        public bool IsEdited { get; set; }
         /// <summary>
         /// Represents the comments the post has received { Table }
         /// </summary>
+        [NotMapped]
         public ICollection<CommentModel> Comments { get; set; }
     }
 }

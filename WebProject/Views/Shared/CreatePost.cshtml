@@ -1,0 +1,22 @@
+﻿<form method="post" enctype="multipart/form-data">
+
+    @if (@Model != null)
+    {
+        <input type="hidden" name="UserId" value="@Model.Id" />
+    }
+
+    <div id="ContentHolder" class="ContentDiv">
+        <textarea name="Content"></textarea>
+
+        <div class="ButtonHolder">
+            <input type="button" value="Cancel" onclick="RemoveTab()" />
+            <label>Image</label>
+            <input type="file" id="File" name="pic" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" onchange="ImagePreview(this, document.getElementById('CurrentImageHolder'))" style="position:absolute; opacity:0;" />
+            <input type="submit" value="Post" />
+        </div>
+    </div>
+        
+    <div id="ImageHolder" class="ImageDiv">
+    </div>
+
+</form>

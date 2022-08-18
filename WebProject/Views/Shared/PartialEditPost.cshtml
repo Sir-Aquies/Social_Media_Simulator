@@ -1,0 +1,34 @@
+﻿@using WebProject.Models;
+@model PostModel
+
+@if (Model != null)
+{
+    <form method="post" enctype="multipart/form-data">
+
+        <input type="hidden" name="UserId" value="@Model.UserModelId" />
+
+        <div id="EditContentHolder" class="ContentDiv">
+            <textarea name="Content">@Model.PostContent</textarea>
+
+            <div class="ButtonHolder">
+                <input type="button" value="Cancel" onclick="RemoveTab()" />
+                <label>Image</label>
+                <input type="file" id="File" name="pic" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" onchange="ImagePreview(this, document.getElementById('CurrentImageHolder'))" style="position:absolute; opacity:0;" />
+                <input type="submit" value="Post" />
+            </div>
+        </div>
+        <div id="EditImageHolder" class="ImageDiv">
+            @if (Model.Media != null)
+            {
+                <img id="NewImage" src="data:image/png;base64,@Convert.ToBase64String(Model.Media)" style="width:100%; height:auto; display:block;" onload="EditImage(this)" />
+            }
+        </div>
+
+    </form>
+}
+else
+{
+    <h1>null</h1>
+}
+
+

@@ -1,37 +1,266 @@
-﻿
+﻿body {
+    box-sizing: border-box;
+    background-color: var(--BackgroundColor);
+}
 
-div.CenterBox {
-    position: absolute;
+div.AllContainer {
+    position: relative;
     left: 0px;
     width: 100%;
+    height: max-content;
+    padding: 0;
+    margin: 0;
+
+    display: flex;
+    /*border: 1px solid red;*/
+}
+
+div.LeftBox {
+    display: none;
+}
+
+div.CenterBox {
+    height: fit-content;
+    width: 100%;
+    padding: 0;
+    border-left: 1px solid var(--postBorder);
+    border-right: 1px solid var(--postBorder);
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    justify-content: center;
+}
+
+button.CreatePostButton {
+    width: 50%;
+    background-color: var(--BackgroundColor);
+    border: 1px solid var(--postBorder);
+    height: max-content;
+    margin: 0 auto;
+    display: block;
+    color: var(--colortext);
+    border-radius: 2rem;
+    font-size: var(--textsize);
+}
+
+div.Post {
+    display: block;
+    width: 100%;
+    height: max-content;
+    padding: 0.8rem;
+    border-top: 1px solid var(--postBorder);
+    /*border-bottom: 1px solid var(--postBorder);
+    margin-bottom: 0.6rem;*/
+    color: var(--colortext);
+    font-size: var(--textsize);
+}
+
+div.PostInfo {
+    width: 100%;
+    height: max-content;
+    padding: 0.3rem;
+    padding-bottom: 0.7rem;
+}
+
+div.PostInfo .PostOptionButton{
+    width: fit-content;
+    height: fit-content;
+    padding: 0;
+    margin-right: 2.2rem;
+    float: right;
+    color: var(--colortext);
+}
+
+.PostForm {
+    display: none;
+    position: absolute;
+/*    left: 0;
+    top: 0;*/
+    background-color: rgb(30, 30, 30);
+    justify-content: left;
+    flex-direction: column;
+    width: fit-content;
+    height: fit-content;
+    z-index: 50;
+}
+
+.PostForm input{
+    background-color: transparent;
+    border: 0;
+    width: 100%;
+    height: fit-content;
+    margin: 0;
+    text-align: right;
+    color: var(--colortext);
+}
+
+.PostForm input:hover {
+    background-color: rgb(24, 24, 24);
 }
 
 
+div.PostInfo img {
+    display: inline;
+    width: 3.3rem;
+    height: 3.3rem;
+    background-color: var(--white);
+    border-radius: 50%;
+    margin-right: 0.5rem;
+}
 
+div.PostContent {
+    width: 100%;
+    height: fit-content;
+    padding: 0.5rem;
+    margin-top: 0.5rem;
 
+    /*display: flex;
+    justify-content: center;
+    align-content: flex-start;*/
+    /*border: 1px solid yellow;*/
+}
 
+div.PostContent div {
+    display: block;
+    overflow-x: hidden;
+    overflow-y: auto;
+    width: 100%;
+    height: fit-content;
+    max-height: 25rem;
+    text-align: left;
+    white-space:pre-wrap;
+}
 
+div.PostContent img {
+    margin: 0;
+    margin-top: 0.3rem;
+    width: 100%;
+    height: auto;
+}
 
+div.PostStats {
+    width: 100%;
+    height: max-content;
+    padding: 0.5rem;
+    display: flex;
+    justify-content: left;
+}
 
+div.PostStats button {
+    display: inline;
+    background-color: Transparent;
+    width: max-content;
+    height: 3rem;
+    color: var(--colortext);
+    font-size: var(--SmallTextsize);
+    border: 0;
+    margin-right: 0.8rem;
+}
 
+div.PostStats button p{
+    display: inline;
+    margin-right: 0.6rem;
+}
 
+div.PostStats button span{
+    font-size: var(--SmallTextsize);
+}
 
+div.RightBox {
+    display: none;
+}
 
+/*Hidden Post tab*/
 
+.PostDiv {
+    width: 100%;
+    height: max-content;
+    padding: 1rem;
+    background-color: var(--BackgroundColor);
+    border: 1px solid var(--postBorder);
+    border-radius: 1.5rem;
+    color: var(--colortext);
+    font-size: var(--textsize);
+    display: none;
+    z-index: 20;
+}
 
+.PostDiv .ContentDiv {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    height: 100%;
+}
 
+.PostDiv textarea {
+    width: 100%;
+    min-height: min-content;
+    height: 15rem;
+    resize: none;
+    margin: 0.3rem 0;
+}
 
+.PostDiv .ImageDiv {
+    width: 20%;
+    padding: 0;
+    margin: 0;
+    max-height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
 
+.PostDiv .ButtonHolder {
+    display: flex;
+    font-size: var(--textsize);
+    justify-content: space-around;
+}
 
-.col-1 {width: 8.33%;}
-.col-2 {width: 16.66%;}
-.col-3 {width: 25%;}
-.col-4 {width: 33.33%;}
-.col-5 {width: 41.66%;}
-.col-6 {width: 50%;}
-.col-7 {width: 58.33%;}
-.col-8 {width: 66.66%;}
-.col-9 {width: 75%;}
-.col-10 {width: 83.33%;}
-.col-11 {width: 91.66%;}
-.col-12 {width: 100%;}
+.PostDiv input {
+    width: 10rem;
+    display: inline;
+    background-color: Transparent;
+    border: 1px solid var(--white);
+    padding: 0.25rem 1rem;
+    font-size: var(--BigTextsize);
+    color: var(--colortext);
+    z-index: 100;
+}
+
+.ButtonHolder label {
+    width: 10rem;
+    display: inline;
+    border: 1px solid var(--white);
+    padding: 0.25rem 1rem;
+    font-size: var(--BigTextsize);
+    cursor: pointer;
+    text-align: center;
+}
+
+/*Hidden Post tab*/
+
+@media only screen and (min-width: 1600px) {
+    div.LeftBox {
+        display: block;
+        width: 24%;
+    }
+
+    img.UserProfilePic {
+        width: 30vh;
+        height: 30vh;
+        max-height: 17rem;
+        max-width: 17rem;
+    }
+
+    div.CenterBox {
+        width: 49%;
+        margin-right: 1%;
+    }
+
+    div.RightBox {
+        display: block;
+        width: 25%;
+        height: 100%;
+
+        /*border: 1px solid yellow !important;*/
+    }
+}

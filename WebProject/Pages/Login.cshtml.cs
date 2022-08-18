@@ -2,16 +2,16 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using WebProject.Data;
 using WebProject.Models;
+using WebProject.Controllers;
 
 namespace WebProject.Pages
 {
     public class LoginModel : PageModel
     {
-        private readonly WebProject.Data.WebProjectSQL _Models;
+        private readonly Data.WebProjectContext _Models;
 
-        public LoginModel(WebProject.Data.WebProjectSQL Models)
+        public LoginModel(Data.WebProjectContext Models)
         {
             _Models = Models;
         }
@@ -38,7 +38,8 @@ namespace WebProject.Pages
 
             if (emptyUser != null)
             {
-                return RedirectToPage("./Index");
+                //return RedirectToActionPermanent("Index", "Profile", new { userId = emptyUser.Id });
+                return RedirectToRoutePermanent(new { controller = "Profile", action = "Index", userId = emptyUser.Id });
             }
 
             return Page();
