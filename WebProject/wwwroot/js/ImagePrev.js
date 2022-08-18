@@ -74,3 +74,19 @@ function DeleteImagePreview() {
     contHolder.style.marginRight = "0";
     contHolder.style.float = "none";
 }
+
+function EditImage(img) {
+    var div = CreateCancelButton();
+    div.appendChild(img);
+
+    var ContHolder = document.getElementById("EditContentHolder");
+    var Holder = document.getElementById("EditImageHolder");
+
+
+    holder.appendChild(div);
+    holder.style.float = "left";
+
+    contHolder.style.width = "79%";
+    contHolder.style.marginRight = "1%";
+    contHolder.style.float = "left";
+}

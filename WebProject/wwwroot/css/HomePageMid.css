@@ -3,9 +3,12 @@
         display: block;
         width: 39%;
         height: 100%;
-        height: max-content;
         margin-right: 1%;
         /*border: 1px solid green;*/
+
+        position: -webkit-sticky;
+        position: sticky;
+        top: 0;
     }
 
     div.UserInfo {
@@ -14,6 +17,7 @@
         color: var(--colortext);
         font-size: 1.5rem;
         padding: 0.3rem;
+        /*border: 1px solid blue;*/
     }
 
     img.UserProfilePic {
