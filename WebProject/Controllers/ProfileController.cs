@@ -10,6 +10,22 @@ namespace WebProject.Controllers
     {
         private readonly WebProjectContext _Models;
         private readonly ILogger<ProfileController> _Logger;
+        private int CurrentUserId;
+        private UserModel CurrentUser
+        {
+            get
+            {
+                if (CurrentUser == null)
+                {
+                    return null;
+                }
+
+                UserModel output = new UserModel();
+                output = _Models.Users.Include(u => u.Posts).AsNoTracking().FirstOrDefault(us => us.Id == CurrentUserId);
+
+                return output;
+            }
+        }
 
         public ProfileController(WebProjectContext Models, ILogger<ProfileController> logger)
         {
@@ -27,6 +43,7 @@ namespace WebProject.Controllers
             }
 
             userModel = await _Models.Users.Include(u => u.Posts).AsNoTracking().FirstOrDefaultAsync(us => us.Id == userId);
+            CurrentUserId = userModel.Id;
 
             if (userModel == null)
             {
@@ -120,6 +137,11 @@ namespace WebProject.Controllers
             }
 
             return RedirectToAction("Index", new { userId = UserId });
+        }
+
+        public IActionResult Settings()
+        {
+            return View(CurrentUser);
         }
 
         private async Task<byte[]> GetBytes(IFormFile formFile)
