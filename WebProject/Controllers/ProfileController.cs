@@ -115,6 +115,7 @@ namespace WebProject.Controllers
                 //postModel.Media = null;
                 //.Attach(postModel).State = EntityState.Modified;
                 _Models.Remove(postModel);
+                // TODO - make it so that i doesn't remove the post from the database. 
                 await _Models.SaveChangesAsync();
             }
 

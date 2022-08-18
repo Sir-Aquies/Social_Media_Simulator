@@ -55,16 +55,33 @@ div.Post {
     font-size: var(--textsize);
 }
 
+div.PostInfo {
+    width: 100%;
+    height: max-content;
+    padding: 0.3rem;
+    padding-bottom: 0.7rem;
+}
+
+div.PostInfo .PostOptionButton{
+    width: fit-content;
+    height: fit-content;
+    padding: 0;
+    margin-right: 2.2rem;
+    float: right;
+    color: var(--colortext);
+}
+
 .PostForm {
     display: none;
-    position: fixed;
-    left: 0;
-    top: 0;
+    position: absolute;
+/*    left: 0;
+    top: 0;*/
     background-color: rgb(30, 30, 30);
     justify-content: left;
     flex-direction: column;
-    width: 7rem;
+    width: fit-content;
     height: fit-content;
+    z-index: 50;
 }
 
 .PostForm input{
@@ -73,6 +90,7 @@ div.Post {
     width: 100%;
     height: fit-content;
     margin: 0;
+    text-align: right;
     color: var(--colortext);
 }
 
@@ -80,23 +98,6 @@ div.Post {
     background-color: rgb(24, 24, 24);
 }
 
-div.PostInfo {
-    width: 100%;
-    height: max-content;
-    padding: 0.3rem;
-    padding-bottom: 0.7rem;
-}
-
-div.PostInfo #PostOptionButton{
-    width: 1rem;
-    height: 1rem;
-    padding: 0;
-    margin-right: 1.2rem;
-    float: right;
-    background-color: transparent;
-    border: 0;
-    color: var(--colortext);
-}
 
 div.PostInfo img {
     display: inline;
@@ -125,7 +126,7 @@ div.PostContent div {
     overflow-y: auto;
     width: 100%;
     height: fit-content;
-    max-height: 10rem;
+    max-height: 25rem;
     text-align: left;
     white-space:pre-wrap;
 }
@@ -172,7 +173,7 @@ div.RightBox {
 /*Hidden Post tab*/
 
 .PostDiv {
-    width: 50rem;
+    width: 100%;
     height: max-content;
     padding: 1rem;
     background-color: var(--BackgroundColor);

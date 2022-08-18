@@ -30,6 +30,18 @@
         display: block;
     }
 
+    div.PostInfo .PostOptionButton {
+        margin-right: 1.2rem;
+    }
+
+    .PostForm input {
+        text-align: left;
+    }
+
+    .PostDiv {
+        width: 50rem;
+    }
+
     div.UserInfo p {
         margin: 0.3rem 0.5rem;
         display: block;

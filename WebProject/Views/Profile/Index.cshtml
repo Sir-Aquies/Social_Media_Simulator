@@ -62,18 +62,18 @@
                     <div class="Post">
 
                         <div class="PostInfo">
-                            <img />
+                            <img /> 
                             <span>@Model.Username</span>
-                            <button type="button" id="PostOptionButton" onclick="OptionButton(@p.Id)">#</button>
+                            <div type="button" class="PostOptionButton" id="PostOptionButton" onclick="OptionButton(this)">...
+                                <form enctype="multipart/form-data" onmousedown="event.stopPropagation()" class="PostForm">
+                                    <input type="hidden" name="PostId" value="@p.Id"/>
+                                    <input type="hidden" name="UserId" value="@Model.Id" />
+
+                                    <input type="submit" value="Edit" @*formaction="@Url.Action("EditPost")"*@ />
+                                    <input type="submit" value="Delete" formaction="@Url.Action("DeletePost")" />
+                                </form>
+                            </div>
                             @*<button type="button" onclick="EditPostWindow()">Edit</button>*@
-
-                            <form id="Post@(p.Id)" enctype="multipart/form-data" onmousedown="event.stopPropagation()" class="PostForm">
-                                <input type="hidden" name="PostId" value="@p.Id"/>
-                                <input type="hidden" name="UserId" value="@Model.Id"/>
-
-                                <input type="submit" value="Edit" @*formaction="@Url.Action("EditPost")"*@/>
-                                <input type="submit" value="Delete" formaction="@Url.Action("DeletePost")" />
-                            </form>
                         </div>
 
                         <div class="PostContent">
@@ -115,7 +115,7 @@
     </div>
 </div>
 
-<div id="PostDiv" class="PostDiv" onclick="event.stopPropagation()">
+<div id="PostDiv" class="PostDiv" ondblclick="event.stopPropagation()">
     @await Html.PartialAsync("CreatePost")
 </div>
 

@@ -3,11 +3,11 @@
 function CreatePostWindow() {
     var postdiv = document.getElementById("PostDiv");
     var tab = Background();
+    document.body.style.overflow = "hidden";
 
     postclone = postdiv.cloneNode(true);
     tab.appendChild(postclone);
     postclone.style.display = "block";
-    document.body.style.overflow = "hidden";
 
     var collection = postclone.children[0].children;
     collection[2].id = "CurrentImageHolder";
@@ -15,17 +15,16 @@ function CreatePostWindow() {
     collection[1].children[1].children[2].id = "CurrentFile";
 }
 
-function OptionButton(postId) {
-    var option = document.getElementById(`Post${postId}`);
-    document.body.style.overflow = "hidden";
+function OptionButton(post) {
+    //document.body.style.overflow = "hidden";
+    var option = post.children[0];
     option.style.display = "inline";
 
-    option.style.left = event.clientX + "px";
-    option.style.top = event.clientY + "px";
+    option.style.transform = "translate(-1.5rem, 2rem)";
 
     document.addEventListener("mousedown", () => {
         option.style.display = "none";
-        document.addEventListener("", () => { });
+        document.addEventListener("mousedown", () => { });
         document.body.style.overflow = "auto";
     });
 }
@@ -38,9 +37,9 @@ function OptionButton(postId) {
 function Background() {
     var tab = document.createElement("div");
     tab.id = "BlackBackground";
-    tab.style.position = "absolute";
+    tab.style.position = "fixed";
     tab.style.width = "100%";
-    tab.style.height = "100%";
+    tab.style.height = "100vh";
     tab.style.left = "0px";
     tab.style.top = "0px";
     tab.style.backgroundColor = "rgba(0, 0, 0, 0.65)";
@@ -48,7 +47,7 @@ function Background() {
     tab.style.display = "flex";
     tab.style.justifyContent = "center";
     tab.style.alignItems = "center";
-    tab.addEventListener("click", () => { RemoveTab() })
+    tab.addEventListener("dblclick", () => { RemoveTab() })
     document.body.appendChild(tab);
     return tab;
 }
