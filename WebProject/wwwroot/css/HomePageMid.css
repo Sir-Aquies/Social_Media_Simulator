@@ -60,3 +60,24 @@
         width: 60%;
     }
 }
+
+div.ActionsBox {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    margin: 0;
+}
+
+div.ActionsBox a{
+    text-decoration: none;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    color: var(--colortext);
+    font-size: 28px;
+}
+
+div.ActionsBox a:hover{
+    color: var(--colortext);
+    background-color: rgb(30, 30, 30);
+}
