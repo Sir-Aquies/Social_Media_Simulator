@@ -27,7 +27,11 @@ div.FieldContainer label{
     font-size: 1.5rem;
 }
 
-div.FieldContainer input{
+div.InputSettings label {
+    margin: 0;
+}
+
+div.FieldContainer input, textarea {
     display: block;
     margin: 0rem auto;
     background-color: var(--white);
@@ -36,9 +40,22 @@ div.FieldContainer input{
     height: 3.0rem;
     color: black;
     border: 1px solid var(--BackgroundColor);
-    border-radius: 3rem;
+    border-radius: 1rem;
     padding-left: 0.8rem;
     padding-right: 0.8rem;
+}
+
+div.InputSettings input {
+    margin: 0;
+    width: 25rem;
+    margin-bottom: 0.8rem;
+}
+
+div.InputSettings textarea {
+    height: fit-content;
+    width: 25rem;
+    margin: 0;
+    margin-bottom: 0.8rem;
 }
 
 div.ButtonContainer {
@@ -75,6 +92,8 @@ div.ButtonContainer a {
 .CenterOb {
     text-align: center;
 }
+
+
 
 @media only screen and (min-width: 990px) {
     div.CentralContainer {

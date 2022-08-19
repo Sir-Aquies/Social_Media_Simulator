@@ -1,17 +1,70 @@
 ﻿@model UserModel
 @{
-	ViewData["Title"] = "Settings";
+	ViewData["Title"] = "Edit Profile";
 }
 
 <link rel="stylesheet" href="~/css/HomePageCSS.css" asp-append-version="true"/>
 <link rel="stylesheet" href="~/css/HomePageMid.css" asp-append-version="true"/>
+<link rel="stylesheet" href="~/css/RegisterCSS.css" asp-append-version="true" />
 
 <div class="AllContainer" style="height: 40rem;">
 	<div class="LeftBox" style="width:34%; border: 1px solid green;">
 		<partial name="SettingsActions"></partial>
 	</div>
 
-	<div class="CenterBox" style="width: 65%; height:100%; border: 1px solid red; margin-right: 0;">
+	<div class="CenterBox" style="width: 65%; border: 1px solid red; margin-right: 0;">
+		@if (Model != null)
+		{
 
+		}
+		<form method="post" enctype="multipart/form-data">
+			<input type="hidden" name="Id" value="@Model.Id"/>
+			<div class="FieldContainer InputSettings">
+				<label>Username</label>
+				<input name="Username" value="@Model.Username" />
+
+				<label>First name</label>
+				@if (Model.FirstName != null || Model.FirstName != String.Empty)
+				{
+					<input name="FirstName" value="@Model.FirstName" />
+				}
+				else
+				{
+					<input name="FirstName" />
+				}
+
+				<label>Last name</label>
+				@if (Model.LastName != null || Model.LastName != String.Empty)
+				{
+					<input name="LastName" value="@Model.LastName" />
+				}
+				else
+				{
+					<input name="LastName" />
+				}
+
+				<label>Description</label>
+				@if (Model.Description != null || Model.Description != String.Empty)
+				{
+					<textarea name="Description">@Model.Description</textarea>
+				}
+				else
+				{
+					<textarea name="Description"></textarea>
+				}
+			</div>
+
+			@if (Model.ProfilePicture != null)
+			{
+				<input type="file" name="ProfilePicture" src="data:image/png;base64,@Convert.ToBase64String(Model.ProfilePicture)" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" />
+			}
+			else 
+			{
+				<input type="file" name="ProfilePicture" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" />
+			}
+
+			<p>For changing the password and email address check "Passwords and Email Address".</p>
+			<input type="submit" value="Update profile" />
+		</form>
 	</div>
 </div>

@@ -52,6 +52,5 @@ namespace WebProject.Controllers
 
             return View(userModel);
         }
-
     }
 }
