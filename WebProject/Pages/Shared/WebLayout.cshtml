@@ -22,6 +22,7 @@
                 <div class="HeadList">
                     <a asp-area="" asp-page="/Login">Log in</a>
                     <a asp-area="" asp-page="/Register">Register</a>
+                    <a asp-area="" asp-controller="Settings" asp-action="Index" asp-route-UserId="@TempData["UserId"]">Settings</a>
                 </div>
             </div>
         </nav>
