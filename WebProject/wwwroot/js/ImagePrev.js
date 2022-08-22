@@ -104,3 +104,7 @@ function SettingImagePreview(input) {
         frame.src = URL.createObjectURL(file);
     }
 }
+
+function FakeCall() {
+    document.getElementById("Settingsfile").click();
+}

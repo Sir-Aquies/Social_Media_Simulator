@@ -116,7 +116,7 @@
         width: 100%;
     }
 
-    div.SettingsButton input {
+    .ButtonEdit {
         background-color: transparent;
         color: var(--colortext);
         border: 1px solid var(--white);

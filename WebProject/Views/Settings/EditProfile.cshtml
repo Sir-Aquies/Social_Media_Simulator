@@ -63,12 +63,13 @@
 				{
 					<img src="~/Valentine.jpg" id="SettingsFrame" />
 				}
-				<input type="file" name="ProfilePicture" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" onchange="SettingImagePreview(this)" />
+				<input type="button" value="Edit Picture" onclick="FakeCall()" class="ButtonEdit"/>
+				<input type="file" id="Settingsfile" name="ProfilePicture" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" onchange="SettingImagePreview(this)" style="display:none;"/>
 			</div>
 
 			<div class="SettingsButton">
 				<p>For changing the password and email address check "Passwords and Email Address".</p>
-				<input type="submit" value="Update profile"/>
+				<input type="submit" value="Update profile" class="ButtonEdit"/>
 			</div>
 
 		</form>
