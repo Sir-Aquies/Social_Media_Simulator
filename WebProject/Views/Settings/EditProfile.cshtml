@@ -4,20 +4,20 @@
 }
 
 <link rel="stylesheet" href="~/css/HomePageCSS.css" asp-append-version="true"/>
-<link rel="stylesheet" href="~/css/HomePageMid.css" asp-append-version="true"/>
 <link rel="stylesheet" href="~/css/RegisterCSS.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/HomePageMid.css" asp-append-version="true" />
 
 <div class="AllContainer" style="height: 40rem;">
-	<div class="LeftBox" style="width:34%; border: 1px solid green;">
+	<div class="LeftBox" style="width:30.5%; border: 1px solid green;">
 		<partial name="SettingsActions"></partial>
 	</div>
 
-	<div class="CenterBox" style="width: 65%; border: 1px solid red; margin-right: 0;">
+	<div class="CenterBox" style="width: 64%; border: 1px solid red; margin-right: 0;">
 		@if (Model != null)
 		{
 
 		}
-		<form method="post" enctype="multipart/form-data">
+		<form method="post" enctype="multipart/form-data" class="EditProfileForm">
 			<input type="hidden" name="Id" value="@Model.Id"/>
 			<div class="FieldContainer InputSettings">
 				<label>Username</label>
@@ -54,17 +54,23 @@
 				}
 			</div>
 
-			@if (Model.ProfilePicture != null)
-			{
-				<input type="file" name="ProfilePicture" src="data:image/png;base64,@Convert.ToBase64String(Model.ProfilePicture)" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" />
-			}
-			else 
-			{
+			<div class="SettingsPicFrame">
+				@if (Model.ProfilePicture != null)
+				{
+					<img src="data:image/png;base64,@Convert.ToBase64String(Model.ProfilePicture)" />
+				}
+				else
+				{
+					<img src="~/Valentine.jpg"/>
+				}
 				<input type="file" name="ProfilePicture" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" />
-			}
+			</div>
 
-			<p>For changing the password and email address check "Passwords and Email Address".</p>
-			<input type="submit" value="Update profile" />
+			<div>
+				<p>For changing the password and email address check "Passwords and Email Address".</p>
+				<input type="submit" value="Update profile" />
+			</div>
+
 		</form>
 	</div>
 </div>

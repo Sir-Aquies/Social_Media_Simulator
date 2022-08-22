@@ -1,9 +1,9 @@
 ﻿@media only screen and (min-width: 1000px) {
     div.LeftBox {
         display: block;
-        width: 39%;
+        width: 39.5%;
         height: 100%;
-        margin-right: 1%;
+        margin-right: 0.5%;
         /*border: 1px solid green;*/
 
         position: -webkit-sticky;
@@ -59,25 +59,69 @@
     div.CenterBox {
         width: 60%;
     }
-}
 
-div.ActionsBox {
-    display: flex;
-    flex-direction: column;
-    padding: 0;
-    margin: 0;
-}
+    /*EditProfilePage*/
+    .EditProfileForm {
+        width: 100%;
+    }
 
-div.ActionsBox a{
-    text-decoration: none;
-    width: 100%;
-    padding: 0;
-    margin: 0;
-    color: var(--colortext);
-    font-size: 28px;
-}
+    div.SettingsPicFrame {
+        width: 30%;
+        float: right;
+        border: 1px solid green;
+    }
 
-div.ActionsBox a:hover{
-    color: var(--colortext);
-    background-color: rgb(30, 30, 30);
+    div.SettingsPicFrame img{
+        width: 100%;
+        height: auto;
+        border-radius: 50%;
+    }
+
+    div.InputSettings {
+        width: 70% !important;
+        padding: 0;
+        border: 1px solid blue;
+        border-radius: 0 !important;
+        float: left;
+    }
+
+    div.InputSettings label {
+        margin: 0;
+    }
+
+    div.InputSettings input {
+        margin: 0;
+        width: 80%;
+        margin-bottom: 0.8rem;
+    }
+
+    div.InputSettings textarea {
+        height: fit-content;
+        width: 80%;
+        max-width: 40rem;
+        margin: 0;
+        margin-bottom: 0.8rem;
+    }
+
+    div.ActionsBox {
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+        margin: 0;
+    }
+
+    div.ActionsBox a{
+        text-decoration: none;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        color: var(--colortext);
+        font-size: 22px;
+    }
+
+    div.ActionsBox a:hover{
+        color: var(--colortext);
+        background-color: rgb(30, 30, 30);
+    }
+    /*EditProfilePage*/
 }
