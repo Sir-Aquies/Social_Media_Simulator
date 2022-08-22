@@ -54,7 +54,7 @@ div.ButtonContainer {
 div.ButtonContainer input {
     display: block;
     background-color: var(--BackgroundColor);
-    color: var(--white);
+    color: var(--colortext);
     margin: 0.5rem auto;
     padding: 1rem 1rem;
     border: 1px solid var(--white);

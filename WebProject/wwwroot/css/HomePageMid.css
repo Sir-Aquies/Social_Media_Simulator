@@ -68,10 +68,10 @@
     div.SettingsPicFrame {
         width: 30%;
         float: right;
-        border: 1px solid green;
+        /*border: 1px solid green;*/
     }
 
-    div.SettingsPicFrame img{
+    div.SettingsPicFrame img {
         width: 100%;
         height: auto;
         border-radius: 50%;
@@ -80,9 +80,9 @@
     div.InputSettings {
         width: 70% !important;
         padding: 0;
-        border: 1px solid blue;
         border-radius: 0 !important;
         float: left;
+        /*border: 1px solid blue;*/
     }
 
     div.InputSettings label {
@@ -93,6 +93,10 @@
         margin: 0;
         width: 80%;
         margin-bottom: 0.8rem;
+
+        background-color: transparent;
+        color: var(--colortext);
+        border: 1px solid var(--white);
     }
 
     div.InputSettings textarea {
@@ -101,6 +105,24 @@
         max-width: 40rem;
         margin: 0;
         margin-bottom: 0.8rem;
+
+        background-color: transparent;
+        color: var(--colortext);
+        border: 1px solid var(--white);
+    }
+
+    div.SettingsButton {
+        clear: both;
+        width: 100%;
+    }
+
+    div.SettingsButton input {
+        background-color: transparent;
+        color: var(--colortext);
+        border: 1px solid var(--white);
+        padding: 0.5rem;
+        border-radius: 1rem;
+        font-size: var(--textsize);
     }
 
     div.ActionsBox {
@@ -110,7 +132,7 @@
         margin: 0;
     }
 
-    div.ActionsBox a{
+    div.ActionsBox a {
         text-decoration: none;
         width: 100%;
         padding: 0;
@@ -119,7 +141,7 @@
         font-size: 22px;
     }
 
-    div.ActionsBox a:hover{
+    div.ActionsBox a:hover {
         color: var(--colortext);
         background-color: rgb(30, 30, 30);
     }
