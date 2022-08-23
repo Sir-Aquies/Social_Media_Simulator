@@ -263,4 +263,8 @@ div.RightBox {
 
         /*border: 1px solid yellow !important;*/
     }
+
+    div.SettingsCenterBox {
+        width: 69%;
+    }
 }

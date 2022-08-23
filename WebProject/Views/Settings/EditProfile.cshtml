@@ -8,11 +8,11 @@
 <link rel="stylesheet" href="~/css/HomePageMid.css" asp-append-version="true" />
 
 <div class="AllContainer" style="height: 40rem;">
-	<div class="LeftBox" style="width:25.5%; border: 1px solid green;">
+	<div class="LeftBox" style="width:25.5%;">
 		<partial name="SettingsActions"></partial>
 	</div>
 
-	<div class="CenterBox" style="width: 69%; border: 1px solid red; margin-right: 0;">
+	<div class="SettingsCenterBox CenterBox">
 		@if (Model != null)
 		{
 
@@ -63,7 +63,7 @@
 				{
 					<img src="~/Valentine.jpg" id="SettingsFrame" />
 				}
-				<input type="button" value="Edit Picture" onclick="FakeCall()" class="ButtonEdit"/>
+				<input type="button" value="Edit Picture" onclick="FakeCall()" class="ButtonEdit" style="margin-right: auto; margin-left: auto;"/>
 				<input type="file" id="Settingsfile" name="ProfilePicture" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" onchange="SettingImagePreview(this)" style="display:none;"/>
 			</div>
 

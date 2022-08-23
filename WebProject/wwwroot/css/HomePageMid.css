@@ -1,4 +1,70 @@
-﻿@media only screen and (min-width: 1000px) {
+﻿/*EditProfilePage*/
+div.SettingsCenterBox {
+    width: 100%;
+    margin-right: 0;
+    border: 0;
+}
+.EditProfileForm {
+    width: 100%;
+}
+
+div.SettingsPicFrame {
+    width: 60%;
+    border: 1px solid green;
+}
+
+div.SettingsPicFrame img {
+    width: 100%;
+    height: auto;
+    border-radius: 50%;
+}
+
+div.InputSettings {
+    width: 100% !important;
+    padding: 0;
+    border-radius: 0 !important;
+    /*border: 1px solid blue;*/
+}
+
+div.InputSettings label {
+    margin: 0;
+}
+
+div.InputSettings input {
+    margin: 0;
+    width: 100%;
+    margin-bottom: 0.8rem;
+    background-color: transparent;
+    color: var(--colortext);
+    border: 1px solid var(--white);
+}
+
+div.InputSettings textarea {
+    height: fit-content;
+    width: 100%;
+    max-width: 40rem;
+    margin: 0;
+    margin-bottom: 0.8rem;
+    background-color: transparent;
+    color: var(--colortext);
+    border: 1px solid var(--white);
+}
+
+div.SettingsButton {
+    width: 100%;
+}
+
+.ButtonEdit {
+    background-color: transparent;
+    color: var(--colortext);
+    border: 1px solid var(--white);
+    padding: 0.5rem;
+    border-radius: 1rem;
+    font-size: var(--textsize);
+}
+/*EditProfilePage*/
+
+@media only screen and (min-width: 1000px) {
     div.LeftBox {
         display: block;
         width: 39.5%;
@@ -61,68 +127,27 @@
     }
 
     /*EditProfilePage*/
-    .EditProfileForm {
-        width: 100%;
-    }
 
     div.SettingsPicFrame {
         width: 30%;
         float: right;
-        /*border: 1px solid green;*/
-    }
-
-    div.SettingsPicFrame img {
-        width: 100%;
-        height: auto;
-        border-radius: 50%;
     }
 
     div.InputSettings {
         width: 70% !important;
-        padding: 0;
-        border-radius: 0 !important;
         float: left;
-        /*border: 1px solid blue;*/
-    }
-
-    div.InputSettings label {
-        margin: 0;
     }
 
     div.InputSettings input {
-        margin: 0;
         width: 80%;
-        margin-bottom: 0.8rem;
-
-        background-color: transparent;
-        color: var(--colortext);
-        border: 1px solid var(--white);
     }
 
     div.InputSettings textarea {
-        height: fit-content;
         width: 80%;
-        max-width: 40rem;
-        margin: 0;
-        margin-bottom: 0.8rem;
-
-        background-color: transparent;
-        color: var(--colortext);
-        border: 1px solid var(--white);
     }
 
     div.SettingsButton {
         clear: both;
-        width: 100%;
-    }
-
-    .ButtonEdit {
-        background-color: transparent;
-        color: var(--colortext);
-        border: 1px solid var(--white);
-        padding: 0.5rem;
-        border-radius: 1rem;
-        font-size: var(--textsize);
     }
 
     div.ActionsBox {
