@@ -246,7 +246,7 @@ div.RightBox {
 
     img.UserProfilePic {
         width: 30vh;
-        height: auto;
+        height: 30vh;
         max-height: 17rem;
         max-width: 17rem;
     }

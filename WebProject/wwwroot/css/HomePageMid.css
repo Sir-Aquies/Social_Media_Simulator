@@ -14,9 +14,11 @@ div.SettingsPicFrame {
 }
 
 div.SettingsPicFrame img {
-    width: 100%;
-    height: auto;
+    width: 15rem;
+    height: 15rem;
     border-radius: 50%;
+    border: 1px solid white;
+    margin-bottom: 0.5rem;
 }
 
 div.InputSettings {
@@ -40,7 +42,7 @@ div.InputSettings input {
 }
 
 div.InputSettings textarea {
-    height: fit-content;
+    min-height: 15rem;
     width: 100%;
     max-width: 40rem;
     margin: 0;
@@ -89,7 +91,7 @@ div.SettingsButton {
 
     img.UserProfilePic {
         width: 40vh;
-        height: auto;
+        height: 40vh;
         border: 1px solid white;
         border-radius: 50%;
         margin: 0.5rem;

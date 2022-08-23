@@ -15,65 +15,74 @@
 	<div class="SettingsCenterBox CenterBox">
 		@if (Model != null)
 		{
+			<form method="post" enctype="multipart/form-data" class="EditProfileForm">
+				<input type="hidden" asp-for="Id" value="@Model.Id" />
+				<div class="FieldContainer InputSettings">
+					<label>Username</label>
+					<input asp-for="Username" value="@Model.Username" />
+					<span asp-validation-for="@Model.Username" class="text-danger"></span>
 
+					<label>First name</label>
+					@if (Model.FirstName != null || Model.FirstName != String.Empty)
+					{
+						<input asp-for="FirstName" value="@Model.FirstName" />
+					}
+					else
+					{
+						<input asp-for="FirstName" />
+					}
+					<span asp-validation-for="@Model.FirstName" class="text-danger"></span>
+
+					<label>Last name</label>
+					@if (Model.LastName != null || Model.LastName != String.Empty)
+					{
+						<input asp-for="LastName" value="@Model.LastName" />
+					}
+					else
+					{
+						<input asp-for="LastName" />
+					}
+					<span asp-validation-for="@Model.LastName" class="text-danger"></span>
+
+					<label>Description</label>
+					@if (Model.Description != null || Model.Description != String.Empty)
+					{
+						<textarea asp-for="Description">@Model.Description</textarea>
+					}
+					else
+					{
+						<textarea asp-for="Description"></textarea>
+					}
+					<span asp-validation-for="@Model.Description" class="text-danger"></span>
+				</div>
+
+				<div class="SettingsPicFrame">
+					@if (Model.ProfilePicture != null)
+					{
+						<img src="data:image/png;base64,@Convert.ToBase64String(Model.ProfilePicture)" id="SettingsFrame" />
+					}
+					else
+					{
+						<img src="~/Valentine.jpg" id="SettingsFrame" />
+					}
+					<input type="button" value="Edit Picture" onclick="FakeCall()" class="ButtonEdit" style="margin-right: auto; margin-left: auto;" />
+					<input type="file" id="Settingsfile" name="ProfilePicture" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" onchange="SettingImagePreview(this)" style="display:none;"/>
+				</div>
+
+				<div class="SettingsButton">
+					<p>For changing the password and email address check "Passwords and Email Address".</p>
+					<input type="submit" value="Update profile" class="ButtonEdit" />
+				</div>
+
+			</form>
 		}
-		<form method="post" enctype="multipart/form-data" class="EditProfileForm">
-			<input type="hidden" name="Id" value="@Model.Id"/>
-			<div class="FieldContainer InputSettings">
-				<label>Username</label>
-				<input name="Username" value="@Model.Username" />
-
-				<label>First name</label>
-				@if (Model.FirstName != null || Model.FirstName != String.Empty)
-				{
-					<input name="FirstName" value="@Model.FirstName" />
-				}
-				else
-				{
-					<input name="FirstName" />
-				}
-
-				<label>Last name</label>
-				@if (Model.LastName != null || Model.LastName != String.Empty)
-				{
-					<input name="LastName" value="@Model.LastName" />
-				}
-				else
-				{
-					<input name="LastName" />
-				}
-
-				<label>Description</label>
-				@if (Model.Description != null || Model.Description != String.Empty)
-				{
-					<textarea name="Description">@Model.Description</textarea>
-				}
-				else
-				{
-					<textarea name="Description"></textarea>
-				}
-			</div>
-
-			<div class="SettingsPicFrame">
-				@if (Model.ProfilePicture != null)
-				{
-					<img src="data:image/png;base64,@Convert.ToBase64String(Model.ProfilePicture)" id="SettingsFrame" />
-				}
-				else
-				{
-					<img src="~/Valentine.jpg" id="SettingsFrame" />
-				}
-				<input type="button" value="Edit Picture" onclick="FakeCall()" class="ButtonEdit" style="margin-right: auto; margin-left: auto;"/>
-				<input type="file" id="Settingsfile" name="ProfilePicture" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" onchange="SettingImagePreview(this)" style="display:none;"/>
-			</div>
-
-			<div class="SettingsButton">
-				<p>For changing the password and email address check "Passwords and Email Address".</p>
-				<input type="submit" value="Update profile" class="ButtonEdit"/>
-			</div>
-
-		</form>
+		
 	</div>
 </div>
 
 <script src="~/js/ImagePrev.js" asp-append-version="true"></script>
+@section Scripts {
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
+	}
