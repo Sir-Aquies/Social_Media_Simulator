@@ -246,7 +246,7 @@ div.RightBox {
 
     img.UserProfilePic {
         width: 30vh;
-        height: 30vh;
+        height: auto;
         max-height: 17rem;
         max-width: 17rem;
     }
@@ -264,7 +264,9 @@ div.RightBox {
         /*border: 1px solid yellow !important;*/
     }
 
+    /*EditProfilePage*/
     div.SettingsCenterBox {
         width: 69%;
     }
+    /*EditProfilePage*/
 }

@@ -10,7 +10,7 @@ div.SettingsCenterBox {
 
 div.SettingsPicFrame {
     width: 60%;
-    border: 1px solid green;
+    /*border: 1px solid green;*/
 }
 
 div.SettingsPicFrame img {
@@ -61,6 +61,7 @@ div.SettingsButton {
     padding: 0.5rem;
     border-radius: 1rem;
     font-size: var(--textsize);
+    display: block;
 }
 /*EditProfilePage*/
 
@@ -88,9 +89,8 @@ div.SettingsButton {
 
     img.UserProfilePic {
         width: 40vh;
-        height: 40vh;
-        background-color: var(--white);
-        border: 1px solid var(--BackgroundColor);
+        height: auto;
+        border: 1px solid white;
         border-radius: 50%;
         margin: 0.5rem;
         display: block;
@@ -120,6 +120,7 @@ div.SettingsButton {
 
     div.UserInfo p.UserDescription {
         font-size: 1.2rem;
+        white-space: pre-wrap;
     }
 
     div.CenterBox {

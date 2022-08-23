@@ -19,7 +19,14 @@
         <div class="UserInfo">
             @if (@Model != null)
             {
-                <img class="UserProfilePic"/>
+                if (Model.ProfilePicture != null) {
+                    <img src="data:image/png;base64,@Convert.ToBase64String(Model.ProfilePicture)" class="UserProfilePic" />
+                }
+                else
+                {
+                    <img class="UserProfilePic" src="~/Valentine.jpg"/>
+                }
+                
                 <p style="font-size: 2.5rem;">@Model.Username</p>
 
                 @if ((@Model.FirstName != null || @Model.FirstName != String.Empty) ||
