@@ -22,7 +22,7 @@
                 <div class="HeadList">
                     <a asp-area="" asp-page="/Login">Log in</a>
                     <a asp-area="" asp-page="/Register">Register</a>
-                    @if (Model != null){
+                    @if (Model is UserModel){
                         <a class="Right" asp-area="" asp-controller="Settings" asp-action="EditProfile" asp-route-UserId="@Model.Id">Settings</a>
                     }
                 </div>

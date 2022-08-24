@@ -1,6 +1,7 @@
 ﻿:root {
     /*--BackgroundColor: rgb(47, 0, 102);*/
     --BackgroundColor: rgb(18, 18, 18);
+    --LayoutColor: rgb(15, 15, 15);
     --white: white;
     --colortext: white;
     --bodercolor: rgb(51, 0, 102);

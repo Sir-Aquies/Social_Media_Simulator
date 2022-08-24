@@ -1,6 +1,6 @@
 ﻿
 nav.HeadBar {
-    background-color: rgb(15, 15, 15);
+    background-color: var(--LayoutColor);
     color: var(--colortext);
     width: 100%;
     height: max-content;

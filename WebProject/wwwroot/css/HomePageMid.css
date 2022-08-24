@@ -3,6 +3,7 @@ div.SettingsCenterBox {
     width: 100%;
     margin-right: 0;
     border: 0;
+    display: block;
 }
 .EditProfileForm {
     width: 100%;
@@ -67,8 +68,19 @@ div.SettingsButton {
 }
 /*EditProfilePage*/
 
+/*AppearanceOptionsPage*/
+div.AppearanceOptions * {
+    font-size: var(--textsize);
+    color: var(--colortext);
+}
+
+div.AppearanceOptions br, hr{
+    margin: 0.5rem;
+}
+/*AppearanceOptionsPage*/
+
 @media only screen and (min-width: 1000px) {
-    div.LeftBox {
+    div .LeftBox {
         display: block;
         width: 39.5%;
         height: 100%;

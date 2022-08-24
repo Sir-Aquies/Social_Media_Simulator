@@ -1,0 +1,50 @@
+﻿@model UserModel
+@{
+	ViewData["Title"] = "Web Appearance";
+}
+
+<link rel="stylesheet" href="~/css/HomePageCSS.css" asp-append-version="true"/>
+<link rel="stylesheet" href="~/css/RegisterCSS.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/HomePageMid.css" asp-append-version="true" />
+
+<div class="AllContainer">
+	<div class="LeftBox" style="width:25.5%;">
+		<partial name="SettingsActions"></partial>
+	</div>
+		
+	<div class="SettingsCenterBox CenterBox"><br />
+		
+		<div class="AppearanceOptions">
+			<label>Change mode</label>
+			<hr />
+			<input type="radio" id="LightMode" name="mode" value="Lightmode"/>
+			<label for="LightMode">Light mode</label>
+			<input type="radio" id="DarkMode" name="mode" value="Darkmode"/>
+			<label for="DarkMode">Dark mode</label>
+
+			<br />
+			<br />
+			<input class="ButtonEdit" type="button" onclick="ChangeMode()" value="Apply changes"/>
+
+			<br />
+			<label>Customize Appareance</label>
+			<hr />
+
+			<label>Background Color </label><br />
+			<input type="color" id="ColorBackground"/>
+			<br />
+			<label>Layout Color </label><br />
+			<input type="color" id="ColorLayout"/>
+			<br />
+			<label>Text Color </label><br />
+			<input type="color" id="ColorText"/>
+
+			<br />
+			<br />
+			<input class="ButtonEdit" type="button" onclick="" value="Apply changes" />
+		</div>
+		
+	</div>
+</div>
+
+<script src="~/js/ChangeMode.js"></script>
