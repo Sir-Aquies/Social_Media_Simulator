@@ -49,3 +49,7 @@ div.HeadList a {
 div.HeadList a.Right{
     float: right;
 }
+
+div, input, p, button {
+    color: var(--colortext);
+}

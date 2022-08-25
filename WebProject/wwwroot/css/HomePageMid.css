@@ -18,7 +18,7 @@ div.SettingsPicFrame img {
     width: 15rem;
     height: 15rem;
     border-radius: 50%;
-    border: 1px solid white;
+    border: 1px solid var(--BorderColor);
     margin-bottom: 0.5rem;
 }
 
@@ -39,7 +39,7 @@ div.InputSettings input {
     margin-bottom: 0.8rem;
     background-color: transparent;
     color: var(--colortext);
-    border: 1px solid var(--white);
+    border: 1px solid var(--BorderColor);
 }
 
 div.InputSettings textarea {
@@ -50,7 +50,7 @@ div.InputSettings textarea {
     margin-bottom: 0.8rem;
     background-color: transparent;
     color: var(--colortext);
-    border: 1px solid var(--white);
+    border: 1px solid var(--BorderColor);
 }
 
 div.SettingsButton {
@@ -60,7 +60,7 @@ div.SettingsButton {
 .ButtonEdit {
     background-color: transparent;
     color: var(--colortext);
-    border: 1px solid var(--white);
+    border: 1px solid var(--BorderColor);
     padding: 0.5rem;
     border-radius: 1rem;
     font-size: var(--textsize);
@@ -71,7 +71,6 @@ div.SettingsButton {
 /*AppearanceOptionsPage*/
 div.AppearanceOptions * {
     font-size: var(--textsize);
-    color: var(--colortext);
 }
 
 div.AppearanceOptions br, hr{
@@ -104,7 +103,7 @@ div.AppearanceOptions br, hr{
     img.UserProfilePic {
         width: 40vh;
         height: 40vh;
-        border: 1px solid white;
+        border: 1px solid var(--BorderColor);
         border-radius: 50%;
         margin: 0.5rem;
         display: block;
@@ -168,7 +167,7 @@ div.AppearanceOptions br, hr{
     div.ActionsBox {
         display: flex;
         flex-direction: column;
-        padding: 0;
+        padding: 0 0 0 0.6rem;
         margin: 0;
     }
 
@@ -182,8 +181,7 @@ div.AppearanceOptions br, hr{
     }
 
     div.ActionsBox a:hover {
-        color: var(--colortext);
-        background-color: rgb(30, 30, 30);
+        background-color: var(--ShadowColor);
     }
     /*EditProfilePage*/
 }

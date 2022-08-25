@@ -4,9 +4,9 @@
     color: var(--white);
 }
 
-div.CentralContainer { 
+div.CentralContainer {
     width: 100%;
-    border: 1px solid var(--white);
+    border: 1px solid var(--BorderColor);
     border-radius: 3rem;
     padding: 0.5rem;
 }
@@ -57,7 +57,7 @@ div.ButtonContainer input {
     color: var(--colortext);
     margin: 0.5rem auto;
     padding: 1rem 1rem;
-    border: 1px solid var(--white);
+    border: 1px solid var(--BorderColor);
     border-radius: 1.5rem;
     font-size: 1.6rem;
     text-align: center;
