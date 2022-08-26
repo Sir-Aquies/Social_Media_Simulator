@@ -1,7 +1,7 @@
 ﻿body {
     box-sizing: border-box;
     background-color: var(--BackgroundColor);
-    color: var(--white);
+    color: var(--colortext);
 }
 
 div.CentralContainer {
@@ -12,7 +12,6 @@ div.CentralContainer {
 }
 
 div.FieldContainer {
-    background-color: var(--BackgroundColor);
     border: 1px solid var(--BackgroundColor);
     border-radius: 3rem;
     width: 100%;
@@ -20,22 +19,21 @@ div.FieldContainer {
 }
 
 div.FieldContainer label{
-    background-color: var(--BackgroundColor);
     display: block;
     margin: 0rem auto;
-    color: white;
-    font-size: 1.5rem;
+    color: var(--colortext);
+    font-size: var(--textsize);
 }
 
 div.FieldContainer input, textarea {
     display: block;
     margin: 0rem auto;
-    background-color: var(--white);
-    font-size: 1.5rem;
+    font-size: var(--textsize);
     width: 100%;
     height: 3.0rem;
-    color: black;
-    border: 1px solid var(--BackgroundColor);
+    color: var(--colortext);
+    border: 1px solid var(--BorderColor);
+    background-color: transparent;
     border-radius: 1rem;
     padding-left: 0.8rem;
     padding-right: 0.8rem;
@@ -53,7 +51,7 @@ div.ButtonContainer {
 
 div.ButtonContainer input {
     display: block;
-    background-color: var(--BackgroundColor);
+    background-color: transparent;
     color: var(--colortext);
     margin: 0.5rem auto;
     padding: 1rem 1rem;
@@ -80,7 +78,7 @@ div.ButtonContainer a {
     div.CentralContainer {
         margin-right: auto;
         margin-left: auto;
-        width: 60%;
+        width: 50%;
     }
 
     div.ButtonContainer a {

@@ -29,16 +29,17 @@ div.InputSettings {
     /*border: 1px solid blue;*/
 }
 
-div.InputSettings label {
+div.InputSettings input, textarea, label{
+    font-size: var(--textsize);
     margin: 0;
+    color: var(--colortext);
+    height: fit-content;
 }
 
 div.InputSettings input {
-    margin: 0;
     width: 100%;
     margin-bottom: 0.8rem;
     background-color: transparent;
-    color: var(--colortext);
     border: 1px solid var(--BorderColor);
 }
 
@@ -46,10 +47,8 @@ div.InputSettings textarea {
     min-height: 15rem;
     width: 100%;
     max-width: 40rem;
-    margin: 0;
     margin-bottom: 0.8rem;
     background-color: transparent;
-    color: var(--colortext);
     border: 1px solid var(--BorderColor);
 }
 
