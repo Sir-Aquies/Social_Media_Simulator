@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark light"/>
     <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="~/css/WebVariables.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
@@ -16,7 +17,12 @@
         <nav class="HeadBar">
             <div class="HeadContainer">
                 <div class="HeadHome">
-                    <a asp-area="" asp-page="/Index">Home</a>
+                    @if (Model is UserModel && Model != null) {
+                        <a asp-area="" asp-controller="Profile" asp-action="Index" asp-route-UserId="@Model.Id">Home</a>
+                    } 
+                    else {
+                        <a asp-area="" asp-controller="Profile" asp-action="Index">Home</a>
+                    }
                 </div>
 
                 <div class="HeadList">
@@ -36,6 +42,7 @@
         </main>
     </div>
 
+    <script src="~/js/ChangeMode.js" asp-append-version="true"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

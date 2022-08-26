@@ -37,7 +37,8 @@ button.CreatePostButton {
     height: max-content;
     margin: 0 auto;
     display: block;
-    border-radius: 2rem;
+    border-radius: 1rem;
+    border: 1px solid var(--BorderColor);
     font-size: var(--textsize);
 }
 
@@ -47,8 +48,6 @@ div.Post {
     height: max-content;
     padding: 0.8rem;
     border-top: 1px solid var(--BorderColor);
-    /*border-bottom: 1px solid var(--postBorder);
-    margin-bottom: 0.6rem;*/
     font-size: var(--textsize);
 }
 
@@ -70,8 +69,6 @@ div.PostInfo .PostOptionButton{
 .PostForm {
     display: none;
     position: absolute;
-/*    left: 0;
-    top: 0;*/
     background-color: rgb(30, 30, 30);
     justify-content: left;
     flex-direction: column;
@@ -97,9 +94,9 @@ div.PostInfo img {
     display: inline;
     width: 3.3rem;
     height: 3.3rem;
-    background-color: var(--white);
     border-radius: 50%;
     margin-right: 0.5rem;
+    border: 1px solid var(--BorderColor);
 }
 
 div.PostContent {
@@ -171,6 +168,7 @@ div.RightBox {
     height: max-content;
     padding: 1rem;
     background-color: var(--BackgroundColor);
+    border: 1px solid var(--BorderColor);
     border-radius: 1.5rem;
     color: var(--colortext);
     font-size: var(--textsize);

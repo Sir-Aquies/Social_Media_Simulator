@@ -1,6 +1,10 @@
-﻿<div class="ActionsBox">
-	<a asp-area="" asp-action="EditProfile" asp-route-UserId="@Model.Id">Edit profile</a>
-	<a asp-area="" asp-action="Appearance" asp-route-UserId="@Model.Id">Web Appearance</a>
-	<a asp-area="" asp-action="PostSettings" asp-route-UserId="@Model.Id">Post settings</a>
-	<a asp-area="" asp-action="Security" asp-route-UserId="@Model.Id">Passwords and Security</a>
-</div>
+﻿
+@if (Model is UserModel && Model != null){
+	<div class="ActionsBox">
+		<a asp-area="" asp-action="EditProfile" asp-route-UserId="@Model.Id">Edit profile</a>
+		<a asp-area="" asp-action="Appearance" asp-route-UserId="@Model.Id">Web Appearance</a>
+		<a asp-area="" asp-action="PostSettings" asp-route-UserId="@Model.Id">Post settings</a>
+		<a asp-area="" asp-action="Security" asp-route-UserId="@Model.Id">Passwords and Security</a>
+	</div>
+}
+

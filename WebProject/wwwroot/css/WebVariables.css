@@ -4,14 +4,9 @@
     --LayoutColor: rgb(15, 15, 15);
     --ShadowColor: rgb(27, 27, 27);
     --BorderColor: rgb(255, 255, 255);
-    --white: white;
     --colortext: white;
     --postBorder: rgb(128, 128, 128);
     --SmallTextsize: 1.2rem;
     --textsize: 1.4rem;
     --BigTextsize: 2rem;
-}
-
-.WhiteBorder {
-    border: 1px solid var(--BorderColor);
 }
