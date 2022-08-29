@@ -1,4 +1,6 @@
 ﻿#nullable disable
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -69,15 +71,20 @@ namespace WebProject.Models
         /// <summary>
         /// User's profile picture { image }.
         /// </summary>
+        [BindNever]
         public byte[] ProfilePicture { get; set; }
         /// <summary>
         /// User's publish posts { Table }
         /// </summary>
+        [BindNever]
         public ICollection<PostModel> Posts { get; set; }
         /// <summary>
         /// User's favorite posts { Table }
         /// </summary>
         [NotMapped]
+        [BindNever]
         public ICollection<PostModel> FavoritePost { get; set; }
+        [BindNever]
+        public bool ShowImages { get; set; }
     }
 }

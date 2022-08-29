@@ -88,7 +88,7 @@ namespace WebProject.Controllers
                 return View(null);
             }
 
-            userModel = await _Models.Users.Include(u => u.Posts).AsNoTracking().FirstOrDefaultAsync(us => us.Id == UserId);
+            userModel = await _Models.Users.AsNoTracking().FirstOrDefaultAsync(us => us.Id == UserId);
 
             if (userModel == null)
             {

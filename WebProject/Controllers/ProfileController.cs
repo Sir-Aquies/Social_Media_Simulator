@@ -27,7 +27,6 @@ namespace WebProject.Controllers
             }
 
             userModel = await _Models.Users.Include(u => u.Posts).AsNoTracking().FirstOrDefaultAsync(us => us.Id == UserId);
-            TempData["UserId"] = userModel.Id;
 
             if (userModel == null)
             {
@@ -57,13 +56,13 @@ namespace WebProject.Controllers
 
             if (!ModelState.IsValid)
             {
-                return RedirectToAction("UserPage", "Profile", new { userId = UserId });
+                return RedirectToAction("UserPage", "Profile", new { UserId = UserId });
             }
 
             _Models.Posts.Add(post);
             await _Models.SaveChangesAsync();
 
-            return RedirectToAction("Index", new { userId = UserId });
+            return RedirectToAction("Index", new { UserId = UserId });
         }
 
         public async Task<IActionResult> EditPost(int? PostId, int UserId)

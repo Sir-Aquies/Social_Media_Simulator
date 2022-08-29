@@ -182,5 +182,9 @@ div.AppearanceOptions br, hr{
     div.ActionsBox a:hover {
         background-color: var(--ShadowColor);
     }
+    
+    div.ActionsBox a:target {
+        background-color: var(--ShadowColor);
+    }
     /*EditProfilePage*/
 }
