@@ -77,6 +77,65 @@ div.AppearanceOptions br, hr{
 }
 /*AppearanceOptionsPage*/
 
+.Switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.ToggleButton {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.BallButton {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--colortext);
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.BallButton:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: var(--BackgroundColor);
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+/*.ToggleButton:checked + .BallButton {
+    background-color: #2196F3;
+}*/
+
+.ToggleButton:focus + .BallButton {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+.ToggleButton:checked + .BallButton:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+
+.BallButton.round {
+    border-radius: 34px;
+}
+
+.BallButton.round:before {
+  border-radius: 50%;
+}
+
 @media only screen and (min-width: 1000px) {
     div .LeftBox {
         display: block;

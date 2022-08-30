@@ -68,7 +68,7 @@ function SetAppearance(ColorBackground, ColorLayout, ColorText, ColorBorder, Col
 function SetMode(mode) {
     if (mode === "Lightmode") {
         document.documentElement.style.setProperty('--BackgroundColor', 'rgb(255, 255, 255)');
-        document.documentElement.style.setProperty('--LayoutColor', 'rgb(253, 253, 253)');
+        document.documentElement.style.setProperty('--LayoutColor', 'rgb(250, 250, 250)');
         document.documentElement.style.setProperty('--ShadowColor', 'rgb(110, 110, 110)');
         document.documentElement.style.setProperty('--BorderColor', 'rgb(0, 0, 0)');
         document.documentElement.style.setProperty('--colortext', 'black');

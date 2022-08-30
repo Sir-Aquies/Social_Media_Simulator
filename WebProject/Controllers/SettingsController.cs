@@ -98,6 +98,38 @@ namespace WebProject.Controllers
             return View(userModel);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Appearance(bool ShowImages, int? UserId)
+        {
+            UserModel userModel = new UserModel();
+
+            if (UserId == null)
+            {
+                return NotFound();
+            }
+
+            userModel = await _Models.Users.AsNoTracking().FirstOrDefaultAsync(us => us.Id == UserId);
+
+            if (userModel.ShowImages)
+            {
+                userModel.ShowImages = false;
+            }
+            else if (!userModel.ShowImages)
+            {
+                userModel.ShowImages = true;
+            }
+
+            _Models.Attach(userModel).State = EntityState.Modified;
+            await _Models.SaveChangesAsync();
+
+            if (userModel == null)
+            {
+                return NotFound();
+            }
+
+            return View(userModel);
+        }
+
         private async Task<byte[]> GetBytes(IFormFile formFile)
         {
             await using var memoryStream = new MemoryStream();

@@ -85,6 +85,6 @@ namespace WebProject.Models
         [BindNever]
         public ICollection<PostModel> FavoritePost { get; set; }
         [BindNever]
-        public bool ShowImages { get; set; }
+        public bool ShowImages { get; set; } = true;
     }
 }
