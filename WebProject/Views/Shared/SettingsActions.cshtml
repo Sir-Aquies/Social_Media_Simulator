@@ -1,9 +1,28 @@
 ﻿
 @if (Model is UserModel && Model != null){
 	<div class="ActionsBox">
-		<a asp-area="" asp-action="EditProfile" asp-route-UserId="@Model.Id">Edit profile</a>
-		<a asp-area="" asp-action="Appearance" asp-route-UserId="@Model.Id">Web Appearance</a>
-		<a asp-area="" asp-action="Security" asp-route-UserId="@Model.Id">Passwords and Security</a>
+		<a asp-area="" asp-action="EditProfile" asp-route-UserId="@Model.Id" id="EditProfile">Edit profile</a>
+		<a asp-area="" asp-action="Appearance" asp-route-UserId="@Model.Id" id="Appearance">Web Appearance</a>
+		<a asp-area="" asp-action="Security" asp-route-UserId="@Model.Id" id="Security">Passwords and Security</a>
 	</div>
 }
+
+<script>
+	var text = window.location.href;
+
+	if (text.includes("EditProfile")) {
+		var a = document.getElementById("EditProfile");
+		a.style.borderBottom = "2px solid var(--colortext)";
+	}
+
+	if (text.includes("Appearance")) {
+		var a = document.getElementById("Appearance");
+		a.style.borderBottom = "2px solid var(--colortext)";
+	}
+
+	if (text.includes("Security")) {
+		var a = document.getElementById("Security");
+		a.style.borderBottom = "2px solid var(--colortext)";
+	}
+</script>
 

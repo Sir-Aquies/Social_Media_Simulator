@@ -7,11 +7,13 @@
 <link rel="stylesheet" href="~/css/RegisterCSS.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/HomePageMid.css" asp-append-version="true" />
 
-<div class="AllContainer">
-	<div class="LeftBox" style="width:25.5%;">
+<div class="AllContainer AllContainerSettings">
+	<div class="LeftBoxSettings">
 		<partial name="SettingsActions"></partial>
 	</div>
-		
+
+	<hr style="margin: 0.5rem 0" />
+
 	<div class="SettingsCenterBox CenterBox"><br />
 		@if (Model is UserModel && Model != null)
 		{
