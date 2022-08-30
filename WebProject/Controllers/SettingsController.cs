@@ -110,6 +110,11 @@ namespace WebProject.Controllers
 
             userModel = await _Models.Users.AsNoTracking().FirstOrDefaultAsync(us => us.Id == UserId);
 
+            if (userModel == null)
+            {
+                return NotFound();
+            }
+
             if (userModel.ShowImages)
             {
                 userModel.ShowImages = false;
@@ -121,11 +126,6 @@ namespace WebProject.Controllers
 
             _Models.Attach(userModel).State = EntityState.Modified;
             await _Models.SaveChangesAsync();
-
-            if (userModel == null)
-            {
-                return NotFound();
-            }
 
             return View(userModel);
         }
