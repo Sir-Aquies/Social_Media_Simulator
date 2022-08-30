@@ -1,10 +1,41 @@
-﻿/*EditProfilePage*/
+﻿/*Global Changes*/
 div.SettingsCenterBox {
     width: 100%;
     margin-right: 0;
     border: 0;
     display: block;
 }
+
+div.AllContainerSettings {
+    flex-direction: column;
+}
+
+div.LeftBoxSettings {
+    width: 100%;
+}
+
+div.ActionsBox {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 0;
+    margin: 0;
+}
+
+div.ActionsBox a {
+    text-decoration: none;
+    width: fit-content;
+    padding: 0 0 0.4rem 0;
+    margin: 0.5rem 0.5rem;
+    color: var(--colortext);
+    font-size: 16px;
+}
+
+div.ActionsBox a:hover {
+    font-size: 17px;
+}
+
+/*EditProfilePage*/
 .EditProfileForm {
     width: 100%;
 }
@@ -65,7 +96,6 @@ div.SettingsButton {
     font-size: var(--textsize);
     display: block;
 }
-/*EditProfilePage*/
 
 /*AppearanceOptionsPage*/
 div.AppearanceOptions * {
@@ -75,13 +105,14 @@ div.AppearanceOptions * {
 div.AppearanceOptions br, hr{
     margin: 0.5rem;
 }
-/*AppearanceOptionsPage*/
+
 
 .Switch {
     position: relative;
     display: inline-block;
     width: 60px;
     height: 34px;
+    float: right;
 }
 
 .ToggleButton {
@@ -137,7 +168,7 @@ div.AppearanceOptions br, hr{
 }
 
 @media only screen and (min-width: 1000px) {
-    div .LeftBox {
+    div.LeftBox {
         display: block;
         width: 39.5%;
         height: 100%;
@@ -199,6 +230,9 @@ div.AppearanceOptions br, hr{
     }
 
     /*EditProfilePage*/
+    div.SettingsCenterBox{
+        width: 60%;
+    }
 
     div.SettingsPicFrame {
         width: 30%;
@@ -221,29 +255,4 @@ div.AppearanceOptions br, hr{
     div.SettingsButton {
         clear: both;
     }
-
-    div.ActionsBox {
-        display: flex;
-        flex-direction: column;
-        padding: 0 0 0 0.6rem;
-        margin: 0;
-    }
-
-    div.ActionsBox a {
-        text-decoration: none;
-        width: 100%;
-        padding: 0;
-        margin: 0;
-        color: var(--colortext);
-        font-size: 22px;
-    }
-
-    div.ActionsBox a:hover {
-        background-color: var(--ShadowColor);
-    }
-    
-    div.ActionsBox a:target {
-        background-color: var(--ShadowColor);
-    }
-    /*EditProfilePage*/
 }
