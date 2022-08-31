@@ -3,9 +3,13 @@
 	ViewData["Title"] = "Edit Profile";
 }
 
-<link rel="stylesheet" href="~/css/HomePageCSS.css" asp-append-version="true"/>
+<link rel="stylesheet" href="~/css/HomePageCSS.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/RegisterCSS.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/HomePageMid.css" asp-append-version="true" />
+
+@*@if (!string.IsNullOrEmpty(ViewBag.Message)){
+	<div class="AlertMessage" id="MessageSuccess">@ViewBag.Message <div class="CloseButton" onclick="this.parentElement.style.display='none';"></div></div>
+}*@
 
 <div class="AllContainer AllContainerSettings">
 	<div class="LeftBoxSettings">
@@ -15,7 +19,7 @@
 	<hr style="margin: 0.5rem 0" />
 
 	<div class="SettingsCenterBox CenterBox">
-		@if (Model != null)
+		@if (Model is UserModel && Model != null)
 		{
 			<form method="post" enctype="multipart/form-data" class="EditProfileForm">
 				<input type="hidden" asp-for="Id" value="@Model.Id" />
@@ -25,7 +29,7 @@
 					<span asp-validation-for="@Model.Username" class="text-danger"></span>
 
 					<label>First name</label>
-					@if (Model.FirstName != null || Model.FirstName != String.Empty)
+					@if (!string.IsNullOrEmpty(Model.FirstName))
 					{
 						<input asp-for="FirstName" value="@Model.FirstName" />
 					}
@@ -36,7 +40,7 @@
 					<span asp-validation-for="@Model.FirstName" class="text-danger"></span>
 
 					<label>Last name</label>
-					@if (Model.LastName != null || Model.LastName != String.Empty)
+					@if (!string.IsNullOrEmpty(Model.LastName))
 					{
 						<input asp-for="LastName" value="@Model.LastName" />
 					}
@@ -47,7 +51,7 @@
 					<span asp-validation-for="@Model.LastName" class="text-danger"></span>
 
 					<label>Description</label>
-					@if (Model.Description != null || Model.Description != String.Empty)
+					@if (!string.IsNullOrEmpty(Model.Description))
 					{
 						<textarea asp-for="Description">@Model.Description</textarea>
 					}
@@ -83,6 +87,13 @@
 </div>
 
 <script src="~/js/ImagePrev.js" asp-append-version="true"></script>
+
+<script>
+	const Message = document.getElementById("MessageSuccess");
+	if (Message){
+		setInterval(function() {Message.style.display = "none"}, 20000);
+	}
+</script>
 
 @section Scripts {
 	@{

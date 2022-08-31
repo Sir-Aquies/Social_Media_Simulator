@@ -229,8 +229,40 @@ div.RightBox {
 
 /*Hidden Post tab*/
 
+div.AlertMessage {
+    position: relative;
+    /*text-align: center;*/
+    background-color: var(--ShadowColor);
+    color: var(--colortext);
+    width: 100%;
+    height: fit-content;
+    padding: 1rem 1.2rem;
+    font-size: var(--SmallTextsize);
+    overflow: auto;
+    border-top: 0.01rem solid white;
+    border-bottom: 0.01rem solid white;
+}
+
+.CloseButton {
+    position: absolute;
+    display: inline;
+    border-radius: 50%;
+    cursor: pointer;
+    background-image: url(../button.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-clip: border-box;
+    width: 1.2rem;
+    height: 1.2rem;
+    right: 1rem;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
 @media only screen and (min-width: 1600px) {
-    div.LeftBox {
+    div .LeftBox {
         display: block;
         width: 24%;
     }

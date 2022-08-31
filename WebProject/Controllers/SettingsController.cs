@@ -65,7 +65,7 @@ namespace WebProject.Controllers
 
             _Models.Attach(userModel).State = EntityState.Modified;
             await _Models.SaveChangesAsync();
-            ViewBag.Message = "Profile sucesfully updated.";
+            ViewBag.Message = "Profile successfully updated.";
 
             //if (await TryUpdateModelAsync<UserModel>(
             //    userModel, "ChangeUser", u => u.Username, u => u.FirstName, u => u.FirstName, u => u.LastName, u => u.Description, u => u.ProfilePicture))

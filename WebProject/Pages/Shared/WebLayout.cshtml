@@ -37,6 +37,13 @@
                 </div>
             </div>
         </nav>
+        @if (!string.IsNullOrEmpty(ViewBag.Message)){
+            <div class="AlertMessage" id="MessageSuccess">@ViewBag.Message <div class="CloseButton" onclick="this.parentElement.style.display='none';"></div></div>
+        }
+        else if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+        {
+            <div class="AlertMessage" id="MessageSuccess">@ViewBag.ErrorMessage <div class="CloseButton" onclick="this.parentElement.style.display='none';"></div></div>
+        }
     </header>
 
     <div class="container">
