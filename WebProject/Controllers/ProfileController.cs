@@ -119,7 +119,7 @@ namespace WebProject.Controllers
                 await _Models.SaveChangesAsync();
             }
 
-            return RedirectToAction("Index", new { userId = UserId });
+            return RedirectToAction("Index", new { UserId = UserId });
         }
 
         private async Task<byte[]> GetBytes(IFormFile formFile)
