@@ -105,7 +105,7 @@ namespace WebProject.Controllers
 
             if (UserId == null)
             {
-                return NotFound();
+                return View(null);
             }
 
             userModel = await _Models.Users.AsNoTracking().FirstOrDefaultAsync(us => us.Id == UserId);
@@ -126,6 +126,25 @@ namespace WebProject.Controllers
 
             _Models.Attach(userModel).State = EntityState.Modified;
             await _Models.SaveChangesAsync();
+
+            return View(userModel);
+        }
+
+        public async Task<IActionResult> Security(int? UserId)
+        {
+            UserModel userModel = new UserModel();
+
+            if (UserId == null)
+            {
+                return View(null);
+            }
+
+            userModel = await _Models.Users.AsNoTracking().FirstOrDefaultAsync(us => us.Id == UserId);
+
+            if (userModel == null)
+            {
+                return NotFound();
+            }
 
             return View(userModel);
         }
