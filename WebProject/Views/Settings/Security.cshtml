@@ -15,6 +15,39 @@
 	<hr style="margin: 0.5rem 0" />
 
 	<div class="SettingsCenterBox CenterBox"><br />
-		
+		<label>Change password</label>
+
+		<form method="post">
+			<input type="hidden" asp-for="Id" value="@Model.Id"/>
+			<div class="FieldContainer InputSettings">
+				<label>Old Password</label>
+				<input name="OldPassword" type="password"/>
+
+				<label>New password</label>
+				<input asp-for="Password"/>
+				<span asp-validation-for="Password" class="text-danger"></span>
+
+				<label>Confirm new password</label>
+				<input asp-for="ConfirmPassword"/>
+				<span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+			</div>
+
+			<div class="SettingsButton">
+				<input type="submit" value="Update password" class="ButtonEdit"/>
+			</div>
+		</form>
 	</div>
 </div>
+
+<script>
+	const Message = document.getElementById("MessageSuccess");
+	if (Message) {
+		setInterval(function () { Message.style.display = "none" }, 30000);
+	}
+</script>
+
+@section Scripts {
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
+	}

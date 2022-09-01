@@ -43,8 +43,7 @@ namespace WebProject.Controllers
 
             if (userModel == null)
             {
-                ViewBag.ErrorMessage = "Sorry, something went wrong.";
-                return View(userModel);
+                return NotFound();
             }
 
             if (ChangeUser == null)
@@ -145,6 +144,42 @@ namespace WebProject.Controllers
             {
                 return NotFound();
             }
+
+            return View(userModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Security(UserModel UserPassword, string OldPassword)
+        {
+            UserModel userModel = new UserModel();
+
+            userModel = await _Models.Users.AsNoTracking().FirstOrDefaultAsync(us => us.Id == UserPassword.Id);
+
+            if (OldPassword != userModel.Password)
+            {
+                ViewBag.ErrorMessage = "Old Password is invalid";
+                return View(userModel);
+            }
+
+            if (userModel == null)
+            {
+                return NotFound();
+            }
+
+            if (UserPassword == null)
+            {
+                ViewBag.ErrorMessage = "Sorry, something went wrong.";
+                return View(userModel);
+            }
+
+            if (!string.IsNullOrEmpty(UserPassword.Password))
+            {
+                userModel.Password = UserPassword.Password;
+            }
+
+            _Models.Attach(userModel).State = EntityState.Modified;
+            await _Models.SaveChangesAsync();
+            ViewBag.Message = "Password successfully updated.";
 
             return View(userModel);
         }
