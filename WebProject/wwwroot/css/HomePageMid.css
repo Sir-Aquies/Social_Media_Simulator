@@ -6,6 +6,10 @@ div.SettingsCenterBox {
     display: block;
 }
 
+/*div.SettingsCenterBox *{
+    font-size: var(--SmallTextsize) !important;
+}*/
+
 div.AllContainerSettings {
     flex-direction: column;
 }

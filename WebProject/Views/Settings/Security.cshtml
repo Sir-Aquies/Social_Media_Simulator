@@ -16,6 +16,7 @@
 
 	<div class="SettingsCenterBox CenterBox"><br />
 		<label>Change password</label>
+		<hr style="margin: 0.5rem" />
 
 		<form method="post">
 			<input type="hidden" asp-for="Id" value="@Model.Id"/>
@@ -34,6 +35,31 @@
 
 			<div class="SettingsButton">
 				<input type="submit" value="Update password" class="ButtonEdit"/>
+			</div>
+		</form>
+
+		<br />
+		<br />
+
+		<label>Change email address</label>
+		<hr style="margin: 0.5rem" />
+		
+		<label>Current email address: </label>
+		<label><b>@Model.EmailAddress</b></label>
+
+		<br />
+		<br />
+
+		<form method="post" novalidate action="ChangeEmail" id="myform">
+			<input type="hidden" asp-for="Id" value="@Model.Id" />
+			<div class="FieldContainer InputSettings">
+				<label>New email address</label>
+				<input asp-for="EmailAddress" />
+				<span asp-validation-for="EmailAddress" class="text-danger"></span>
+			</div>
+
+			<div class="SettingsButton">
+				<input type="submit" value="Update email address" class="ButtonEdit" form="myform" />
 			</div>
 		</form>
 	</div>

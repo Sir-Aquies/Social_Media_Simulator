@@ -145,6 +145,22 @@ namespace WebProject.Controllers
                 return NotFound();
             }
 
+            if (TempData["ErrorMessage"] != null)
+            {
+                if (!string.IsNullOrEmpty(TempData["ErrorMessage"].ToString()))
+                {
+                    ViewBag.ErrorMessage = TempData["ErrorMessage"].ToString();
+                } 
+            }
+
+            if (TempData["Message"] != null)
+            {
+                if (!string.IsNullOrEmpty(TempData["Message"].ToString()))
+                {
+                    ViewBag.Message = TempData["Message"].ToString();
+                } 
+            }
+
             return View(userModel);
         }
 
@@ -166,22 +182,46 @@ namespace WebProject.Controllers
                 return NotFound();
             }
 
-            if (UserPassword == null)
-            {
-                ViewBag.ErrorMessage = "Sorry, something went wrong.";
-                return View(userModel);
-            }
-
             if (!string.IsNullOrEmpty(UserPassword.Password))
             {
                 userModel.Password = UserPassword.Password;
+
+                _Models.Attach(userModel).State = EntityState.Modified;
+                await _Models.SaveChangesAsync();
+                ViewBag.Message = "Password successfully updated.";
             }
 
-            _Models.Attach(userModel).State = EntityState.Modified;
-            await _Models.SaveChangesAsync();
-            ViewBag.Message = "Password successfully updated.";
-
             return View(userModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangeEmail(UserModel UserEmail)
+        {
+            UserModel userModel = new UserModel();
+
+            userModel = await _Models.Users.AsNoTracking().FirstOrDefaultAsync(us => us.Id == UserEmail.Id);
+
+            if (userModel == null)
+            {
+                return NotFound();
+            }
+
+            if (userModel.EmailAddress == UserEmail.EmailAddress)
+            {
+                TempData["ErrorMessage"] = "Email address is the same.";
+                return RedirectToAction("Security", new { UserId = UserEmail.Id });
+            }
+
+            if (!string.IsNullOrEmpty(UserEmail.EmailAddress))
+            {
+                userModel.EmailAddress = UserEmail.EmailAddress;
+
+                _Models.Attach(userModel).State = EntityState.Modified;
+                await _Models.SaveChangesAsync();
+                TempData["Message"] = "Email address successfully updated.";
+            }
+
+            return RedirectToAction("Security", new { UserId = UserEmail.Id });
         }
 
         private async Task<byte[]> GetBytes(IFormFile formFile)
