@@ -90,3 +90,21 @@ function EditImage(img) {
     contHolder.style.marginRight = "1%";
     contHolder.style.float = "left";
 }
+
+function SettingImagePreview(input) {
+    const [file] = input.files;
+
+    if (file) {
+        var frame = document.getElementById("SettingsFrame");
+
+        if (!frame) {
+            return;
+        }
+
+        frame.src = URL.createObjectURL(file);
+    }
+}
+
+function FakeCall() {
+    document.getElementById("Settingsfile").click();
+}

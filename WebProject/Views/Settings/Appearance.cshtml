@@ -1,0 +1,88 @@
+﻿@model UserModel
+@{
+	ViewData["Title"] = "Web Appearance";
+}
+
+<link rel="stylesheet" href="~/css/HomePageCSS.css" asp-append-version="true"/>
+<link rel="stylesheet" href="~/css/RegisterCSS.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/HomePageMid.css" asp-append-version="true" />
+
+<div class="AllContainer AllContainerSettings">
+	<div class="LeftBoxSettings">
+		<partial name="SettingsActions"></partial>
+	</div>
+
+	<hr style="margin: 0.5rem 0" />
+
+	<div class="SettingsCenterBox CenterBox"><br />
+		@if (Model is UserModel && Model != null)
+		{
+			<div class="AppearanceOptions">
+				<label>Change mode</label>
+				<hr />
+				<input type="radio" id="LightMode" name="mode" value="Lightmode" onclick="ChangeMode()" />
+				<label for="LightMode">Light mode</label>
+				<input type="radio" id="DarkMode" name="mode" value="Darkmode" onclick="ChangeMode()" />
+				<label for="DarkMode">Dark mode</label>
+
+				<br />
+				<br />
+				@*<input class="ButtonEdit" type="button" onclick="ChangeMode()" value="Apply changes"/>*@
+
+				<br />
+				<label>Customize Appareance</label>
+				<hr />
+
+				<label>Background Color</label><br />
+				<input type="color" id="ColorBackground" value="#121212" />
+				<br />
+				<label>Layout Color</label><br />
+				<input type="color" id="ColorLayout" value="#0f0f0f" />
+				<br />
+				<label>Text Color</label><br />
+				<input type="color" id="ColorText" value="#ffffff" />
+				<br />
+				<label>Border Color</label><br />
+				<input type="color" id="ColorBorder" value="#ffffff" />
+				<br />
+				<label>Shadow Color</label><br />
+				<input type="color" id="ColorShadow" value="#1b1b1b" />
+
+				<br />
+				<br />
+				<input class="ButtonEdit" type="button" onclick="CostumAppareance()" value="Apply changes" />
+
+				<br />
+				<label>Post Settings</label>
+				<hr />
+
+				<input id="ModelId" type="hidden" value="@Model.Id" />
+				<label>Show post images</label>
+				<label class="Switch">
+					@if (Model.ShowImages)
+					{
+						<input id="Submit" type="checkbox" name="ShowImages" class="ToggleButton" value="@Model.ShowImages" checked />
+					}
+					else
+					{
+						<input id="Submit" type="checkbox" name="ShowImages" class="ToggleButton" value="@Model.ShowImages" />
+					}
+					<span class="BallButton round"></span>
+				</label>
+
+			</div>
+		}
+	</div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/js/AppearanceJS.js" asp-append-version="true"></script>
+<script>
+if (savedTheme == "Darkmode") {
+    document.getElementById("DarkMode").checked = true;
+}
+
+if (savedTheme == "Lightmode") {
+	document.getElementById("LightMode").checked = true;
+}
+</script>

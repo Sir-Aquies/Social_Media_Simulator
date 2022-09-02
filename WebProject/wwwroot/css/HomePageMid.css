@@ -1,9 +1,182 @@
-﻿@media only screen and (min-width: 1000px) {
+﻿/*Global Changes*/
+div.SettingsCenterBox {
+    width: 100%;
+    margin-right: 0;
+    border: 0;
+    display: block;
+}
+
+/*div.SettingsCenterBox *{
+    font-size: var(--SmallTextsize) !important;
+}*/
+
+div.AllContainerSettings {
+    flex-direction: column;
+}
+
+div.LeftBoxSettings {
+    width: 100%;
+}
+
+div.ActionsBox {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 0;
+    margin: 0;
+}
+
+div.ActionsBox a {
+    text-decoration: none;
+    width: fit-content;
+    padding: 0 0 0.4rem 0;
+    margin: 0.5rem 0.5rem;
+    color: var(--colortext);
+    font-size: 16px;
+}
+
+div.ActionsBox a:hover {
+    font-size: 17px;
+}
+
+/*EditProfilePage*/
+.EditProfileForm {
+    width: 100%;
+}
+
+div.SettingsPicFrame {
+    width: 60%;
+    /*border: 1px solid green;*/
+}
+
+div.SettingsPicFrame img {
+    width: 15rem;
+    height: 15rem;
+    border-radius: 50%;
+    border: 1px solid var(--BorderColor);
+    margin-bottom: 0.5rem;
+}
+
+div.InputSettings {
+    width: 100% !important;
+    padding: 0;
+    border-radius: 0 !important;
+    /*border: 1px solid blue;*/
+}
+
+div.InputSettings input, textarea, label{
+    font-size: var(--textsize);
+    margin: 0;
+    color: var(--colortext);
+    height: fit-content;
+}
+
+div.InputSettings input {
+    width: 100%;
+    margin-bottom: 0.8rem;
+    background-color: transparent;
+    border: 1px solid var(--BorderColor);
+}
+
+div.InputSettings textarea {
+    min-height: 15rem;
+    width: 100%;
+    max-width: 40rem;
+    margin-bottom: 0.8rem;
+    background-color: transparent;
+    border: 1px solid var(--BorderColor);
+}
+
+div.SettingsButton {
+    width: 100%;
+}
+
+.ButtonEdit {
+    background-color: transparent;
+    color: var(--colortext);
+    border: 1px solid var(--BorderColor);
+    padding: 0.5rem;
+    border-radius: 1rem;
+    font-size: var(--textsize);
+    display: block;
+}
+
+/*AppearanceOptionsPage*/
+div.AppearanceOptions * {
+    font-size: var(--textsize);
+}
+
+div.AppearanceOptions br, hr{
+    margin: 0.5rem;
+}
+
+
+.Switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    float: right;
+}
+
+.ToggleButton {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.BallButton {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--colortext);
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.BallButton:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: var(--BackgroundColor);
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.ToggleButton:checked + .BallButton {
+    background-color: var(--ShadowColor);
+}
+
+.ToggleButton:focus + .BallButton {
+    box-shadow: 0 0 1px var(--colortext);
+}
+
+.ToggleButton:checked + .BallButton:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+
+.BallButton.round {
+    border-radius: 34px;
+}
+
+.BallButton.round:before {
+  border-radius: 50%;
+}
+
+@media only screen and (min-width: 1000px) {
     div.LeftBox {
         display: block;
-        width: 39%;
+        width: 39.5%;
         height: 100%;
-        margin-right: 1%;
+        margin-right: 0.5%;
         /*border: 1px solid green;*/
 
         position: -webkit-sticky;
@@ -23,8 +196,7 @@
     img.UserProfilePic {
         width: 40vh;
         height: 40vh;
-        background-color: var(--white);
-        border: 1px solid var(--BackgroundColor);
+        border: 1px solid var(--BorderColor);
         border-radius: 50%;
         margin: 0.5rem;
         display: block;
@@ -54,9 +226,37 @@
 
     div.UserInfo p.UserDescription {
         font-size: 1.2rem;
+        white-space: pre-wrap;
     }
 
     div.CenterBox {
         width: 60%;
+    }
+
+    /*EditProfilePage*/
+    div.SettingsCenterBox{
+        width: 60%;
+    }
+
+    div.SettingsPicFrame {
+        width: 30%;
+        float: right;
+    }
+
+    div.InputSettings {
+        width: 70% !important;
+        float: left;
+    }
+
+    div.InputSettings input {
+        width: 80%;
+    }
+
+    div.InputSettings textarea {
+        width: 80%;
+    }
+
+    div.SettingsButton {
+        clear: both;
     }
 }

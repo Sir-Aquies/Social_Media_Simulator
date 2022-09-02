@@ -4,8 +4,12 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark light"/>
     <title>@ViewData["Title"]</title>
+
     <link rel="stylesheet" href="~/css/WebVariables.css" asp-append-version="true"/>
+    <script src="~/js/ChangeMode.js" asp-append-version="true"></script>
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/WebProject.styles.css" asp-append-version="true" />
@@ -16,15 +20,30 @@
         <nav class="HeadBar">
             <div class="HeadContainer">
                 <div class="HeadHome">
-                    <a asp-area="" asp-page="/Index">Home</a>
+                    @if (Model is UserModel && Model != null) {
+                        <a asp-area="" asp-controller="Profile" asp-action="Index" asp-route-UserId="@Model.Id">Home</a>
+                    } 
+                    else {
+                        <a asp-area="" asp-controller="Profile" asp-action="Index">Home</a>
+                    }
                 </div>
 
                 <div class="HeadList">
                     <a asp-area="" asp-page="/Login">Log in</a>
                     <a asp-area="" asp-page="/Register">Register</a>
+                    @if (Model is UserModel){
+                        <a class="Right" asp-area="" asp-controller="Settings" asp-action="EditProfile" asp-route-UserId="@Model.Id">Settings</a>
+                    }
                 </div>
             </div>
         </nav>
+        @if (!string.IsNullOrEmpty(ViewBag.Message)){
+            <div class="AlertMessage" id="MessageSuccess">@ViewBag.Message <div class="CloseButton" onclick="this.parentElement.style.display='none';"></div></div>
+        }
+        else if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+        {
+            <div class="AlertMessage" id="MessageSuccess">@ViewBag.ErrorMessage <div class="CloseButton" onclick="this.parentElement.style.display='none';"></div></div>
+        }
     </header>
 
     <div class="container">

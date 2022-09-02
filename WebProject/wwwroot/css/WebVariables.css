@@ -1,11 +1,19 @@
 ﻿:root {
     /*--BackgroundColor: rgb(47, 0, 102);*/
-    --BackgroundColor: rgb(22, 22, 22);
-    --white: white;
+    --BackgroundColor: rgb(18, 18, 18);
+    --LayoutColor: rgb(15, 15, 15);
+    --ShadowColor: rgb(27, 27, 27);
+    --BorderColor: rgb(255, 255, 255);
     --colortext: white;
-    --bodercolor: rgb(51, 0, 102);
     --postBorder: rgb(128, 128, 128);
     --SmallTextsize: 1.2rem;
     --textsize: 1.4rem;
     --BigTextsize: 2rem;
 }
+/*
+    --BackgroundColor: #121212;
+    --LayoutColor: #0f0f0f;
+    --ShadowColor: #1b1b1b;
+    --BorderColor: #ffffff;
+    --colortext: #ffffff;
+*/

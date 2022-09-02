@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using WebProject.Data;
 using WebProject.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Builder;
 
 namespace WebProject.Pages
 {
@@ -27,6 +29,15 @@ namespace WebProject.Pages
         public async Task<IActionResult> OnPostAsync()
         {
             var emptyUser = new UserModel();
+
+            //if (CreateUser.DateofBirth > DateTime.Now)
+            //{
+            //    ModelState.AddModelError(nameof(CreateUser.DateofBirth), "Date of Birth cannot be in the future");
+            //}
+            //else if (CreateUser.DateofBirth < new DateTime(1960, 1, 1))
+            //{
+            //    ModelState.AddModelError(nameof(CreateUser.DateofBirth), "Date of Birth should not be before 1960");
+            //}
 
             if (!ModelState.IsValid)
             {

@@ -1,6 +1,6 @@
 ﻿
 nav.HeadBar {
-    background-color: rgb(18, 18, 18);
+    background-color: var(--LayoutColor);
     color: var(--colortext);
     width: 100%;
     height: max-content;
@@ -33,9 +33,9 @@ div.HeadHome a {
 }
 
 div.HeadList {
-    width: max-content;
     margin: 0;
     padding: 0;
+    width: 100%;
 }
 
 div.HeadList a {
@@ -43,4 +43,13 @@ div.HeadList a {
     font-size: var(--textsize);
     color: var(--colortext);
     margin: 0.5rem;
+    float: left;
+}
+
+div.HeadList a.Right{
+    float: right;
+}
+
+div, input, p, button {
+    color: var(--colortext);
 }
