@@ -31,6 +31,7 @@ div.CenterBox {
     justify-content: center;
 }
 
+
 button.CreatePostButton {
     width: 50%;
     background-color: var(--BackgroundColor);
@@ -49,6 +50,10 @@ div.Post {
     padding: 0.8rem;
     border-top: 1px solid var(--BorderColor);
     font-size: var(--textsize);
+}
+
+div.Post:last-child {
+    border-bottom: 1px solid var(--BorderColor);
 }
 
 div.PostInfo {
@@ -122,11 +127,25 @@ div.PostContent div {
     white-space:pre-wrap;
 }
 
+.FlipDiv {
+    white-space: pre-wrap;
+    width: 100%;
+    height: fit-content;
+    text-align: center;
+    background-color: var(--ShadowColor);
+    border: 1px solid var(--BorderColor);
+    cursor: pointer;
+}
+
 div.PostContent img {
     margin: 0;
     margin-top: 0.3rem;
     width: 100%;
     height: auto;
+}
+
+div.PostContent img.ImgFinder {
+    display: none;
 }
 
 div.PostStats {
@@ -162,7 +181,6 @@ div.RightBox {
 }
 
 /*Hidden Post tab*/
-
 .PostDiv {
     width: 100%;
     height: max-content;

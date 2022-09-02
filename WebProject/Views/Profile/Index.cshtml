@@ -13,6 +13,7 @@
 
 <link rel="stylesheet" href="~/css/HomePageCSS.css" asp-append-version="true"/>
 <link rel="stylesheet" href="~/css/HomePageMid.css" asp-append-version="true"/>
+<script src="~/lib/jquery/dist/jquery.js"></script>
 
 <div class="AllContainer">
     <div class="LeftBox">
@@ -29,13 +30,12 @@
                 
                 <p style="font-size: 2.5rem;">@Model.Username</p>
 
-                @if ((@Model.FirstName != null || @Model.FirstName != String.Empty) ||
-                (@Model.LastName != null || @Model.LastName != String.Empty))
+                @if (!string.IsNullOrEmpty(Model.FirstName) || !string.IsNullOrEmpty(Model.LastName))
                 {
                     <p>@Model.FirstName @Model.LastName</p>
                 }
 
-                @if (@Model.Description != null || @Model.Description != String.Empty)
+                @if (!string.IsNullOrEmpty(Model.Description))
                 {
                     <p class="UserDescription">@Model.Description</p>
                 }
@@ -86,14 +86,19 @@
                         </div>
 
                         <div class="PostContent">
-                            @if (p.PostContent != null || p.PostContent != String.Empty)
+                            @if (!string.IsNullOrEmpty(p.PostContent))
                             {
                                 <div>@p.PostContent</div>
                             }
 
-                            @if (p.Media != null)
+                            @if (p.Media != null && Model.ShowImages)
                             {
                                 <img src="data:image/png;base64,@Convert.ToBase64String(p.Media)" />
+                            }
+                            else if (p.Media != null && !Model.ShowImages)
+                            {
+                                <div class="FlipDiv" onclick="ShowPostImg(this)">Show Image</div>
+                                <img id="" src="data:image/png;base64,@Convert.ToBase64String(p.Media)" class="ImgFinder"/>
                             }
                         </div>
 
@@ -110,14 +115,14 @@
                     </div>
                 }
             }
-
         }
-        else
-        {
-            <p style="font-size:1.5rem; color:white">The programmer has not code this part of the page:(</p>
-        }
-
     </div>
+
+    <script>
+        $(document).ready(function () {
+            $(".ImgFinder").slideUp();
+        });
+    </script>
 
     <div class="RightBox">
 
@@ -133,4 +138,4 @@
 </div>*@
 
 <script src="~/js/PostWindows.js" asp-append-version="true"></script>
-<script src="~/js/ImagePrev.js" asp-append-version="true" ></script>
+<script src="~/js/ImagePrev.js" asp-append-version="true"></script>
