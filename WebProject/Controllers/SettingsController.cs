@@ -98,7 +98,7 @@ namespace WebProject.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Appearance(bool ShowImages, int? UserId)
+        public async Task<IActionResult> Appearance(int? UserId, bool ShowImages)
         {
             UserModel userModel = new UserModel();
 
@@ -147,18 +147,12 @@ namespace WebProject.Controllers
 
             if (TempData["ErrorMessage"] != null)
             {
-                if (!string.IsNullOrEmpty(TempData["ErrorMessage"].ToString()))
-                {
-                    ViewBag.ErrorMessage = TempData["ErrorMessage"].ToString();
-                } 
+                ViewBag.ErrorMessage = TempData["ErrorMessage"].ToString();
             }
 
             if (TempData["Message"] != null)
             {
-                if (!string.IsNullOrEmpty(TempData["Message"].ToString()))
-                {
-                    ViewBag.Message = TempData["Message"].ToString();
-                } 
+                ViewBag.Message = TempData["Message"].ToString();
             }
 
             return View(userModel);

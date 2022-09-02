@@ -154,7 +154,7 @@ div.AppearanceOptions br, hr{
 }
 
 .ToggleButton:focus + .BallButton {
-    box-shadow: 0 0 1px #2196F3;
+    box-shadow: 0 0 1px var(--colortext);
 }
 
 .ToggleButton:checked + .BallButton:before {

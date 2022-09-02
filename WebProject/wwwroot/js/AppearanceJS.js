@@ -1,6 +1,9 @@
 ﻿
 $(document).ready(function () {
-    $('#myform input[type="checkbox"]').change(function () {
-        $('#myform').submit();
+    $('#Submit').change(function () {
+        /*$('#myform').submit();*/
+
+        var userId = $("#ModelId").val();
+        $.post("/Settings/Appearance", { UserId : userId })
     });
 });

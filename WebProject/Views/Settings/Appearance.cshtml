@@ -53,23 +53,22 @@
 				<input class="ButtonEdit" type="button" onclick="CostumAppareance()" value="Apply changes" />
 
 				<br />
-				<label>Post Appearance</label>
+				<label>Post Settings</label>
 				<hr />
-				<form id="myform" method="post">
-					<input type="hidden" name="UserId" value="@Model.Id" />
-					<label>Show post images</label>
-					<label class="Switch">
-						@if (Model.ShowImages)
-						{
-							<input id="Submit" type="checkbox" name="ShowImages" class="ToggleButton" value="@Model.ShowImages" checked />
-						}
-						else
-						{
-							<input id="Submit" type="checkbox" name="ShowImages" class="ToggleButton" value="@Model.ShowImages" />
-						}
-						<span class="BallButton round"></span>
-					</label>
-				</form>
+
+				<input id="ModelId" type="hidden" value="@Model.Id" />
+				<label>Show post images</label>
+				<label class="Switch">
+					@if (Model.ShowImages)
+					{
+						<input id="Submit" type="checkbox" name="ShowImages" class="ToggleButton" value="@Model.ShowImages" checked />
+					}
+					else
+					{
+						<input id="Submit" type="checkbox" name="ShowImages" class="ToggleButton" value="@Model.ShowImages" />
+					}
+					<span class="BallButton round"></span>
+				</label>
 
 			</div>
 		}
