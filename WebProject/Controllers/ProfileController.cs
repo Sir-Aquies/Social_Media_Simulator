@@ -97,6 +97,26 @@ namespace WebProject.Controllers
             return PartialView("EditPost", postModel);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> LookforPost(int? PostId)
+        {
+            PostModel postModel = new PostModel();
+
+            if (PostId == null)
+            {
+                return View();
+            }
+
+            postModel = await _Models.Posts.FirstOrDefaultAsync(us => us.Id == PostId);
+
+            if (postModel == null)
+            {
+                return View();
+            }
+
+            return PartialView("PartialEditPost", postModel);
+        }
+
         public async Task<IActionResult> DeletePost(int? PostId, int? UserId)
         {
             PostModel postModel = new PostModel();

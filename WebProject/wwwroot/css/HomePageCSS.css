@@ -128,10 +128,8 @@ div.PostContent div {
 }
 
 .FlipDiv {
-    white-space: pre-wrap;
     width: 100%;
-    height: fit-content;
-    text-align: center;
+    text-align: center !important;
     background-color: var(--ShadowColor);
     border: 1px solid var(--BorderColor);
     cursor: pointer;

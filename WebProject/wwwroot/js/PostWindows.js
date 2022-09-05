@@ -3,6 +3,7 @@
 function CreatePostWindow() {
     var postdiv = document.getElementById("PostDiv");
     var tab = Background();
+    tab.addEventListener("dblclick", () => { RemoveTab() });
     document.body.style.overflow = "hidden";
 
     postclone = postdiv.cloneNode(true);
@@ -16,7 +17,6 @@ function CreatePostWindow() {
 }
 
 function OptionButton(post) {
-    //document.body.style.overflow = "hidden";
     var option = post.children[0];
     option.style.display = "inline";
 
@@ -25,14 +25,33 @@ function OptionButton(post) {
     document.addEventListener("mousedown", () => {
         option.style.display = "none";
         document.addEventListener("mousedown", () => { });
-        document.body.style.overflow = "auto";
     });
 }
 
-//function EditPostWindow(postId) {
-//    var editpostdiv = document.getElementById("EditPostDiv");
-//    var tab = Background();
-//}
+function EditPostWindow(postid, parent) {
+    const option = parent.parentElement;
+    option.style.display = "none";
+    document.addEventListener("mousedown", () => { });
+
+    $.post("Profile/LookforPost", { PostId: postid }, function (data, status) {
+        var tab = Background();
+        document.body.style.overflow = "hidden";
+        const partial = document.getElementById("EditPostDiv");
+        partial.style.display = "block";
+        tab.appendChild(partial);
+
+        tab.addEventListener("dblclick", () => {
+            partial.style.display = "none";
+            document.body.appendChild(partial);
+            tab.remove();
+            document.body.style.overflow = "auto";
+        })
+
+        $('#EditPostDiv').html(data);
+    });
+
+    
+}
 
 function Background() {
     var tab = document.createElement("div");
@@ -47,7 +66,6 @@ function Background() {
     tab.style.display = "flex";
     tab.style.justifyContent = "center";
     tab.style.alignItems = "center";
-    tab.addEventListener("dblclick", () => { RemoveTab() })
     document.body.appendChild(tab);
     return tab;
 }
