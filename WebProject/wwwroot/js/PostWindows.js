@@ -28,9 +28,8 @@ function OptionButton(post) {
     });
 }
 
-function EditPostWindow(postid, parent) {
-    const option = parent.parentElement;
-    option.style.display = "none";
+function EditPostWindow(postid, input) {
+    input.parentElement.style.display = "none";
     document.addEventListener("mousedown", () => { });
 
     $.post("Profile/LookforPost", { PostId: postid }, function (data, status) {
@@ -39,13 +38,7 @@ function EditPostWindow(postid, parent) {
         const partial = document.getElementById("EditPostDiv");
         partial.style.display = "block";
         tab.appendChild(partial);
-
-        tab.addEventListener("dblclick", () => {
-            partial.style.display = "none";
-            document.body.appendChild(partial);
-            tab.remove();
-            document.body.style.overflow = "auto";
-        })
+        tab.addEventListener("dblclick", () => { RemoveEditPostTab() })
 
         $('#EditPostDiv').html(data);
     });
@@ -68,6 +61,15 @@ function Background() {
     tab.style.alignItems = "center";
     document.body.appendChild(tab);
     return tab;
+}
+
+function RemoveEditPostTab() {
+    var tab = document.getElementById("BlackBackground");
+    const partial = document.getElementById("EditPostDiv");
+    partial.style.display = "none";
+    document.body.appendChild(partial);
+    tab.remove();
+    document.body.style.overflow = "auto";
 }
 
 function RemoveTab() {

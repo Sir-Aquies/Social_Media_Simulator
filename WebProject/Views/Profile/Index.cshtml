@@ -73,12 +73,12 @@
                                 <img />
                             }
                             <span>@Model.Username</span>
-                            <div type="button" class="PostOptionButton" id="PostOptionButton" onclick="OptionButton(this)">...
-                                <form enctype="multipart/form-data" onmousedown="event.stopPropagation()" class="PostForm">
+                            <div type="button" class="PostOptionButton" id="PostOptionButton" onclick="OptionButton(this);">...
+                                <form enctype="multipart/form-data" onmousedown="event.stopPropagation()" onclick="event.stopPropagation();" class="PostForm">
                                     <input type="hidden" name="PostId" value="@p.Id"/>
                                     <input type="hidden" name="UserId" value="@Model.Id" />
 
-                                    <input type="button" value="Edit" onclick="EditPostWindow(@p.Id.ToString(), this)" />
+                                    <input type="button" value="Edit" onclick="EditPostWindow(@p.Id.ToString(), this);" />
                                     <input type="submit" value="Delete" formaction="@Url.Action("DeletePost")" />
                                 </form>
                             </div>
