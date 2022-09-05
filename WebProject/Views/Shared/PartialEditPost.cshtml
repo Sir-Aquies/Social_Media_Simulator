@@ -20,9 +20,9 @@
         <div id="EditImageHolder" class="ImageDiv">
             @if (Model.Media != null)
             {
-                <img id="EditNewImg" src="data:image/png;base64,@Convert.ToBase64String(Model.Media)" style="width:100%; height:auto; display:block;" />
+                <img id="SRC" src="data:image/png;base64,@Convert.ToBase64String(Model.Media)" style="display:none;"/>
                 <script>
-                    EditImage(document.getElementById("EditNewImg"));
+                    EditImage(document.getElementById("SRC").src);
                 </script>
             }
         </div>

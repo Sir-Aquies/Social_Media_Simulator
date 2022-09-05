@@ -5,24 +5,16 @@ function ImagePreview(input, holder, contHolder) {
     const [file] = input.files;
 
     if (file) {
-        var oldImg = document.getElementById("NewImg");
-        if (oldImg) {
-            oldImg.src = URL.createObjectURL(file);
+        var oldFrame = document.getElementById("ImageFrame");
+        if (oldFrame) {
+            oldFrame.children[1].src = URL.createObjectURL(file);
             return;
         }
 
-        var newImg = document.createElement("img");
-        newImg.style.display = "block";
-        newImg.style.width = "100%";
-        newImg.style.height = "auto";
-        newImg.id = "NewImg";
-        newImg.src = URL.createObjectURL(file);
+        var frame = CreateFrame(file);
+        frame.children[0].onclick = DeleteImagePreview;
 
-        var x = CreateCancelButton();
-        x.children[0].onclick = DeleteImagePreview;
-        x.appendChild(newImg);
-
-        holder.appendChild(x);
+        holder.appendChild(frame);
         holder.style.float = "left";
 
         contHolder.style.width = "79%";
@@ -31,8 +23,9 @@ function ImagePreview(input, holder, contHolder) {
     }
 }
 
-function CreateCancelButton() {
+function CreateFrame(picture) {
     var div = document.createElement("div");
+    div.id = "ImageFrame";
     div.style.width = "100%";
     div.style.height = "auto";
     div.style.padding = "0";
@@ -51,7 +44,17 @@ function CreateCancelButton() {
     button.style.backgroundSize = "contain";
     button.style.backgroundPosition = "center";
     button.style.backgroundRepeat = "no-repeat"
+
+    var newImg = document.createElement("img");
+    newImg.style.display = "block";
+    newImg.style.width = "100%";
+    newImg.style.height = "auto";
+    if (picture) {
+        newImg.src = URL.createObjectURL(picture);
+    }
+
     div.appendChild(button);
+    div.appendChild(newImg);
 
     return div;
 }
@@ -79,24 +82,16 @@ function EditImagePreview(input, holder) {
     var contHolder = document.getElementById("EditContentHolder");
 
     if (file) {
-        var oldImg = document.getElementById("EditNewImg");
-        if (oldImg) {
-            oldImg.src = URL.createObjectURL(file);
+        var oldFrame = document.getElementById("ImageFrame");
+        if (oldFrame) {
+            oldFrame.children[1].src = URL.createObjectURL(file);
             return;
         }
 
-        var newImg = document.createElement("img");
-        newImg.style.display = "block";
-        newImg.style.width = "100%";
-        newImg.style.height = "auto";
-        newImg.id = "EditNewImg";
-        newImg.src = URL.createObjectURL(file);
+        var frame = CreateFrame(file);
+        frame.children[0].onclick = DeleteEditImagePreview;
 
-        var x = CreateCancelButton();
-        x.children[0].onclick = DeleteEditImagePreview;
-        x.appendChild(newImg);
-
-        holder.appendChild(x);
+        holder.appendChild(frame);
         holder.style.float = "left";
 
         contHolder.style.width = "79%";
@@ -105,14 +100,13 @@ function EditImagePreview(input, holder) {
     }
 }
 
-function EditImage(img) {
-    var div = CreateCancelButton();
+function EditImage(picture) {
+    var div = CreateFrame();
     div.children[0].onclick = DeleteEditImagePreview;
-    div.appendChild(img);
+    div.children[1].src = picture;
 
     var ContHolder = document.getElementById("EditContentHolder");
     var Holder = document.getElementById("EditImageHolder");
-
 
     Holder.appendChild(div);
     Holder.style.float = "left";
