@@ -33,6 +33,16 @@ namespace WebProject.Controllers
                 return NotFound();
             }
 
+            if (TempData["ErrorMessage"] != null)
+            {
+                ViewBag.ErrorMessage = TempData["ErrorMessage"].ToString();
+            }
+
+            if (TempData["Message"] != null)
+            {
+                ViewBag.Message = TempData["Message"].ToString();
+            }
+
             return View(userModel);
         }
 
@@ -65,36 +75,34 @@ namespace WebProject.Controllers
             return RedirectToAction("Index", new { UserId = UserId });
         }
 
-        public async Task<IActionResult> EditPost(int? PostId, int UserId)
+        public async Task<IActionResult> EditPost(int? PostId, int UserId, string Content, IFormFile Media)
         {
             PostModel postModel = new PostModel();
-            UserModel userModel = new UserModel();
-
-            if (PostId == null)
-            {
-                return View();
-            }
 
             postModel = await _Models.Posts.FirstOrDefaultAsync(us => us.Id == PostId);
 
             if (postModel == null)
             {
-                return View();
+                TempData["ErrorMessage"] = "Sorry, somthing went wrong";
+                return RedirectToAction("Index", new { UserId = UserId });
             }
 
-            //if (Content != null && Content != postModel.PostContent)
-            //{
-            //    postModel.PostContent = Content;
-            //}
+            if (!string.IsNullOrEmpty(Content) && Content != postModel.PostContent)
+            {
+                postModel.PostContent = Content;
 
-            //if (pic != null)
-            //{
-            //    postModel.Media = await GetBytes(pic);
-            //}
+                if (Media != null)
+                {
+                    postModel.Media = await GetBytes(Media);
+                }
 
-            //TODO - add the is edited;
+                postModel.IsEdited = true;
+                _Models.Attach(postModel).State = EntityState.Modified;
+                await _Models.SaveChangesAsync();
+                TempData["Message"] = "Post successfully updated.";
+            }
 
-            return PartialView("EditPost", postModel);
+            return RedirectToAction("Index", new { UserId = UserId });
         }
 
         [HttpPost]
