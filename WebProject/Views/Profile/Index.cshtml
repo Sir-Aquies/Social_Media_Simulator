@@ -16,7 +16,7 @@
 <script src="~/lib/jquery/dist/jquery.js"></script>
 
 <div class="AllContainer">
-    <div class="LeftBox">
+    <div class="LeftBox" id="LeftBoxV">
         <div class="UserInfo">
             @if (@Model != null)
             {
@@ -53,7 +53,7 @@
     </div>
 
     <div class="CenterBox">
-        @if (@Model != null)
+        @if (@Model is UserModel)
         {
             <div class="Post">
                 <button type="button" class="CreatePostButton" onclick="CreatePostWindow()">Create New Post</button>
@@ -81,7 +81,7 @@
                             {
                                 <span>@Model.Username</span>
                             }
-                            <div type="button" class="PostOptionButton" id="PostOptionButton" onclick="OptionButton(this);">...
+                            <div type="button" class="PostOptionButton" id="PostOptionButton" onclick="OptionButton(this);"><span>...</span>
                                 <form enctype="multipart/form-data" onmousedown="event.stopPropagation()" onclick="event.stopPropagation();" class="PostForm">
                                     <input type="hidden" name="PostId" value="@p.Id"/>
                                     <input type="hidden" name="UserId" value="@Model.Id" />

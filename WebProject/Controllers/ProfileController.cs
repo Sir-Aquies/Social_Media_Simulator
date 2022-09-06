@@ -84,7 +84,7 @@ namespace WebProject.Controllers
             if (postModel == null)
             {
                 TempData["ErrorMessage"] = "Sorry, somthing went wrong";
-                return RedirectToAction("Index", new { UserId = UserId });
+                return RedirectToAction("Index", new { UserId });
             }
 
             if (!string.IsNullOrEmpty(Content) && Content != postModel.PostContent)
@@ -102,7 +102,7 @@ namespace WebProject.Controllers
                 TempData["Message"] = "Post successfully updated.";
             }
 
-            return RedirectToAction("Index", new { UserId = UserId });
+            return RedirectToAction("Index", new { UserId });
         }
 
         [HttpPost]
@@ -147,7 +147,7 @@ namespace WebProject.Controllers
                 await _Models.SaveChangesAsync();
             }
 
-            return RedirectToAction("Index", new { UserId = UserId });
+            return RedirectToAction("Index", new { UserId });
         }
 
         private async Task<byte[]> GetBytes(IFormFile formFile)

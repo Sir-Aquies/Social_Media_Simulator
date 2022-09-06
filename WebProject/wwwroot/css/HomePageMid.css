@@ -172,38 +172,42 @@ div.AppearanceOptions br, hr{
 }
 
 @media only screen and (min-width: 1000px) {
+    div.HeadHome {
+        display: none;
+    }
+
+    div.DisplayTab {
+        display: none;
+    }
+
+    div.UserInfoMobile {
+        display: none;
+    }
+
     div.LeftBox {
         display: block;
         width: 39.5%;
         height: 100%;
         margin-right: 0.5%;
-        /*border: 1px solid green;*/
+    }
 
-        position: -webkit-sticky;
+    /*div.UserInfo {
         position: sticky;
+        position: -webkit-sticky;
         top: 0;
-    }
-
-    div.UserInfo {
-        width: 100%;
-        height: max-content;
-        color: var(--colortext);
-        font-size: 1.5rem;
-        padding: 0.3rem;
-        /*border: 1px solid blue;*/
-    }
+    }*/
 
     img.UserProfilePic {
         width: 40vh;
         height: 40vh;
-        border: 1px solid var(--BorderColor);
-        border-radius: 50%;
-        margin: 0.5rem;
-        display: block;
+    }
+        
+    div .PostInfo .PostOptionButton {
+        margin-right: 1.2rem;
     }
 
-    div.PostInfo .PostOptionButton {
-        margin-right: 1.2rem;
+    .PostForm {
+        left: 0;
     }
 
     .PostForm input {
@@ -212,21 +216,6 @@ div.AppearanceOptions br, hr{
 
     .PostDiv {
         width: 50rem;
-    }
-
-    div.UserInfo p {
-        margin: 0.3rem 0.5rem;
-        display: block;
-    }
-
-    div.UserInfo a {
-        margin: 0.3rem 0.5rem;
-        display: block;
-    }
-
-    div.UserInfo p.UserDescription {
-        font-size: 1.2rem;
-        white-space: pre-wrap;
     }
 
     div.CenterBox {

@@ -17,10 +17,10 @@ function CreatePostWindow() {
 }
 
 function OptionButton(post) {
-    var option = post.children[0];
+    var option = post.children[1];
     option.style.display = "inline";
 
-    option.style.transform = "translate(-1.5rem, 2rem)";
+    //option.style.transform = "translate(-1.5rem, 2rem)";
 
     document.addEventListener("mousedown", () => {
         option.style.display = "none";

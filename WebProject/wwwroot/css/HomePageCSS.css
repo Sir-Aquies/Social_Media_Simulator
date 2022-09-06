@@ -15,8 +15,51 @@ div.AllContainer {
     /*border: 1px solid red;*/
 }
 
+div.DisplayTab {
+    display: none;
+    position: absolute;
+    width: 60%;
+    background-color: var(--BackgroundColor);
+    height: 110vh;
+}
+
 div.LeftBox {
     display: none;
+}
+
+img.UserProfilePic {
+    width: 100%;
+    height: auto;
+    max-width: 22vh;
+    max-height: 22vh;
+    border: 1px solid var(--BorderColor);
+    border-radius: 50%;
+    margin: 0.5rem;
+    display: block;
+}
+
+div.UserInfo {
+    width: 100%;
+    height: max-content;
+    color: var(--colortext);
+    font-size: 1.5rem;
+    padding: 0.3rem;
+    /*border: 1px solid blue;*/
+}
+
+div.UserInfo p {
+    margin: 0.3rem 0.5rem;
+    display: block;
+}
+
+div.UserInfo a {
+    margin: 0.3rem 0.5rem;
+    display: block;
+}
+
+div.UserInfo p.UserDescription {
+    font-size: 1.2rem;
+    white-space: pre-wrap;
 }
 
 div.CenterBox {
@@ -60,25 +103,31 @@ div.PostInfo {
     width: 100%;
     height: max-content;
     padding: 0.3rem;
-    padding-bottom: 0.7rem;
+    position: relative;
 }
 
-div.PostInfo .PostOptionButton{
-    width: fit-content;
-    height: fit-content;
+div.PostOptionButton {
+    position: absolute;
     padding: 0;
-    margin-right: 2.2rem;
-    float: right;
+    right: 0;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
+div.PostOptionButton span {
+    transform: rotate(90deg);
+    font-size: 1.7rem;
+    display: block;
 }
 
 .PostForm {
     display: none;
     position: absolute;
     background-color: rgb(30, 30, 30);
-    justify-content: left;
+    justify-content: right;
     flex-direction: column;
-    width: fit-content;
-    height: fit-content;
+    left: -5.5rem;
     z-index: 50;
 }
 
@@ -104,16 +153,17 @@ div.PostInfo img {
     border: 1px solid var(--BorderColor);
 }
 
+div.PostInfo > span {
+    position: relative;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
 div.PostContent {
     width: 100%;
     height: fit-content;
     padding: 0.5rem;
-    margin-top: 0.5rem;
-
-    /*display: flex;
-    justify-content: center;
-    align-content: flex-start;*/
-    /*border: 1px solid yellow;*/
 }
 
 div.PostContent div {
@@ -244,38 +294,6 @@ div.RightBox {
 }
 
 /*Hidden Post tab*/
-
-div.AlertMessage {
-    position: relative;
-    /*text-align: center;*/
-    background-color: var(--ShadowColor);
-    color: var(--colortext);
-    width: 100%;
-    height: fit-content;
-    padding: 1rem 1.2rem;
-    font-size: var(--SmallTextsize);
-    overflow: auto;
-    border-top: 0.01rem solid white;
-    border-bottom: 0.01rem solid white;
-}
-
-.CloseButton {
-    position: absolute;
-    display: inline;
-    border-radius: 50%;
-    cursor: pointer;
-    background-image: url(../button.png);
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: contain;
-    background-clip: border-box;
-    width: 1.2rem;
-    height: 1.2rem;
-    right: 1rem;
-    top: 50%;
-    -ms-transform: translateY(-50%);
-    transform: translateY(-50%);
-}
 
 @media only screen and (min-width: 1600px) {
     div .LeftBox {
