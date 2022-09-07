@@ -76,7 +76,8 @@ div.CenterBox {
 
 
 button.CreatePostButton {
-    width: 50%;
+    width: fit-content;
+    padding: 0.5rem 2rem;
     background-color: var(--BackgroundColor);
     height: max-content;
     margin: 0 auto;
@@ -104,15 +105,14 @@ div.PostInfo {
     height: max-content;
     padding: 0.3rem;
     position: relative;
+    display: flex;
+    align-items: center;
 }
 
 div.PostOptionButton {
-    position: absolute;
     padding: 0;
+    position: absolute;
     right: 0;
-    top: 50%;
-    -ms-transform: translateY(-50%);
-    transform: translateY(-50%);
 }
 
 div.PostOptionButton span {
@@ -153,25 +153,16 @@ div.PostInfo img {
     border: 1px solid var(--BorderColor);
 }
 
-div.PostInfo > span {
-    position: relative;
-    top: 50%;
-    -ms-transform: translateY(-50%);
-    transform: translateY(-50%);
-}
-
 div.PostContent {
     width: 100%;
     height: fit-content;
-    padding: 0.5rem;
+    padding: 0.3rem;
 }
 
 div.PostContent div {
-    display: block;
     overflow-x: hidden;
     overflow-y: auto;
     width: 100%;
-    height: fit-content;
     max-height: 25rem;
     text-align: left;
     white-space:pre-wrap;
@@ -189,6 +180,7 @@ div.PostContent img {
     margin: 0;
     margin-top: 0.3rem;
     width: 100%;
+    max-height: 35rem;
     height: auto;
 }
 
@@ -199,25 +191,20 @@ div.PostContent img.ImgFinder {
 div.PostStats {
     width: 100%;
     height: max-content;
-    padding: 0.5rem;
+    padding: 0.3rem;
     display: flex;
     justify-content: left;
+    flex-wrap: wrap;
 }
 
 div.PostStats button {
     display: inline;
     background-color: Transparent;
     width: max-content;
-    height: 3rem;
-    color: var(--colortext);
+    padding: 0.5rem 0.5rem;
     font-size: var(--SmallTextsize);
     border: 0;
     margin-right: 0.8rem;
-}
-
-div.PostStats button p{
-    display: inline;
-    margin-right: 0.6rem;
 }
 
 div.PostStats button span{
@@ -292,8 +279,6 @@ div.RightBox {
     cursor: pointer;
     text-align: center;
 }
-
-/*Hidden Post tab*/
 
 @media only screen and (min-width: 1600px) {
     div .LeftBox {

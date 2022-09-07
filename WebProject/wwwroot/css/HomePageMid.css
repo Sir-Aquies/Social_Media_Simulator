@@ -46,12 +46,17 @@ div.ActionsBox a:hover {
 
 div.SettingsPicFrame {
     width: 60%;
-    /*border: 1px solid green;*/
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
 }
 
 div.SettingsPicFrame img {
-    width: 15rem;
-    height: 15rem;
+    width: 100%;
+    height: auto;
+    max-width: 15rem;
+    max-height: 15rem;
     border-radius: 50%;
     border: 1px solid var(--BorderColor);
     margin-bottom: 0.5rem;
@@ -93,9 +98,9 @@ div.SettingsButton {
 
 .ButtonEdit {
     background-color: transparent;
-    color: var(--colortext);
     border: 1px solid var(--BorderColor);
     padding: 0.5rem;
+    width: fit-content;
     border-radius: 1rem;
     font-size: var(--textsize);
     display: block;
@@ -171,7 +176,7 @@ div.AppearanceOptions br, hr{
   border-radius: 50%;
 }
 
-@media only screen and (min-width: 1000px) {
+@media only screen and (min-width: 968px) {
     div.HeadHome {
         display: none;
     }
@@ -190,12 +195,6 @@ div.AppearanceOptions br, hr{
         height: 100%;
         margin-right: 0.5%;
     }
-
-    /*div.UserInfo {
-        position: sticky;
-        position: -webkit-sticky;
-        top: 0;
-    }*/
 
     img.UserProfilePic {
         width: 40vh;

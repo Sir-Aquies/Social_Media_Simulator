@@ -1,4 +1,14 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿const mediaQuery = window.matchMedia('(min-width: 400px)');
 
-// Write your JavaScript code.
+mediaQuery.addListener(handleTabletChange);
+
+function handleTabletChange(e) {
+    if (e.matches) {
+        $("#HeadList").css("margin-left", "auto");
+        $("#HeadList").children().css("display", "none")
+    } else {
+        $("#HeadList").css("margin-left", "0");
+    }
+};
+
+handleTabletChange(mediaQuery);

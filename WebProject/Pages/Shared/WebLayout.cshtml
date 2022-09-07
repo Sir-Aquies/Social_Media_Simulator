@@ -21,11 +21,12 @@
             <div class="HeadContainer">
                 <div class="HeadHome">
                     @if (@Model is UserModel){
-                        <div class="UserInfoMobile" onclick="ToggleTab()" onmouseup="event.stopPropagation();">Open</div>
+                        @*<div class="UserInfoMobile" onclick="ToggleTab()" onmouseup="event.stopPropagation();">Open</div>*@
+                        <img src="data:image/png;base64,@Convert.ToBase64String(Model.ProfilePicture)" class="UserInfoMobile" onclick="ToggleTab()" onmouseup="event.stopPropagation();" />
                     }
                 </div>
 
-                <div class="HeadList">
+                <div class="HeadList" id="HeadList">
                     @if (Model is UserModel)
                     {
                         <a asp-area="" asp-controller="Profile" asp-action="Index" asp-route-UserId="@Model.Id">Home</a>
