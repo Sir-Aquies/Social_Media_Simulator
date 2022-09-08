@@ -207,6 +207,7 @@ div.AppearanceOptions br, hr{
 
     .PostForm {
         left: 0;
+        right: unset;
     }
 
     .PostForm input {

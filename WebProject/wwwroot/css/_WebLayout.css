@@ -4,8 +4,7 @@ nav.HeadBar {
     color: var(--colortext);
     width: 100%;
     height: max-content;
-    padding: 0.7rem 0 0.7rem 0;
-    margin: 0;
+    padding: 0.4rem 0;
 }
 
 header {
@@ -30,8 +29,6 @@ div.HeadContainer {
 div.HeadHome {
     display: block;
     width: max-content;
-    margin: 0;
-    padding: 0;
 }
 
 img.UserInfoMobile {
@@ -39,6 +36,7 @@ img.UserInfoMobile {
     width: 6.5vh;
     height: 6.5vh;
     margin: 0.3rem;
+    margin-left: 1rem;
     cursor: pointer;
     border: 1px solid var(--BorderColor);
     border-radius: 50%;
@@ -52,24 +50,46 @@ div.HeadHome a {
 }
 
 div.HeadList {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    justify-content: flex-start;
+    width: 3rem;
+    height: 3rem;
+    margin-left: auto;
+    margin-right: 1rem;
+    cursor: pointer;
+    position: relative;
 }
 
-div.HeadList a {
+div.HeadListButtonContainer {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    padding: 0.5rem;
+    flex-wrap: wrap;
+    align-content: space-around;
+}
+
+div.HeadListButton {
+    width: 100%;
+    height: 0.3rem;
+    background-color: var(--BorderColor);
+}
+
+div.TabList {
+    position: absolute;
+    display: flex;
+    background-color: var(--ShadowColor);
+    flex-direction: column;
+    right: 0;
+}
+
+div.TabList a {
     text-decoration: none;
     font-size: var(--textsize);
     color: var(--colortext);
     margin: 0.5rem;
 }
 
-div.HeadList a.Right{
-    margin-left: unset;
+div.TabList a.Right{
+    margin-left: 0;
 }
 
 div.AlertMessage {
@@ -107,8 +127,35 @@ div, input, p, button {
     color: var(--colortext);
 }
 
-@media only screen and (min-width: 400px) {
-    div.HeadList a.Right {
+@media only screen and (min-width: 564px) {
+    div.TabList a.Right {
         margin-left: auto;
+    }
+
+    div.HeadList {
+        width: 100%;
+        height: fit-content;
+        margin-left: 0;
+        margin-right: 0;
+        cursor: default;
+        border-radius: 0;
+    }
+
+    div.TabList {
+        width: 100%;
+        background-color: transparent;
+        position: static;
+        flex-direction: unset;
+        align-items: center;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+
+    div.HeadListButtonContainer {
+        display: none;
+    }
+
+    div.HeadListButton {
+        display: none;
     }
 }

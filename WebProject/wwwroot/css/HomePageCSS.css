@@ -110,9 +110,8 @@ div.PostInfo {
 }
 
 div.PostOptionButton {
-    padding: 0;
-    position: absolute;
-    right: 0;
+    position: relative;
+    margin-left: auto;
 }
 
 div.PostOptionButton span {
@@ -127,7 +126,7 @@ div.PostOptionButton span {
     background-color: rgb(30, 30, 30);
     justify-content: right;
     flex-direction: column;
-    left: -5.5rem;
+    right: 0;
     z-index: 50;
 }
 

@@ -77,7 +77,7 @@ function SetMode(mode) {
     }
 
     if (mode === "Darkmode") {
-        document.documentElement.style.setProperty('--BackgroundColor', 'rgb(18, 18, 18)');
+        document.documentElement.style.setProperty('--BackgroundColor', 'rgb(20, 20, 20)');
         document.documentElement.style.setProperty('--LayoutColor', 'rgb(15, 15, 15)');
         document.documentElement.style.setProperty('--ShadowColor', 'rgb(27, 27, 27)');
         document.documentElement.style.setProperty('--BorderColor', 'rgb(255, 255, 255)');

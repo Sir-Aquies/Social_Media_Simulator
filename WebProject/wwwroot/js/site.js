@@ -1,13 +1,26 @@
-﻿const mediaQuery = window.matchMedia('(min-width: 400px)');
+﻿const mediaQuery = window.matchMedia('(max-width: 564px)');
 
 mediaQuery.addListener(handleTabletChange);
 
 function handleTabletChange(e) {
     if (e.matches) {
-        $("#HeadList").css("margin-left", "auto");
-        $("#HeadList").children().css("display", "none")
+        $("#TabList").css("display", "none");
+        $("#HeadList").click(function () {
+            if ($("#TabList").css("display") == "none") {
+                $("#TabList").css("display", "flex");
+            } else {
+                $("#TabList").css("display", "none");
+            }
+        });
+
+        $(document).mousedown(function () {
+            $("#TabList").css("display", "none");
+            $(document).unbind()
+        });
     } else {
-        $("#HeadList").css("margin-left", "0");
+        $("#TabList").css("display", "flex");
+        $("#HeadList").unbind();
+        $(document).unbind();
     }
 };
 
