@@ -40,6 +40,7 @@ img.UserInfoMobile {
     cursor: pointer;
     border: 1px solid var(--BorderColor);
     border-radius: 50%;
+    transition: box-shadow 0.1s;
 }
 
 div.HeadHome a {
@@ -73,6 +74,10 @@ div.HeadListButton {
     background-color: var(--BorderColor);
 }
 
+.HeadListButtonContainer:hover > div {
+    background-color: rgb(150, 150, 150);
+}
+
 div.TabList {
     position: absolute;
     display: flex;
@@ -89,7 +94,7 @@ div.TabList a {
 }
 
 div.TabList a.Right{
-    margin-left: 0;
+    margin-left: 0.5rem;
 }
 
 div.AlertMessage {

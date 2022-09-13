@@ -16,11 +16,12 @@ div.AllContainer {
 }
 
 div.DisplayTab {
-    display: none;
+    display: block;
     position: absolute;
     width: 60%;
-    background-color: var(--BackgroundColor);
+    background-color: var(--LayoutColor);
     height: 110vh;
+    transition: left 0.5s;
 }
 
 div.LeftBox {

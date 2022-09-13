@@ -20,8 +20,9 @@
         <nav class="HeadBar">
             <div class="HeadContainer">
                 <div class="HeadHome">
+                    <!--Image that when click display the DisplayTab with the user info-->
                     @if (@Model is UserModel){
-                        <img src="data:image/png;base64,@Convert.ToBase64String(Model.ProfilePicture)" class="UserInfoMobile" onclick="ToggleTab()" onmouseup="event.stopPropagation();" />
+                        <img src="data:image/png;base64,@Convert.ToBase64String(Model.ProfilePicture)" id="UserMobilePic" class="UserInfoMobile" onclick="ToggleTab()" onmousedown="event.stopPropagation();" />
                     }
                 </div>
 
@@ -51,8 +52,8 @@
                 </div>
             </div>
         </nav>
-
-        <div class="DisplayTab" id="DisplayTab" onmouseup="event.stopPropagation();">
+        <!--div that is display when UserMobilePic is clicked-->
+        <div class="DisplayTab" id="DisplayTab" onmousedown="event.stopPropagation();">
             <div class="UserInfo">
                 @if (@Model is UserModel)
                 {
