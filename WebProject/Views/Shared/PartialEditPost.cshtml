@@ -14,7 +14,7 @@
                 <input type="button" value="Cancel" onclick="RemoveEditPostTab()" />
                 <input type="button" value="Image" onclick="document.getElementById('EditFile').click()" />
                 <input type="file" id="EditFile" name="Media" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" onchange="EditImagePreview(this, document.getElementById('EditImageHolder'))" style="display: none;" />
-                <input type="submit" value="Post" />
+                <input type="submit" value="Edit" />
             </div>
         </div>
 
@@ -22,6 +22,8 @@
             @if (Model.Media != null)
             {
                 <img id="SRC" src="data:image/png;base64,@Convert.ToBase64String(Model.Media)" style="display:none;"/>
+                <input type="hidden" id="DeleteMedia" name="DeleteMedia" value="false" @*style="display:none"*@/>
+
                 <script>
                     EditImage(document.getElementById("SRC").src);
                 </script>

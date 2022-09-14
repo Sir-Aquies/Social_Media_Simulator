@@ -128,6 +128,20 @@ div.AlertMessage {
     transform: translateY(-50%);
 }
 
+div.DisplayTab {
+    display: block;
+    position: absolute;
+    width: 60%;
+    background-color: var(--LayoutColor);
+    height: 110vh;
+    transition: all 0.5s;
+    right: 100%;
+}
+
+div.DisplayTab.Left {
+    transform: translate(100%, 0);
+}
+
 div, input, p, button {
     color: var(--colortext);
 }

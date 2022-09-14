@@ -81,7 +81,7 @@
                             {
                                 <span>@Model.Username</span>
                             }
-                            <div type="button" class="PostOptionButton" id="PostOptionButton" onclick="OptionButton(this);"><span>...</span>
+                            <div type="button" class="PostOptionButton" id="PostOptionButton" onclick="OptionButton(this);" onmousedown="event.stopPropagation()"><span>...</span>
                                 <form enctype="multipart/form-data" onmousedown="event.stopPropagation()" onclick="event.stopPropagation();" class="PostForm">
                                     <input type="hidden" name="PostId" value="@p.Id"/>
                                     <input type="hidden" name="UserId" value="@Model.Id" />
@@ -137,11 +137,9 @@
 </div>
 
 <div id="PostDiv" class="PostDiv" ondblclick="event.stopPropagation()">
-    @await Html.PartialAsync("CreatePost")
 </div>
 
-<div id="EditPostDiv" class="PostDiv" onclick="event.stopPropagation()">
-    @*@await Html.PartialAsync("PartialEditPost", new PostModel())*@
+<div id="EditPostDiv" class="PostDiv" ondblclick="event.stopPropagation()">
 </div>
 
 <script src="~/js/PostWindows.js" asp-append-version="true"></script>

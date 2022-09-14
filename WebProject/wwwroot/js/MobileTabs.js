@@ -24,31 +24,36 @@ function handleTabletChange(e) {
 };
 
 handleTabletChange(mediaQuery);
-ToggleTab();
-
 
 function ToggleTab() {
     const leftbox = document.getElementById("DisplayTab");
     const pic = document.getElementById("UserMobilePic");
 
     if (leftbox.slide == "off") {
-        leftbox.style.left = `0px`;
-        pic.style.boxShadow = "0 0px 5px 3px rgba(0, 150, 255, 0.4)";
-        leftbox.slide = "on";
+        Show();
 
         document.addEventListener("mousedown", () => {
-            leftbox.slide = "off";
-            leftbox.style.left = `-${leftbox.offsetWidth + 10}px`;
-            pic.style.boxShadow = "none";
-            document.addEventListener("mousedown", () => { })
+            Hide();
         });
     }
     else
     {
-        leftbox.style.left = `-${ leftbox.offsetWidth + 10 }px`;
+        Hide();
+    }
+
+    function Show() {
+        $("#DisplayTab").addClass("Left");
+        pic.style.boxShadow = "0 0px 5px 3px rgba(0, 150, 255, 0.4)";
+        leftbox.slide = "on";
+    }
+
+    function Hide() {
+        $("#DisplayTab").removeClass("Left");
         pic.style.boxShadow = "none";
         leftbox.slide = "off";
 
         document.addEventListener("mousedown", () => { })
     }
 };
+
+ToggleTab();

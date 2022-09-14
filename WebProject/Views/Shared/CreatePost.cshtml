@@ -10,8 +10,8 @@
 
         <div class="ButtonHolder">
             <input type="button" value="Cancel" onclick="RemoveTab()" />
-            <input type="button" value="Image" onclick="document.getElementById('CurrentFile').click()" />
-            <input type="file" id="File" name="pic" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" onchange="ImagePreview(this, document.getElementById('CurrentImageHolder'), document.getElementById('CurrentContentHolder'))" style="display: none;" />
+            <input type="button" value="Image" onclick="document.getElementById('File').click()" />
+            <input type="file" id="File" name="pic" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" onchange="ImagePreview(this, document.getElementById('ImageHolder'), document.getElementById('ContentHolder'))" style="display: none;" />
             <input type="submit" value="Post" />
         </div>
     </div>
