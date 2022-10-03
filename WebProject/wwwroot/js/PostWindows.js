@@ -1,38 +1,66 @@
-﻿var postclone;
+﻿function CreatePostWindow() {
+    $.get("Profile/LookForCreatePost", function (data, status) {
+        if (status === "success") {
+            const postdiv = document.getElementById("PostDiv");
+            const tab = Background();
+            tab.addEventListener("dblclick", () => { RemoveTab() });
+            document.body.style.overflow = "hidden";
+            postdiv.style.display = "block";
+            tab.appendChild(postdiv);
 
-function CreatePostWindow() {
-    var postdiv = document.getElementById("PostDiv");
-    var tab = Background();
-    document.body.style.overflow = "hidden";
+            $('#PostDiv').html(data);
+        }
+    });
+}
 
-    postclone = postdiv.cloneNode(true);
-    tab.appendChild(postclone);
-    postclone.style.display = "block";
+function RemoveTab() {
+    const postdiv = document.getElementById("PostDiv");
+    const tab = document.getElementById("BlackBackground");
 
-    var collection = postclone.children[0].children;
-    collection[2].id = "CurrentImageHolder";
-    collection[1].id = "CurrentContentHolder";
-    collection[1].children[1].children[2].id = "CurrentFile";
+    postdiv.style.display = "none";
+    document.body.appendChild(postdiv);
+
+    if (tab) {
+        tab.remove();
+    }
+
+    document.body.style.overflow = "auto";
 }
 
 function OptionButton(post) {
-    //document.body.style.overflow = "hidden";
-    var option = post.children[0];
+    var option = post.children[1];
     option.style.display = "inline";
-
-    option.style.transform = "translate(-1.5rem, 2rem)";
 
     document.addEventListener("mousedown", () => {
         option.style.display = "none";
         document.addEventListener("mousedown", () => { });
-        document.body.style.overflow = "auto";
     });
 }
 
-//function EditPostWindow(postId) {
-//    var editpostdiv = document.getElementById("EditPostDiv");
-//    var tab = Background();
-//}
+function EditPostWindow(postid, input) {
+    input.parentElement.style.display = "none";
+    document.addEventListener("mousedown", () => { });
+
+    $.post("Profile/LookforPost", { PostId: postid }, function (data, status) {
+        const tab = Background();
+        document.body.style.overflow = "hidden";
+        const partial = document.getElementById("EditPostDiv");
+        partial.style.display = "block";
+        tab.appendChild(partial);
+        tab.addEventListener("dblclick", () => { RemoveEditPostTab() })
+
+        $('#EditPostDiv').html(data);
+    });
+}
+
+function RemoveEditPostTab() {
+    const tab = document.getElementById("BlackBackground");
+    const partial = document.getElementById("EditPostDiv");
+    partial.style.display = "none";
+    document.body.appendChild(partial);
+    tab.remove();
+    document.body.style.overflow = "auto";
+}
 
 function Background() {
     var tab = document.createElement("div");
@@ -47,21 +75,6 @@ function Background() {
     tab.style.display = "flex";
     tab.style.justifyContent = "center";
     tab.style.alignItems = "center";
-    tab.addEventListener("dblclick", () => { RemoveTab() })
     document.body.appendChild(tab);
     return tab;
-}
-
-function RemoveTab() {
-    var tab = document.getElementById("BlackBackground");
-
-    if (postclone) {
-        postclone.remove();
-    }
-    
-    if (tab) {
-        tab.remove();
-    }
-
-    document.body.style.overflow = "auto";
 }

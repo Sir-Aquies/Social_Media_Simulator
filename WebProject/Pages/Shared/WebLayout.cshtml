@@ -20,23 +20,69 @@
         <nav class="HeadBar">
             <div class="HeadContainer">
                 <div class="HeadHome">
-                    @if (Model is UserModel && Model != null) {
-                        <a asp-area="" asp-controller="Profile" asp-action="Index" asp-route-UserId="@Model.Id">Home</a>
-                    } 
-                    else {
-                        <a asp-area="" asp-controller="Profile" asp-action="Index">Home</a>
+                    <!--Image that when click display the DisplayTab with the user info-->
+                    @if (@Model is UserModel){
+                        <img src="data:image/png;base64,@Convert.ToBase64String(Model.ProfilePicture)" id="UserMobilePic" class="UserInfoMobile" onclick="ToggleTab()" onmousedown="event.stopPropagation();" />
                     }
                 </div>
 
-                <div class="HeadList">
-                    <a asp-area="" asp-page="/Login">Log in</a>
-                    <a asp-area="" asp-page="/Register">Register</a>
-                    @if (Model is UserModel){
-                        <a class="Right" asp-area="" asp-controller="Settings" asp-action="EditProfile" asp-route-UserId="@Model.Id">Settings</a>
-                    }
+                <div class="HeadList" id="HeadList" onmousedown="event.stopPropagation();">
+                    <div class="HeadListButtonContainer">
+                        <div class="HeadListButton"></div>
+                        <div class="HeadListButton"></div>
+                        <div class="HeadListButton"></div>
+                    </div>
+                    
+                    <div class="TabList" id="TabList" onclick="event.stopPropagation();">
+                        @if (Model is UserModel)
+                        {
+                            <a asp-area="" asp-controller="Profile" asp-action="Index" asp-route-UserId="@Model.Id">Home</a>
+                        }
+                        else
+                        {
+                            <a asp-area="" asp-controller="Profile" asp-action="Index">Home</a>
+                        }
+                        <a asp-area="" asp-page="/Login">Log in</a>
+                        <a asp-area="" asp-page="/Register">Register</a>
+                        @if (Model is UserModel)
+                        {
+                            <a class="Right" asp-area="" asp-controller="Settings" asp-action="EditProfile" asp-route-UserId="@Model.Id">Settings</a>
+                        }
+                    </div>
                 </div>
             </div>
         </nav>
+        <!--div that is display when UserMobilePic is clicked-->
+        <div class="DisplayTab" id="DisplayTab" onmousedown="event.stopPropagation();">
+            <div class="UserInfo">
+                @if (@Model is UserModel)
+                {
+                    if (Model.ProfilePicture != null)
+                    {
+                        <img src="data:image/png;base64,@Convert.ToBase64String(Model.ProfilePicture)" class="UserProfilePic" />
+                    }
+                    else
+                    {
+                        <img class="UserProfilePic" src="~/Valentine.jpg" />
+                    }
+
+                    <p style="font-size: 2.5rem;">@Model.Username</p>
+
+                    @if (!string.IsNullOrEmpty(Model.FirstName) || !string.IsNullOrEmpty(Model.LastName))
+                    {
+                        <p>@Model.FirstName @Model.LastName</p>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.Description))
+                    {
+                        <p class="UserDescription">@Model.Description</p>
+                    }
+
+                    <p>Born: @Model.DateofBirth.ToShortDateString()</p>
+                }
+            </div>
+        </div>
+
         @if (!string.IsNullOrEmpty(ViewBag.Message)){
             <div class="AlertMessage" id="MessageSuccess">@ViewBag.Message <div class="CloseButton" onclick="this.parentElement.style.display='none';"></div></div>
         }
@@ -54,7 +100,7 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/MobileTabs.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

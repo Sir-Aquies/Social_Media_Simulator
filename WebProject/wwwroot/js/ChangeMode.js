@@ -29,15 +29,6 @@ function ChangeMode() {
     }
 
     SetMode(selectedMode);
-
-    //if (selectedMode === "Lightmode") {
-    //    var sheet = document.styleSheets[0];
-    //    sheet.insertRule(":root{--BackgroundColor: rgb(255, 255, 255); --LayoutColor: rgb(253, 253, 253); --ShadowColor: rgb(110, 110, 110); --BorderColor: rgb(0, 0, 0); --colortext: black}");
-    //}
-
-    //if (selectedMode === "Darkmode") {
-
-    //}
 }
 
 function CostumAppareance() {
@@ -67,21 +58,23 @@ function SetAppearance(ColorBackground, ColorLayout, ColorText, ColorBorder, Col
 
 function SetMode(mode) {
     if (mode === "Lightmode") {
-        document.documentElement.style.setProperty('--BackgroundColor', 'rgb(255, 255, 255)');
-        document.documentElement.style.setProperty('--LayoutColor', 'rgb(250, 250, 250)');
-        document.documentElement.style.setProperty('--ShadowColor', 'rgb(110, 110, 110)');
-        document.documentElement.style.setProperty('--BorderColor', 'rgb(0, 0, 0)');
-        document.documentElement.style.setProperty('--colortext', 'black');
+        //document.documentElement.style.setProperty('--BackgroundColor', 'rgb(255, 255, 255)');
+        //document.documentElement.style.setProperty('--LayoutColor', 'rgb(250, 250, 250)');
+        //document.documentElement.style.setProperty('--ShadowColor', 'rgb(110, 110, 110)');
+        //document.documentElement.style.setProperty('--BorderColor', 'rgb(0, 0, 0)');
+        //document.documentElement.style.setProperty('--colortext', 'black');
+        document.documentElement.setAttribute("data-theme", "light");
         localStorage.setItem("Mode", "Lightmode");
         localStorage.setItem("UseCostum", false);
     }
-
-    if (mode === "Darkmode") {
-        document.documentElement.style.setProperty('--BackgroundColor', 'rgb(18, 18, 18)');
-        document.documentElement.style.setProperty('--LayoutColor', 'rgb(15, 15, 15)');
-        document.documentElement.style.setProperty('--ShadowColor', 'rgb(27, 27, 27)');
-        document.documentElement.style.setProperty('--BorderColor', 'rgb(255, 255, 255)');
-        document.documentElement.style.setProperty('--colortext', 'white');
+    else
+    {
+        //document.documentElement.style.setProperty('--BackgroundColor', 'rgb(20, 20, 20)');
+        //document.documentElement.style.setProperty('--LayoutColor', 'rgb(15, 15, 15)');
+        //document.documentElement.style.setProperty('--ShadowColor', 'rgb(27, 27, 27)');
+        //document.documentElement.style.setProperty('--BorderColor', 'rgb(255, 255, 255)');
+        //document.documentElement.style.setProperty('--colortext', 'white');
+        document.documentElement.setAttribute("data-theme", "dark");
         localStorage.setItem("Mode", "Darkmode");
         localStorage.setItem("UseCostum", false);
     }

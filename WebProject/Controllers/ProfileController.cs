@@ -6,127 +6,158 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WebProject.Controllers
 {
-    public class ProfileController : Controller
-    {
-        private readonly WebProjectContext _Models;
-        private readonly ILogger<ProfileController> _Logger;
+	public class ProfileController : Controller
+	{
+		private readonly WebProjectContext _Models;
+		private readonly ILogger<ProfileController> _Logger;
 
-        public ProfileController(WebProjectContext Models, ILogger<ProfileController> logger)
-        {
-            _Models = Models;
-            _Logger = logger;
-        }
+		public ProfileController(WebProjectContext Models, ILogger<ProfileController> logger)
+		{
+			_Models = Models;
+			_Logger = logger;
+		}
 
-        public async Task<IActionResult> Index(int? UserId)
-        {
-            UserModel userModel = new UserModel();
+		public async Task<IActionResult> Index(int? UserId)
+		{
+			if (UserId == null)
+			{
+				return View(null);
+			}
 
-            if (UserId == null)
-            {
-                return View(null);
-            }
+			UserModel userModel = await _Models.Users.Include(u => u.Posts).AsNoTracking().FirstOrDefaultAsync(us => us.Id == UserId);
 
-            userModel = await _Models.Users.Include(u => u.Posts).AsNoTracking().FirstOrDefaultAsync(us => us.Id == UserId);
+			if (userModel == null)
+			{
+				return NotFound();
+			}
 
-            if (userModel == null)
-            {
-                return NotFound();
-            }
+			if (TempData["ErrorMessage"] != null)
+			{
+				ViewBag.ErrorMessage = TempData["ErrorMessage"].ToString();
+			}
 
-            return View(userModel);
-        }
+			if (TempData["Message"] != null)
+			{
+				ViewBag.Message = TempData["Message"].ToString();
+			}
 
-        [HttpPost]
-        public async Task<IActionResult> Index(string Content, int UserId, IFormFile pic)
-        {
-            PostModel post = new PostModel();
-            post.UserModelId = UserId;
-            if (Content != null)
-            {
-                post.PostContent = Content;
-            }
+			return View(userModel);
+		}
 
-            if (pic != null)
-            {
-                post.Media = await GetBytes(pic);
-                //var picbyte = await GetBytes(pic);
-                //post.Media = Convert.ToBase64String(picbyte);
-                //TODO - change the byte[] to nvarchar(MAX).
-            }
+		[HttpPost]
+		public async Task<IActionResult> Index(string Content, int UserId, IFormFile pic)
+		{
+			PostModel post = new PostModel();
+			post.UserModelId = UserId;
 
-            if (!ModelState.IsValid)
-            {
-                return RedirectToAction("UserPage", "Profile", new { UserId = UserId });
-            }
+			if (Content != null)
+			{
+				post.PostContent = Content;
+			}
 
-            _Models.Posts.Add(post);
-            await _Models.SaveChangesAsync();
+			if (pic != null)
+			{
+				post.Media = await GetBytes(pic);
+				//var picbyte = await GetBytes(pic);
+				//post.Media = Convert.ToBase64String(picbyte);
+				//TODO - change the byte[] to nvarchar(MAX).
+			}
 
-            return RedirectToAction("Index", new { UserId = UserId });
-        }
+			if (!ModelState.IsValid)
+			{
+				return RedirectToAction("UserPage", "Profile", new { UserId = UserId });
+			}
 
-        public async Task<IActionResult> EditPost(int? PostId, int UserId)
-        {
-            PostModel postModel = new PostModel();
-            UserModel userModel = new UserModel();
+			_Models.Posts.Add(post);
+			await _Models.SaveChangesAsync();
 
-            if (PostId == null)
-            {
-                return View();
-            }
+			return RedirectToAction("Index", new { UserId });
+		}
 
-            postModel = await _Models.Posts.FirstOrDefaultAsync(us => us.Id == PostId);
+		[HttpPost]
+		public async Task<IActionResult> EditPost(int? PostId, int UserId, string Content, IFormFile Media, string DeleteMedia)
+		{
+			PostModel postModel = await _Models.Posts.FirstOrDefaultAsync(us => us.Id == PostId);
+			
+			if (postModel != null)
+			{
+				if (Media != null)
+				{
+					postModel.Media = await GetBytes(Media);
+				}
+				else if (DeleteMedia == "true" && Media == null)
+				{
+					postModel.Media = null;
+				}
 
-            if (postModel == null)
-            {
-                return View();
-            }
+				if (!string.IsNullOrEmpty(Content) && Content != postModel.PostContent)
+				{
+					postModel.PostContent = Content;
+				}
 
-            //if (Content != null && Content != postModel.PostContent)
-            //{
-            //    postModel.PostContent = Content;
-            //}
+				postModel.IsEdited = true;
+				_Models.Attach(postModel).State = EntityState.Modified;
+				await _Models.SaveChangesAsync();
+				TempData["Message"] = "Post successfully updated.";
+			}
+			else
+			{
+				TempData["ErrorMessage"] = "Sorry, something went wrong";
+				return RedirectToAction("Index", new { UserId = UserId });
+			}
 
-            //if (pic != null)
-            //{
-            //    postModel.Media = await GetBytes(pic);
-            //}
+			return RedirectToAction("Index", new { UserId = UserId });
+		}
 
-            //TODO - add the is edited;
+		[HttpPost]
+		public async Task<IActionResult> LookforPost(int? PostId)
+		{
+			if (PostId == null)
+			{
+				return View();
+			}
 
-            return PartialView("EditPost", postModel);
-        }
+			PostModel postModel = await _Models.Posts.FirstOrDefaultAsync(us => us.Id == PostId);
 
-        public async Task<IActionResult> DeletePost(int? PostId, int? UserId)
-        {
-            PostModel postModel = new PostModel();
+			if (postModel == null)
+			{
+				return View();
+			}
 
-            if (PostId == null)
-            {
-                return NotFound();
-            }
+			return PartialView("PartialEditPost", postModel);
+		}
 
-            postModel = await _Models.Posts.FirstOrDefaultAsync(us => us.Id == PostId);
+		[HttpGet]
+		public IActionResult LookForCreatePost() => PartialView("CreatePost");
 
-            if (postModel != null)
-            {
-                //postModel.PostContent = null;
-                //postModel.UserModelId = 0;
-                //postModel.Media = null;
-                //.Attach(postModel).State = EntityState.Modified;
-                _Models.Remove(postModel);
-                // TODO - make it so that i doesn't remove the post from the database. 
-                await _Models.SaveChangesAsync();
-            }
+		public async Task<IActionResult> DeletePost(int? PostId, int? UserId)
+		{
+			if (PostId == null)
+			{
+				return NotFound();
+			}
 
-            return RedirectToAction("Index", new { UserId = UserId });
-        }
+			PostModel postModel = await _Models.Posts.FirstOrDefaultAsync(us => us.Id == PostId);
 
-        private async Task<byte[]> GetBytes(IFormFile formFile)
-        {
-            await using var memoryStream = new MemoryStream();
-            await formFile.CopyToAsync(memoryStream);
-            return memoryStream.ToArray();
-        }
-    }
+			if (postModel != null)
+			{
+				//postModel.PostContent = null;
+				//postModel.UserModelId = 0;
+				//postModel.Media = null;
+				//.Attach(postModel).State = EntityState.Modified;
+				_Models.Remove(postModel);
+				// TODO - make it so that i doesn't remove the post from the database.
+				await _Models.SaveChangesAsync();
+			}
+
+			return RedirectToAction("Index", new { UserId = UserId });
+		}
+
+		private async Task<byte[]> GetBytes(IFormFile formFile)
+		{
+			await using var memoryStream = new MemoryStream();
+			await formFile.CopyToAsync(memoryStream);
+			return memoryStream.ToArray();
+		}
+	}
 }

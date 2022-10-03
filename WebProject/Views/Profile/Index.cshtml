@@ -15,7 +15,7 @@
 <link rel="stylesheet" href="~/css/HomePageMid.css" asp-append-version="true"/>
 
 <div class="AllContainer">
-    <div class="LeftBox">
+    <div class="LeftBox" id="LeftBoxV">
         <div class="UserInfo">
             @if (@Model != null)
             {
@@ -29,13 +29,12 @@
                 
                 <p style="font-size: 2.5rem;">@Model.Username</p>
 
-                @if ((@Model.FirstName != null || @Model.FirstName != String.Empty) ||
-                (@Model.LastName != null || @Model.LastName != String.Empty))
+                @if (!string.IsNullOrEmpty(Model.FirstName) || !string.IsNullOrEmpty(Model.LastName))
                 {
                     <p>@Model.FirstName @Model.LastName</p>
                 }
 
-                @if (@Model.Description != null || @Model.Description != String.Empty)
+                @if (!string.IsNullOrEmpty(Model.Description))
                 {
                     <p class="UserDescription">@Model.Description</p>
                 }
@@ -53,7 +52,7 @@
     </div>
 
     <div class="CenterBox">
-        @if (@Model != null)
+        @if (@Model is UserModel)
         {
             <div class="Post">
                 <button type="button" class="CreatePostButton" onclick="CreatePostWindow()">Create New Post</button>
@@ -72,51 +71,57 @@
                             else {
                                 <img />
                             }
-                            <span>@Model.Username</span>
-                            <div type="button" class="PostOptionButton" id="PostOptionButton" onclick="OptionButton(this)">...
-                                <form enctype="multipart/form-data" onmousedown="event.stopPropagation()" class="PostForm">
+
+                            @if (p.IsEdited)
+                            {
+                                <span>@Model.Username</span><i style="font-size: 14px; margin-left: 0.5rem;">(This post is edited)</i>
+                            }
+                            else
+                            {
+                                <span>@Model.Username</span>
+                            }
+                            <div type="button" class="PostOptionButton" id="PostOptionButton" onclick="OptionButton(this);" onmousedown="event.stopPropagation()"><span>...</span>
+                                <form enctype="multipart/form-data" onmousedown="event.stopPropagation()" onclick="event.stopPropagation();" class="PostForm">
                                     <input type="hidden" name="PostId" value="@p.Id"/>
                                     <input type="hidden" name="UserId" value="@Model.Id" />
 
-                                    <input type="submit" value="Edit" @*formaction="@Url.Action("EditPost")"*@ />
+                                    <input type="button" value="Edit" onclick="EditPostWindow(@p.Id.ToString(), this);" />
                                     <input type="submit" value="Delete" formaction="@Url.Action("DeletePost")" />
                                 </form>
                             </div>
-                            @*<button type="button" onclick="EditPostWindow()">Edit</button>*@
                         </div>
 
                         <div class="PostContent">
-                            @if (p.PostContent != null || p.PostContent != String.Empty)
+                            @if (!string.IsNullOrEmpty(p.PostContent))
                             {
                                 <div>@p.PostContent</div>
                             }
 
-                            @if (p.Media != null)
+                            @if (p.Media != null && Model.ShowImages)
                             {
                                 <img src="data:image/png;base64,@Convert.ToBase64String(p.Media)" />
+                            }
+                            else if (p.Media != null && !Model.ShowImages)
+                            {
+                                <div class="FlipDiv" onclick="ShowPostImg(this)">Show Image</div>
+                                <img id="" src="data:image/png;base64,@Convert.ToBase64String(p.Media)" class="ImgFinder"/>
                             }
                         </div>
 
                         <div class="PostStats">
                             <button type="button">
-                                <p>@p.Likes</p><span>Likes</span>
+                                <span>@p.Likes  Likes</span>
                             </button>
 
                             <button type="button">
-                                <p>0</p><span>Comments</span>
+                                <span>0  Comments</span>
                             </button>
                         </div>
 
                     </div>
                 }
             }
-
         }
-        else
-        {
-            <p style="font-size:1.5rem; color:white">The programmer has not code this part of the page:(</p>
-        }
-
     </div>
 
     <div class="RightBox">
@@ -124,13 +129,9 @@
     </div>
 </div>
 
-<div id="PostDiv" class="PostDiv" ondblclick="event.stopPropagation()">
-    @await Html.PartialAsync("CreatePost")
-</div>
+<div id="PostDiv" class="PostDiv" ondblclick="event.stopPropagation()"></div>
+<div id="EditPostDiv" class="PostDiv" ondblclick="event.stopPropagation()"></div>
 
-@*<div id="EditPostDiv" class="PostDiv" onclick="event.stopPropagation()" style="display:block;">
-    @await Html.PartialAsync("PartialEditPost", new PostModel())
-</div>*@
-
+<script src="~/lib/jquery/dist/jquery.js"></script>
 <script src="~/js/PostWindows.js" asp-append-version="true"></script>
-<script src="~/js/ImagePrev.js" asp-append-version="true" ></script>
+<script src="~/js/ImagePrev.js" asp-append-version="true"></script>

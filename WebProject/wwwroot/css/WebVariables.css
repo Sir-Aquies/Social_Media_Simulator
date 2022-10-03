@@ -1,6 +1,6 @@
 ﻿:root {
     /*--BackgroundColor: rgb(47, 0, 102);*/
-    --BackgroundColor: rgb(18, 18, 18);
+    --BackgroundColor: rgb(20, 20, 20);
     --LayoutColor: rgb(15, 15, 15);
     --ShadowColor: rgb(27, 27, 27);
     --BorderColor: rgb(255, 255, 255);
@@ -10,6 +10,15 @@
     --textsize: 1.4rem;
     --BigTextsize: 2rem;
 }
+
+[data-theme="light"] {
+    --BackgroundColor: rgb(255, 255, 255);
+    --LayoutColor: rgb(200,200,200);
+    --ShadowColor: rgb(200,200,200);
+    --BorderColor: rgb(0, 0, 0);
+    --colortext: black;
+}
+
 /*
     --BackgroundColor: #121212;
     --LayoutColor: #0f0f0f;

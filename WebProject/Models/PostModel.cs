@@ -25,7 +25,6 @@ namespace WebProject.Models
         /// <summary>
         /// Represents the description of the post { nvarchar(MAX) }.
         /// </summary>
-        [Required]
         public string PostContent { get; set; } = string.Empty;
         /// <summary>
         /// Represents the images, videos attach to the post { Table }.
