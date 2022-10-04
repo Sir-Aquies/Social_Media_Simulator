@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Security.Permissions;
 
 namespace WebProject.Models
 {
@@ -16,36 +17,35 @@ namespace WebProject.Models
         /// Represents the id of the user for SQL database { int }.
         /// </summary>
         [Required]
-        public int UserModelId { get; set; }
-        /// <summary>
-        /// Represents the id of the user of the post { int }.
-        /// </summary>
-        [NotMapped]
-        public UserModel User { get; set; }
+        public string UserId { get; set; }
         /// <summary>
         /// Represents the description of the post { nvarchar(MAX) }.
         /// </summary>
-        public string PostContent { get; set; } = string.Empty;
+        public string Content { get; set; }
         /// <summary>
         /// Represents the images, videos attach to the post { Table }.
         /// </summary>
-        public byte[] Media { get; set; }
+        public string Media { get; set; }
         /// <summary>
         /// Represents the amount of likes the post has received { int }.
         /// </summary>
         [BindNever]
-        [Range(0, int.MaxValue)]
         public int Likes { get; set; }
         /// <summary>
         /// Represent if the post has been edited { BIT }.
         /// </summary>
         [BindNever]
         public bool IsEdited { get; set; }
+        public DateTime PostDate { get; set; }
+
         /// <summary>
-        /// Represents the comments the post has received { Table }
+        /// Represents the comments the post has received.
         /// </summary>
-        [BindNever]
-        [NotMapped]
         public ICollection<CommentModel> Comments { get; set; }
+        /// <summary>
+        /// Represents the id of the user of the post { int }.
+        /// </summary>
+        public UserModel User { get; set; }
+        
     }
 }
