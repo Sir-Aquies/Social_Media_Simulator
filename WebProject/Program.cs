@@ -16,6 +16,11 @@ builder.Services.AddDbContext<WebProjectContext>(options =>
 
 builder.Services.AddIdentity<UserModel, IdentityRole>().AddEntityFrameworkStores<WebProjectContext>().AddDefaultTokenProviders();
 
+//builder.Services.ConfigureApplicationCookie(options =>
+//{
+	
+//});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
