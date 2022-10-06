@@ -1,73 +1,52 @@
-﻿body {
+﻿* {
 	box-sizing: border-box;
+}
+
+body {
 	background-color: var(--BackgroundColor);
+	color: var(--colortext);
+	font-size: var(--textsize);
 }
 
-div.AllContainer {
+div.box-container {
 	position: relative;
-	left: 0px;
 	width: 100%;
-	height: max-content;
-	padding: 0;
-	margin: 0;
-
+	height: 100%;
 	display: flex;
-	/*border: 1px solid red;*/
 }
 
-div.LeftBox {
+div.left-box {
 	display: none;
 }
 
-img.UserProfilePic {
-	width: 100%;
-	height: auto;
-	max-width: 22vh;
-	max-height: 22vh;
+img.user-pic {
+	width: 20vh;
+	height: 20vh;
 	border: 1px solid var(--BorderColor);
 	border-radius: 50%;
 	margin: 0.5rem;
 	display: block;
 }
 
-div.UserInfo {
+div.user-info {
 	width: 100%;
-	height: max-content;
-	color: var(--colortext);
-	font-size: 1.5rem;
-	padding: 0.3rem;
-	/*border: 1px solid blue;*/
+	font-size: var(--BigTextsize);
 }
 
-div.UserInfo p {
-	margin: 0.3rem 0.5rem;
-	display: block;
-}
-
-div.UserInfo a {
-	margin: 0.3rem 0.5rem;
-	display: block;
-}
-
-div.UserInfo p.UserDescription {
-	font-size: 1.2rem;
+div.user-info .user-description {
 	white-space: pre-wrap;
 }
 
-div.CenterBox {
-	height: fit-content;
+div.center-box {
 	width: 100%;
-	padding: 0;
 	border-left: 1px solid var(--BorderColor);
 	border-right: 1px solid var(--BorderColor);
 	display: flex;
 	flex-wrap: wrap;
 	align-content: flex-start;
-	justify-content: center;
 }
 
-
-button.CreatePostButton {
+.create-post-button {
 	width: fit-content;
 	padding: 0.5rem 2rem;
 	background-color: var(--BackgroundColor);
@@ -79,40 +58,35 @@ button.CreatePostButton {
 	font-size: var(--textsize);
 }
 
-div.Post {
-	display: block;
+.post-container {
 	width: 100%;
-	height: max-content;
 	padding: 0.8rem;
 	border-top: 1px solid var(--BorderColor);
-	font-size: var(--textsize);
 }
 
-div.Post:last-child {
+.post-container:last-child {
 	border-bottom: 1px solid var(--BorderColor);
 }
 
-div.PostInfo {
+.post-info {
 	width: 100%;
-	height: max-content;
-	padding: 0.3rem;
 	position: relative;
 	display: flex;
 	align-items: center;
 }
 
-div.PostOptionButton {
+.post-option-button {
 	position: relative;
 	margin-left: auto;
 }
 
-div.PostOptionButton span {
+.post-option-button span {
 	transform: rotate(90deg);
 	font-size: 1.7rem;
 	display: block;
 }
 
-.PostForm {
+.post-form {
 	display: none;
 	position: absolute;
 	background-color: rgb(30, 30, 30);
@@ -122,7 +96,7 @@ div.PostOptionButton span {
 	z-index: 50;
 }
 
-.PostForm input{
+.post-form input{
 	background-color: transparent;
 	border: 0;
 	width: 100%;
@@ -131,12 +105,11 @@ div.PostOptionButton span {
 	text-align: right;
 }
 
-.PostForm input:hover {
+.post-form input:hover {
 	background-color: rgb(24, 24, 24);
 }
 
-div.PostInfo img {
-	display: inline;
+.post-info img {
 	width: 3.3rem;
 	height: 3.3rem;
 	border-radius: 50%;
@@ -144,22 +117,21 @@ div.PostInfo img {
 	border: 1px solid var(--BorderColor);
 }
 
-div.PostContent {
+.post-content {
 	width: 100%;
 	height: fit-content;
-	padding: 0.3rem;
 }
 
-div.PostContent div {
+.post-content div {
 	overflow-x: hidden;
 	overflow-y: auto;
 	width: 100%;
-	max-height: 25rem;
+	max-height: 35rem;
 	text-align: left;
-	white-space:pre-wrap;
+	white-space: pre-wrap;
 }
 
-.FlipDiv {
+.flip-div {
 	width: 100%;
 	text-align: center !important;
 	background-color: var(--ShadowColor);
@@ -167,66 +139,58 @@ div.PostContent div {
 	cursor: pointer;
 }
 
-div.PostContent img {
-	margin: 0;
-	margin-top: 0.3rem;
-	width: 100%;
+.post-content img {
+	max-width: 100%;
 	height: auto;
 }
 
-div.PostContent img.ImgFinder {
+.post-content img.ImgFinder {
 	display: none;
 }
 
-div.PostStats {
+.post-stats {
 	width: 100%;
-	height: max-content;
-	padding: 0.3rem;
 	display: flex;
 	justify-content: left;
 	flex-wrap: wrap;
 }
 
-div.PostStats button {
-	display: inline;
+.post-stats button {
 	background-color: Transparent;
 	width: max-content;
-	padding: 0.5rem 0.5rem;
+	padding: 0.5rem;
 	font-size: var(--SmallTextsize);
 	border: 0;
 	margin-right: 0.8rem;
 }
 
-div.PostStats button span{
+.post-stats button span {
 	font-size: var(--SmallTextsize);
 }
 
-div.RightBox {
+.right-box {
 	display: none;
 }
 
 /*Hidden Post tab*/
-.PostDiv {
+.post-div {
 	width: 100%;
-	height: max-content;
 	padding: 1rem;
 	background-color: var(--BackgroundColor);
 	border: 1px solid var(--BorderColor);
-	border-radius: 1.5rem;
+	border-radius: 0.7rem;
 	color: var(--colortext);
 	font-size: var(--textsize);
 	display: none;
 	z-index: 20;
 }
 
-.PostDiv .ContentDiv {
+.content-holder {
 	width: 100%;
-	padding: 0;
-	margin: 0;
 	height: 100%;
 }
 
-.PostDiv textarea {
+.content-holder textarea {
 	width: 100%;
 	min-height: min-content;
 	height: 15rem;
@@ -234,34 +198,29 @@ div.RightBox {
 	margin: 0.3rem 0;
 }
 
-.PostDiv .ImageDiv {
+.image-holder {
 	width: 20%;
-	padding: 0;
-	margin: 0;
-	max-height: 100%;
+	height: 100%;
 	overflow-x: hidden;
 	overflow-y: auto;
 }
 
-.PostDiv .ButtonHolder {
+.button-holder {
 	display: flex;
-	font-size: var(--textsize);
 	justify-content: space-around;
 }
 
-.PostDiv input {
-	width: 10rem;
-	display: inline;
+.button-holder input {
+	width: fit-content;
 	background-color: Transparent;
 	border: 1px solid var(--BorderColor);
-	padding: 0.25rem 1rem;
+	padding: 0.25rem 0.7rem;
 	font-size: var(--BigTextsize);
 	color: var(--colortext);
-	z-index: 100;
 }
 
-.ButtonHolder label {
-	width: 10rem;
+.button-holder label {
+	width: fit-content;
 	display: inline;
 	border: 1px solid var(--BorderColor);
 	padding: 0.25rem 1rem;
@@ -271,28 +230,26 @@ div.RightBox {
 }
 
 @media only screen and (min-width: 1600px) {
-	div .LeftBox {
+	div.left-box {
 		display: block;
 		width: 24%;
 	}
 
-	img.UserProfilePic {
-		width: 30vh;
-		height: 30vh;
-		max-height: 17rem;
+	img.user-pic {
+		width: 25vh;
+		height: 25vh;
 		max-width: 17rem;
+		max-height: 17rem;
 	}
 
-	div.CenterBox {
+	div.center-box {
 		width: 49%;
 		margin-right: 1%;
 	}
 
-	div.RightBox {
+	div.right-box {
 		display: block;
 		width: 25%;
 		height: 100%;
-
-		/*border: 1px solid yellow !important;*/
 	}
 }

@@ -173,10 +173,10 @@ div.AppearanceOptions br, hr{
 }
 
 .BallButton.round:before {
-  border-radius: 50%;
+	border-radius: 50%;
 }
 
-@media only screen and (min-width: 968px) {
+@media only screen and (min-width: 820px) {
 	div.HeadHome {
 		display: none;
 	}
@@ -189,36 +189,31 @@ div.AppearanceOptions br, hr{
 		display: none;
 	}
 
-	div.LeftBox {
+	.left-box {
 		display: block;
 		width: 39.5%;
 		height: 100%;
 		margin-right: 0.5%;
 	}
-
-	img.UserProfilePic {
-		width: 40vh;
-		height: 40vh;
-	}
 		
-	div .PostInfo .PostOptionButton {
+	.post-info .post-option-button {
 		margin-right: 1.2rem;
 	}
 
-	.PostForm {
+	.post-form {
 		left: 0;
 		right: unset;
 	}
 
-	.PostForm input {
+	.post-form input {
 		text-align: left;
 	}
 
-	.PostDiv {
+	.post-div {
 		width: 50rem;
 	}
 
-	div.CenterBox {
+	.center-box {
 		width: 60%;
 	}
 

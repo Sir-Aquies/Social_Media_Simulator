@@ -6,9 +6,9 @@
     --BorderColor: rgb(255, 255, 255);
     --colortext: white;
     --postBorder: rgb(128, 128, 128);
-    --SmallTextsize: 1.2rem;
-    --textsize: 1.4rem;
-    --BigTextsize: 2rem;
+    --SmallTextsize: 1rem;
+    --textsize: 1.2rem;
+    --BigTextsize: 1.5rem;
 }
 
 [data-theme="light"] {

@@ -31,9 +31,9 @@ namespace WebProject.Controllers
 				return NotFound();
 			}
 
-            userModel.Posts = await _Models.Posts.Where(u => u.UserId == userModel.Id).ToListAsync();
+			userModel.Posts = await _Models.Posts.Where(u => u.UserId == userModel.Id).ToListAsync();
 
-            if (TempData["ErrorMessage"] != null)
+			if (TempData["ErrorMessage"] != null)
 			{
 				ViewBag.ErrorMessage = TempData["ErrorMessage"].ToString();
 			}
@@ -47,7 +47,7 @@ namespace WebProject.Controllers
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> Index(string Content, IFormFile Media)
+		public async Task<IActionResult> CreatePost(string Content, IFormFile Media)
 		{
 			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
 			PostModel post = new PostModel();
@@ -69,13 +69,13 @@ namespace WebProject.Controllers
 				await _Models.SaveChangesAsync();
 			}
 
-			return View(userModel);
+			return RedirectToAction("Index");
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> EditPost(int? PostId, string Content, IFormFile Media, string DeleteMedia)
+		public async Task<IActionResult> EditPost(int PostId, string Content, IFormFile Media, string DeleteMedia)
 		{
-			PostModel post = new PostModel();
+			PostModel post = await _Models.Posts.FirstOrDefaultAsync(p => p.Id == PostId);
 			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
 
 			if (Media != null)
@@ -92,54 +92,44 @@ namespace WebProject.Controllers
 				post.Content = Content;
 			}
 
-			try
+			if (!string.IsNullOrEmpty(post.Content) || post.Media != null)
 			{
 				post.IsEdited = true;
-				post.UserId = userModel.Id;
 				_Models.Posts.Update(post);
 				await _Models.SaveChangesAsync();
 				TempData["Message"] = "Post successfully updated.";
-			} 
-			catch
+				return RedirectToAction("Index");
+			}
+			else
 			{
 				TempData["ErrorMessage"] = "Sorry, something went wrong";
-				return RedirectToAction("Index");
 			}
 
 			return RedirectToAction("Index");
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> LookforPost(int? PostId)
+		public async Task<IActionResult> LookforPost(int PostId)
 		{
-			if (PostId == null)
-			{
-				return View();
-			}
-
-			PostModel postModel = await _Models.Posts.FirstOrDefaultAsync(us => us.Id == PostId);
+			PostModel postModel = await _Models.Posts.AsNoTracking().FirstOrDefaultAsync(us => us.Id == PostId);
 
 			if (postModel == null)
-			{
-				return View();
-			}
-
-			return PartialView("PartialEditPost", postModel);
-		}
-
-		[HttpGet]
-		public IActionResult LookForCreatePost() => PartialView("CreatePost");
-
-		public async Task<IActionResult> DeletePost(int? PostId)
-		{
-			if (PostId == null)
 			{
 				return NotFound();
 			}
 
+			return PartialView("EditPost", postModel);
+		}
+
+		[HttpPost]
+		public IActionResult LookForCreatePost() => PartialView("CreatePost");
+
+		public async Task<IActionResult> DeletePost(int PostId)
+		{
+			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
 			PostModel postModel = await _Models.Posts.FirstOrDefaultAsync(us => us.Id == PostId);
 
-			if (postModel != null)
+			if (postModel != null && postModel.UserId == userModel.Id)
 			{
 				_Models.Remove(postModel);
 				await _Models.SaveChangesAsync();

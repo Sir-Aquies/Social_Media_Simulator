@@ -1,5 +1,5 @@
 ﻿function CreatePostWindow() {
-	$.get("Profile/LookForCreatePost", function (data, status) {
+	$.post("Profile/LookForCreatePost", function (data, status) {
 		if (status === "success") {
 			const postdiv = document.getElementById("PostDiv");
 			const tab = Background();

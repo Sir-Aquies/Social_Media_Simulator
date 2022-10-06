@@ -1,22 +1,15 @@
-﻿<form method="post" enctype="multipart/form-data">
+﻿<form method="post" asp-action="CreatePost" enctype="multipart/form-data">
+	<div id="ContentHolder" class="content-holder">
+		<textarea name="Content"></textarea>
 
-    @if (@Model != null)
-    {
-        <input type="hidden" name="UserId" value="@Model.Id" />
-    }
+		<div class="button-holder">
+			<input type="button" value="Cancel" onclick="RemoveTab()" />
+			<input type="button" value="Image" onclick="document.getElementById('File').click()" />
+			<input type="file" id="File" name="Media" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" onchange="ImagePreview(this, document.getElementById('ImageHolder'), document.getElementById('ContentHolder'))" style="display: none;" />
+			<input type="submit" value="Post" />
+		</div>
+	</div>
 
-    <div id="ContentHolder" class="ContentDiv">
-        <textarea name="Content"></textarea>
-
-        <div class="ButtonHolder">
-            <input type="button" value="Cancel" onclick="RemoveTab()" />
-            <input type="button" value="Image" onclick="document.getElementById('File').click()" />
-            <input type="file" id="File" name="pic" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" onchange="ImagePreview(this, document.getElementById('ImageHolder'), document.getElementById('ContentHolder'))" style="display: none;" />
-            <input type="submit" value="Post" />
-        </div>
-    </div>
-        
-    <div id="ImageHolder" class="ImageDiv">
-    </div>
-
+	<div id="ImageHolder" class="image-holder">
+	</div>
 </form>
