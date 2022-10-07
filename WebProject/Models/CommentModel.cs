@@ -7,18 +7,13 @@ namespace WebProject.Models
     public class CommentModel
     {
         /// <summary>
-        /// Represents the commment's unique identifier { int }.
+        /// Represents the commment's unique identifier.
         /// </summary>
         public int Id { get; set; }
         /// <summary>
-        /// Represents the id of the user for SQL database { int }.
+        /// Represents the id of the user for SQL database.
         /// </summary>
-        public int UserId { get; set; }
-        /// <summary>
-        /// Represents the id of the user of the comment { int }.
-        /// </summary>
-        [NotMapped]
-        public UserModel User { get; set; } = new UserModel();
+        public string UserId { get; set; }
         /// <summary>
         /// Represents the id of the post for SQL database { int }.
         /// </summary>
@@ -26,17 +21,20 @@ namespace WebProject.Models
         /// <summary>
         /// Represents the content of the comment { nvarchar(MAX) }.
         /// </summary>
-        [Required]
-        [StringLength(int.MaxValue, MinimumLength = 0)]
-        public string CommentContent { get; set; } = String.Empty;
+        public string Content { get; set; }
         /// <summary>
         /// Represents the amount of likes the comment has received { int }.
         /// </summary>
-        [Range(0, int.MaxValue)]
         public int Likes { get; set; } = 0;
         /// <summary>
         /// Represents the replies the comment has received { Table }
         /// </summary>
+
+        /// <summary>
+        /// Represents the user of the comment { int }.
+        /// </summary>
+        public UserModel User { get; set; }
+        public PostModel Post { get; set; }
         [NotMapped]
         public ICollection<ReplyModel> Replies { get; set; }
     }

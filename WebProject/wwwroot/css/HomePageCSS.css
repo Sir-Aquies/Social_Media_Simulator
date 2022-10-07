@@ -1,298 +1,283 @@
-﻿body {
-    box-sizing: border-box;
-    background-color: var(--BackgroundColor);
+﻿* {
+	box-sizing: border-box;
 }
 
-div.AllContainer {
-    position: relative;
-    left: 0px;
-    width: 100%;
-    height: max-content;
-    padding: 0;
-    margin: 0;
-
-    display: flex;
-    /*border: 1px solid red;*/
+body {
+	background-color: var(--BackgroundColor);
+	color: var(--colortext);
+	font-size: var(--textsize);
 }
 
-div.LeftBox {
-    display: none;
+div.box-container {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	display: flex;
 }
 
-img.UserProfilePic {
-    width: 100%;
-    height: auto;
-    max-width: 22vh;
-    max-height: 22vh;
-    border: 1px solid var(--BorderColor);
-    border-radius: 50%;
-    margin: 0.5rem;
-    display: block;
+div.left-box {
+	display: none;
 }
 
-div.UserInfo {
-    width: 100%;
-    height: max-content;
-    color: var(--colortext);
-    font-size: 1.5rem;
-    padding: 0.3rem;
-    /*border: 1px solid blue;*/
+img.user-pic {
+	width: 20vh;
+	height: 20vh;
+	border: 1px solid var(--BorderColor);
+	border-radius: 50%;
+	margin: 0.5rem;
+	display: block;
 }
 
-div.UserInfo p {
-    margin: 0.3rem 0.5rem;
-    display: block;
+div.user-info {
+	width: 100%;
+	font-size: var(--BigTextsize);
 }
 
-div.UserInfo a {
-    margin: 0.3rem 0.5rem;
-    display: block;
+div.user-info .user-description {
+	white-space: pre-wrap;
 }
 
-div.UserInfo p.UserDescription {
-    font-size: 1.2rem;
-    white-space: pre-wrap;
+div.center-box {
+	width: 100%;
+	border-left: 1px solid var(--BorderColor);
+	border-right: 1px solid var(--BorderColor);
+	display: flex;
+	flex-wrap: wrap;
+	align-content: flex-start;
 }
 
-div.CenterBox {
-    height: fit-content;
-    width: 100%;
-    padding: 0;
-    border-left: 1px solid var(--BorderColor);
-    border-right: 1px solid var(--BorderColor);
-    display: flex;
-    flex-wrap: wrap;
-    align-content: flex-start;
-    justify-content: center;
+.create-post-button {
+	width: fit-content;
+	padding: 0.5rem 2rem;
+	background-color: transparent;
+	height: max-content;
+	margin: 0 auto;
+	display: block;
+	border-radius: 0.5rem;
+	border: 1px solid var(--BorderColor);
+	font-size: var(--textsize);
 }
 
-
-button.CreatePostButton {
-    width: fit-content;
-    padding: 0.5rem 2rem;
-    background-color: var(--BackgroundColor);
-    height: max-content;
-    margin: 0 auto;
-    display: block;
-    border-radius: 1rem;
-    border: 1px solid var(--BorderColor);
-    font-size: var(--textsize);
+.post-container {
+	width: 100%;
+	padding: 0.8rem;
+	border-top: 1px solid var(--BorderColor);
 }
 
-div.Post {
-    display: block;
-    width: 100%;
-    height: max-content;
-    padding: 0.8rem;
-    border-top: 1px solid var(--BorderColor);
-    font-size: var(--textsize);
+.post-container:last-child {
+	border-bottom: 1px solid var(--BorderColor);
 }
 
-div.Post:last-child {
-    border-bottom: 1px solid var(--BorderColor);
+.post-info {
+	width: 100%;
+	position: relative;
+	display: flex;
+	align-items: center;
 }
 
-div.PostInfo {
-    width: 100%;
-    height: max-content;
-    padding: 0.3rem;
-    position: relative;
-    display: flex;
-    align-items: center;
+.post-option-button {
+	position: relative;
+	margin-left: auto;
 }
 
-div.PostOptionButton {
-    position: relative;
-    margin-left: auto;
+.post-option-button span {
+	transform: rotate(90deg);
+	font-size: 1.7rem;
+	display: block;
 }
 
-div.PostOptionButton span {
-    transform: rotate(90deg);
-    font-size: 1.7rem;
-    display: block;
+.post-form {
+	display: none;
+	position: absolute;
+	background-color: var(--ShadowColor);
+	justify-content: right;
+	flex-direction: column;
+	right: 0;
+	z-index: 50;
 }
 
-.PostForm {
-    display: none;
-    position: absolute;
-    background-color: rgb(30, 30, 30);
-    justify-content: right;
-    flex-direction: column;
-    right: 0;
-    z-index: 50;
+.post-form input{
+	background-color: transparent;
+	border: 0;
+	width: 100%;
+	height: fit-content;
+	text-align: right;
 }
 
-.PostForm input{
-    background-color: transparent;
-    border: 0;
-    width: 100%;
-    height: fit-content;
-    margin: 0;
-    text-align: right;
+.post-form input:hover {
+	background-color: rgb(24, 24, 24);
 }
 
-.PostForm input:hover {
-    background-color: rgb(24, 24, 24);
+.post-info img {
+	width: 3.3rem;
+	height: 3.3rem;
+	border-radius: 50%;
+	margin-right: 0.5rem;
+	border: 1px solid var(--BorderColor);
 }
 
-div.PostInfo img {
-    display: inline;
-    width: 3.3rem;
-    height: 3.3rem;
-    border-radius: 50%;
-    margin-right: 0.5rem;
-    border: 1px solid var(--BorderColor);
+.post-content {
+	width: 100%;
+	height: fit-content;
 }
 
-div.PostContent {
-    width: 100%;
-    height: fit-content;
-    padding: 0.3rem;
+.post-content div {
+	overflow-x: hidden;
+	overflow-y: auto;
+	width: 100%;
+	max-height: 35rem;
+	text-align: left;
+	white-space: pre-wrap;
 }
 
-div.PostContent div {
-    overflow-x: hidden;
-    overflow-y: auto;
-    width: 100%;
-    max-height: 25rem;
-    text-align: left;
-    white-space:pre-wrap;
+.flip-div {
+	width: 100%;
+	text-align: center !important;
+	background-color: var(--ShadowColor);
+	border: 1px solid var(--BorderColor);
+	cursor: pointer;
 }
 
-.FlipDiv {
-    width: 100%;
-    text-align: center !important;
-    background-color: var(--ShadowColor);
-    border: 1px solid var(--BorderColor);
-    cursor: pointer;
+.post-content img {
+	max-width: 100%;
+	height: auto;
+	display: block;
+	margin: 0.5rem auto;
 }
 
-div.PostContent img {
-    margin: 0;
-    margin-top: 0.3rem;
-    width: 100%;
-    height: auto;
+.post-content img.ImgFinder {
+	display: none;
 }
 
-div.PostContent img.ImgFinder {
-    display: none;
+.post-stats {
+	width: 100%;
+	display: flex;
+	justify-content: left;
+	flex-wrap: wrap;
 }
 
-div.PostStats {
-    width: 100%;
-    height: max-content;
-    padding: 0.3rem;
-    display: flex;
-    justify-content: left;
-    flex-wrap: wrap;
+.post-stats button {
+	background-color: Transparent;
+	width: max-content;
+	padding: 0.5rem;
+	font-size: var(--SmallTextsize);
+	border: 0;
+	margin-right: 0.8rem;
 }
 
-div.PostStats button {
-    display: inline;
-    background-color: Transparent;
-    width: max-content;
-    padding: 0.5rem 0.5rem;
-    font-size: var(--SmallTextsize);
-    border: 0;
-    margin-right: 0.8rem;
+.post-stats button span {
+	font-size: var(--SmallTextsize);
 }
 
-div.PostStats button span{
-    font-size: var(--SmallTextsize);
-}
-
-div.RightBox {
-    display: none;
+.right-box {
+	display: none;
 }
 
 /*Hidden Post tab*/
-.PostDiv {
-    width: 100%;
-    height: max-content;
-    padding: 1rem;
-    background-color: var(--BackgroundColor);
-    border: 1px solid var(--BorderColor);
-    border-radius: 1.5rem;
-    color: var(--colortext);
-    font-size: var(--textsize);
-    display: none;
-    z-index: 20;
+.post-div {
+	width: 100%;
+	padding: 1rem;
+	background-color: var(--BackgroundColor);
+	border: 1px solid var(--BorderColor);
+	border-radius: 0.7rem;
+	color: var(--colortext);
+	font-size: var(--textsize);
+	display: none;
+	z-index: 20;
 }
 
-.PostDiv .ContentDiv {
-    width: 100%;
-    padding: 0;
-    margin: 0;
-    height: 100%;
+.content-holder {
+	width: 100%;
+	height: 100%;
 }
 
-.PostDiv textarea {
-    width: 100%;
-    min-height: min-content;
-    height: 15rem;
-    resize: none;
-    margin: 0.3rem 0;
+.content-holder textarea {
+	width: 100%;
+	min-height: min-content;
+	height: 15rem;
+	resize: none;
+	margin: 0.3rem 0;
 }
 
-.PostDiv .ImageDiv {
-    width: 20%;
-    padding: 0;
-    margin: 0;
-    max-height: 100%;
-    overflow-x: hidden;
-    overflow-y: auto;
+.image-holder {
+	width: 20%;
+	height: 100%;
+	overflow-x: hidden;
+	overflow-y: auto;
 }
 
-.PostDiv .ButtonHolder {
-    display: flex;
-    font-size: var(--textsize);
-    justify-content: space-around;
+.button-holder {
+	display: flex;
+	justify-content: space-around;
 }
 
-.PostDiv input {
-    width: 10rem;
-    display: inline;
-    background-color: Transparent;
-    border: 1px solid var(--BorderColor);
-    padding: 0.25rem 1rem;
-    font-size: var(--BigTextsize);
-    color: var(--colortext);
-    z-index: 100;
+.button-holder input {
+	width: fit-content;
+	background-color: Transparent;
+	border: 1px solid var(--BorderColor);
+	padding: 0.25rem 0.7rem;
+	font-size: var(--BigTextsize);
+	color: var(--colortext);
 }
 
-.ButtonHolder label {
-    width: 10rem;
-    display: inline;
-    border: 1px solid var(--BorderColor);
-    padding: 0.25rem 1rem;
-    font-size: var(--BigTextsize);
-    cursor: pointer;
-    text-align: center;
+.button-holder label {
+	width: fit-content;
+	display: inline;
+	border: 1px solid var(--BorderColor);
+	padding: 0.25rem 1rem;
+	font-size: var(--BigTextsize);
+	cursor: pointer;
+	text-align: center;
+}
+
+@media only screen and (min-width: 820px) {
+	.left-box {
+		display: block;
+		width: 40%;
+		height: 100%;
+	}
+	.post-info .post-option-button {
+		margin-right: 1.2rem;
+	}
+
+	.post-form {
+		left: 0;
+		right: unset;
+	}
+
+	.post-form input {
+		text-align: left;
+	}
+
+	.post-div {
+		width: 50rem;
+	}
+
+	.center-box {
+		width: 60%;
+	}
 }
 
 @media only screen and (min-width: 1600px) {
-    div .LeftBox {
-        display: block;
-        width: 24%;
-    }
+	div.left-box {
+		display: block;
+		width: 25%;
+	}
 
-    img.UserProfilePic {
-        width: 30vh;
-        height: 30vh;
-        max-height: 17rem;
-        max-width: 17rem;
-    }
+	img.user-pic {
+		width: 25vh;
+		height: 25vh;
+		max-width: 17rem;
+		max-height: 17rem;
+	}
 
-    div.CenterBox {
-        width: 49%;
-        margin-right: 1%;
-    }
+	div.center-box {
+		width: 50%;
+	}
 
-    div.RightBox {
-        display: block;
-        width: 25%;
-        height: 100%;
-
-        /*border: 1px solid yellow !important;*/
-    }
+	div.right-box {
+		display: block;
+		width: 25%;
+		height: 100%;
+	}
 }

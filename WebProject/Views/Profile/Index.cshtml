@@ -1,136 +1,128 @@
 ﻿@model UserModel
 
 @{
-    if (@Model != null)
-    {
-        ViewData["Title"] = @Model.Username;
-    } 
-    else
-    {
-        ViewData["Title"] = "Home";
-    }
+	if (@Model != null)
+	{
+		ViewData["Title"] = @Model.UserName;
+	} 
+	else
+	{
+		ViewData["Title"] = "Home";
+	}
 }
 
 <link rel="stylesheet" href="~/css/HomePageCSS.css" asp-append-version="true"/>
 <link rel="stylesheet" href="~/css/HomePageMid.css" asp-append-version="true"/>
 
-<div class="AllContainer">
-    <div class="LeftBox" id="LeftBoxV">
-        <div class="UserInfo">
-            @if (@Model != null)
-            {
-                if (Model.ProfilePicture != null) {
-                    <img src="data:image/png;base64,@Convert.ToBase64String(Model.ProfilePicture)" class="UserProfilePic" />
-                }
-                else
-                {
-                    <img class="UserProfilePic" src="~/Valentine.jpg"/>
-                }
-                
-                <p style="font-size: 2.5rem;">@Model.Username</p>
+<div class="box-container">
+	<div class="left-box" id="LeftBoxV">
+		<div class="user-info">
+			@if (Model is UserModel)
+			{
+				if (Model.ProfilePicture != null) {
+					<img src="data:image/png;base64,@Model.ProfilePicture" class="user-pic" />
+				}
+				else
+				{
+					<img class="user-pic" src=""/>
+				}
+				
+				<div>@Model.UserName</div>
 
-                @if (!string.IsNullOrEmpty(Model.FirstName) || !string.IsNullOrEmpty(Model.LastName))
-                {
-                    <p>@Model.FirstName @Model.LastName</p>
-                }
+				@if (!string.IsNullOrEmpty(Model.Name))
+				{
+					<div>@Model.Name</div>
+				}
 
-                @if (!string.IsNullOrEmpty(Model.Description))
-                {
-                    <p class="UserDescription">@Model.Description</p>
-                }
+				@if (!string.IsNullOrEmpty(Model.Description))
+				{
+					<div class="user-description">@Model.Description</div>
+				}
 
-                <p>Born: @Model.DateofBirth.ToShortDateString()</p>
-            } 
-            else
-            {
-                <p>Don't miss the opportunity to post something.</p>
-                <a asp-area="" asp-page="/Register">Create a new account here.</a>
-                <p>or</p>
-                <a asp-area="" asp-page="/Login">Login to your account here.</a>
-            }
-        </div>
-    </div>
+				<div>Born: @Model.DateofBirth.ToShortDateString()</div>
+			}
+		</div>
+	</div>
 
-    <div class="CenterBox">
-        @if (@Model is UserModel)
-        {
-            <div class="Post">
-                <button type="button" class="CreatePostButton" onclick="CreatePostWindow()">Create New Post</button>
-            </div>
+	<div class="center-box">
+		@if (Model is UserModel)
+		{
+			<div class="post-container">
+				<button type="button" class="create-post-button" onclick="CreatePostWindow()">Create New Post</button>
+			</div>
 
-            if (Model.Posts.Any())
-            {
-                foreach (var p in Model.Posts.Reverse())
-                {
-                    <div class="Post">
+			if (Model.Posts.Any())
+			{
+				foreach (var p in Model.Posts.Reverse())
+				{
+					<div class="post-container">
+						<div class="post-info">
+							@if (Model.ProfilePicture != null) {
+								<img src="data:image/png;base64,@Model.ProfilePicture" />
+							}
+							else {
+								<img />
+							}
 
-                        <div class="PostInfo">
-                            @if (Model.ProfilePicture != null) {
-                                <img src="data:image/png;base64,@Convert.ToBase64String(Model.ProfilePicture)" />
-                            }
-                            else {
-                                <img />
-                            }
+							@if (p.IsEdited)
+							{
+								<span>@Model.UserName</span> <i style="font-size: 14px; margin-left: 0.5rem;">(This post is edited)</i>
+							}
+							else
+							{
+								<span>@Model.UserName</span>
+							}
 
-                            @if (p.IsEdited)
-                            {
-                                <span>@Model.Username</span><i style="font-size: 14px; margin-left: 0.5rem;">(This post is edited)</i>
-                            }
-                            else
-                            {
-                                <span>@Model.Username</span>
-                            }
-                            <div type="button" class="PostOptionButton" id="PostOptionButton" onclick="OptionButton(this);" onmousedown="event.stopPropagation()"><span>...</span>
-                                <form enctype="multipart/form-data" onmousedown="event.stopPropagation()" onclick="event.stopPropagation();" class="PostForm">
-                                    <input type="hidden" name="PostId" value="@p.Id"/>
-                                    <input type="hidden" name="UserId" value="@Model.Id" />
+							<div type="button" class="post-option-button" id="PostOptionButton" onclick="OptionButton(this);" onmousedown="event.stopPropagation()"><span>...</span>
+								<form method="post" enctype="multipart/form-data" onmousedown="event.stopPropagation()" onclick="event.stopPropagation();" class="post-form">
+									<input type="hidden" name="PostId" value="@p.Id"/>
 
-                                    <input type="button" value="Edit" onclick="EditPostWindow(@p.Id.ToString(), this);" />
-                                    <input type="submit" value="Delete" formaction="@Url.Action("DeletePost")" />
-                                </form>
-                            </div>
-                        </div>
+									<input type="button" value="Edit" onclick="EditPostWindow(@p.Id.ToString(), this);" />
+									<input type="submit" value="Delete" formaction="@Url.Action("DeletePost")" />
+								</form>
+							</div>
+						</div>
 
-                        <div class="PostContent">
-                            @if (!string.IsNullOrEmpty(p.PostContent))
-                            {
-                                <div>@p.PostContent</div>
-                            }
+						<div class="post-content">
+							@if (!string.IsNullOrEmpty(p.Content))
+							{
+								<div>@p.Content</div>
+							}
 
-                            @if (p.Media != null && Model.ShowImages)
-                            {
-                                <img src="data:image/png;base64,@Convert.ToBase64String(p.Media)" />
-                            }
-                            else if (p.Media != null && !Model.ShowImages)
-                            {
-                                <div class="FlipDiv" onclick="ShowPostImg(this)">Show Image</div>
-                                <img id="" src="data:image/png;base64,@Convert.ToBase64String(p.Media)" class="ImgFinder"/>
-                            }
-                        </div>
+							@if (p.Media != null && Model.ShowImages)
+							{
+								<img src="data:image/png;base64,@p.Media" />
+							}
+							else if (p.Media != null && !Model.ShowImages)
+							{
+								<div class="flip-div" onclick="ShowPostImg(this)">Show Image</div>
+								<img id="" src="data:image/png;base64,@p.Media" class="ImgFinder"/>
+							}
+						</div>
 
-                        <div class="PostStats">
-                            <button type="button">
-                                <span>@p.Likes  Likes</span>
-                            </button>
+						<div class="post-stats">
+							<button type="button">
+								<span>@p.Likes  Likes</span>
+							</button>
 
-                            <button type="button">
-                                <span>0  Comments</span>
-                            </button>
-                        </div>
+							<button type="button">
+								<span>0  Comments</span>
+							</button>
+						</div>
 
-                    </div>
-                }
-            }
-        }
-    </div>
+					</div>
+				}
+			}
+		}
+	</div>
 
-    <div class="RightBox">
+	<div class="right-box">
 
-    </div>
+	</div>
 </div>
 
-<div id="PostDiv" class="PostDiv" ondblclick="event.stopPropagation()"></div>
-<div id="EditPostDiv" class="PostDiv" ondblclick="event.stopPropagation()"></div>
+<div id="PostDiv" class="post-div" ondblclick="event.stopPropagation()"></div>
+<div id="EditPostDiv" class="post-div" ondblclick="event.stopPropagation()"></div>
 
 <script src="~/lib/jquery/dist/jquery.js"></script>
 <script src="~/js/PostWindows.js" asp-append-version="true"></script>

@@ -1,0 +1,112 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="color-scheme" content="dark light"/>
+	<title>@ViewData["Title"]</title>
+
+	<link rel="stylesheet" href="~/css/WebVariables.css" asp-append-version="true"/>
+	<script src="~/js/ChangeMode.js" asp-append-version="true"></script>
+
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+	<link rel="stylesheet" href="~/WebProject.styles.css" asp-append-version="true" />
+	<link rel="stylesheet" href="~/css/_WebLayout.css" asp-append-version="true" />
+</head>
+<body>
+	<header>
+		<nav class="HeadBar">
+			<div class="HeadContainer">
+				<div class="HeadHome">
+					<!--Image that when click display the DisplayTab with the user info-->
+					@if (@Model is UserModel){
+						<img src="data:image/png;base64,@Model.ProfilePicture" id="UserMobilePic" class="UserInfoMobile" onclick="ToggleTab()" onmousedown="event.stopPropagation();" />
+					}
+				</div>
+
+				<div class="HeadList" id="HeadList" onmousedown="event.stopPropagation();">
+					<div class="HeadListButtonContainer">
+						<div class="HeadListButton"></div>
+						<div class="HeadListButton"></div>
+						<div class="HeadListButton"></div>
+					</div>
+					
+					<div class="TabList" id="TabList" onclick="event.stopPropagation();">
+						@if (Model is UserModel)
+						{
+							<a asp-area="" asp-controller="Profile" asp-action="Index">Home</a>
+						}
+						else
+						{
+							<a asp-area="" asp-controller="Profile" asp-action="Index">Home</a>
+						}
+
+						@if (Model is not UserModel && Model is not PasswordUser)
+						{
+							<a asp-area="" asp-controller="Account" asp-action="Login">Log in</a>
+							<a asp-area="" asp-controller="Account" asp-action="Register">Register</a>
+						}
+						
+						@if (Model is UserModel)
+						{
+							<a class="Right" asp-area="" asp-controller="Settings" asp-action="EditProfile">Settings</a>
+						}
+					</div>
+				</div>
+			</div>
+		</nav>
+		<!--div that is display when UserMobilePic is clicked-->
+		<div class="DisplayTab" id="DisplayTab" onmousedown="event.stopPropagation();">
+			<div class="UserInfo">
+				@if (@Model is UserModel)
+				{
+					if (Model.ProfilePicture != null)
+					{
+						<img src="data:image/png;base64,@Model.ProfilePicture" class="UserProfilePic" />
+					}
+					else
+					{
+						<img class="UserProfilePic" src="" />
+					}
+
+					<p style="font-size: 2.5rem;">@Model.UserName</p>
+
+					@if (!string.IsNullOrEmpty(Model.Name))
+					{
+						<p>@Model.Name</p>
+					}
+
+					@if (!string.IsNullOrEmpty(Model.Description))
+					{
+						<p class="UserDescription">@Model.Description</p>
+					}
+
+					<p>Born: @Model.DateofBirth.ToShortDateString()</p>
+				}
+			</div>
+		</div>
+
+		@if (!string.IsNullOrEmpty(ViewBag.Message)){
+			<div class="AlertMessage" id="MessageSuccess">@ViewBag.Message <div class="CloseButton" onclick="this.parentElement.style.display='none';"></div></div>
+		}
+		else if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+		{
+			<div class="AlertMessage" id="MessageSuccess">@ViewBag.ErrorMessage <div class="CloseButton" onclick="this.parentElement.style.display='none';"></div></div>
+		}
+	</header>
+
+	<div class="container">
+		<main role="main" class="pb-3">
+			@RenderBody()
+		</main>
+	</div>
+
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="~/js/MobileTabs.js" asp-append-version="true"></script>
+
+	@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

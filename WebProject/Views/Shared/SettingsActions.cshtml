@@ -1,11 +1,11 @@
 ﻿
-@if (Model is UserModel && Model != null){
-	<div class="ActionsBox">
-		<a asp-area="" asp-action="EditProfile" asp-route-UserId="@Model.Id" id="EditProfile">Edit profile</a>
-		<a asp-area="" asp-action="Appearance" asp-route-UserId="@Model.Id" id="Appearance">Web Appearance</a>
-		<a asp-area="" asp-action="Security" asp-route-UserId="@Model.Id" id="Security">Passwords and Security</a>
-	</div>
-}
+
+<div class="actions-container">
+	<a asp-area="" asp-action="EditProfile" id="EditProfile">Edit profile</a>
+	<a asp-area="" asp-action="Appearance" id="Appearance">Web Appearance</a>
+	<a asp-area="" asp-action="Security" id="Security">Passwords and Security</a>
+</div>
+
 
 <script>
 	var text = window.location.href;

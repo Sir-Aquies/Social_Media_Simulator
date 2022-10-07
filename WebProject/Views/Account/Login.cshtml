@@ -1,0 +1,44 @@
+﻿@model LoginModel
+
+@{
+	ViewData["Title"] = "Login";
+}
+
+<link rel="stylesheet" href="~/css/RegisterCSS.css" asp-append-version="true"/>
+
+<div style="margin:5rem"></div>
+
+<div class="form-container">
+	<h1 style="text-align:center">Log in</h1>
+
+	<form method="post" autocomplete="on">
+		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+		<div class="field-container">
+			<input type="hidden" asp-for="ReturnUrl" />
+
+			<label asp-for="UserName"></label>
+			<input asp-for="UserName" value="Eliot09" />
+			<span asp-validation-for="UserName" class="text-danger"></span>
+
+			<label asp-for="Password"></label>
+			<input asp-for="Password" value="Eliot_Password09">
+			<span asp-validation-for="Password" class="text-danger"></span>
+		</div>
+
+		<div class="button-container">
+			<a asp-area="" asp-action="Register">Create account</a>
+			<input type="submit" value="Log in"/>
+		</div>
+	</form>
+</div>
+
+@section Scripts {
+	@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+<pre>
+	Eliot09
+	Eliot09@gmail.com
+	Eliot_Password09
+</pre>

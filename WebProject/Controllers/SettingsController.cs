@@ -3,226 +3,217 @@ using Microsoft.AspNetCore.Mvc;
 using WebProject.Models;
 using WebProject.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebProject.Controllers
 {
-    public class SettingsController : Controller
-    {
-        private readonly WebProjectContext _Models;
+	[Authorize]
+	public class SettingsController : Controller
+	{
+		private readonly WebProjectContext _Models;
+		private readonly UserManager<UserModel> userManager;
+		private readonly IPasswordHasher<UserModel> passwordHasher;
 
-        public SettingsController(WebProjectContext Models)
-        {
-            _Models = Models;
-        }
+		public SettingsController(WebProjectContext Models, IPasswordHasher<UserModel> passwordHshr, UserManager<UserModel> manager)
+		{
+			_Models = Models;
+			userManager = manager;
+			passwordHasher = passwordHshr;
+		}
 
-        public async Task<IActionResult> EditProfile(int? UserId)
-        {
-            UserModel userModel = new UserModel();
+		public async Task<IActionResult> EditProfile()
+		{
+			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
 
-            if (UserId == null)
-            {
-                return View(null);
-            }
+			if (userModel == null)
+			{
+				return RedirectToAction("Logout", "Account");
+			}
 
-            userModel = await _Models.Users.AsNoTracking().FirstOrDefaultAsync(us => us.Id == UserId);
+			return View(userModel);
+		}
 
-            if (userModel == null)
-            {
-                return NotFound();
-            }
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> EditProfile(string Description, string Name, string UserName, IFormFile ProfilePicture)
+		{
+			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
 
-            return View(userModel);
-        }
+			if (userModel != null)
+			{
+				if (!string.IsNullOrEmpty(UserName))
+				{
+					userModel.UserName = UserName;
+				}
 
-        [HttpPost]
-        public async Task<IActionResult> EditProfile(UserModel ChangeUser, IFormFile ProfilePicture)
-        {
-            UserModel userModel = new UserModel();
+				if (!string.IsNullOrEmpty(Name))
+				{
+					userModel.Name = Name;
+				}
 
-            userModel = await _Models.Users.AsNoTracking().FirstOrDefaultAsync(us => us.Id == ChangeUser.Id);
+				if (!string.IsNullOrEmpty(UserName))
+				{
+					userModel.Description = Description;
+				}
 
-            if (userModel == null)
-            {
-                return NotFound();
-            }
+				if (ProfilePicture != null)
+				{
+					userModel.ProfilePicture = Convert.ToBase64String(await GetBytes(ProfilePicture));
 
-            if (ChangeUser == null)
-            {
-                ViewBag.ErrorMessage = "Sorry, something went wrong.";
-                return View(userModel);
-            }
+				}
 
-            userModel.Username = ChangeUser.Username;
-            userModel.FirstName = ChangeUser.FirstName;
-            userModel.LastName = ChangeUser.LastName;
-            userModel.Description = ChangeUser.Description;
+				IdentityResult result = await userManager.UpdateAsync(userModel);
+				if (result.Succeeded)
+				{
+					ViewBag.Message = "Profile successfully updated.";
+					return View(userModel);
+				}
+				else
+				{
+					ViewBag.ErrorMessage = "Sorry, something went wrong.";
+					return View(userModel);
+				}
+			}
+			else
+			{
+				return RedirectToAction("Logout", "Account");
+			}
+		}
 
-            if (ProfilePicture != null)
-            {
-                userModel.ProfilePicture = await GetBytes(ProfilePicture);
-            }
+		public async Task<IActionResult> Appearance()
+		{
+			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
 
-            _Models.Attach(userModel).State = EntityState.Modified;
-            await _Models.SaveChangesAsync();
-            ViewBag.Message = "Profile successfully updated.";
+			if (userModel == null)
+			{
+				return RedirectToAction("Logout", "Account");
+			}
 
-            //if (await TryUpdateModelAsync<UserModel>(
-            //    userModel, "ChangeUser", u => u.Username, u => u.FirstName, u => u.FirstName, u => u.LastName, u => u.Description, u => u.ProfilePicture))
-            //{
-            //    _Models.Attach(userModel).State = EntityState.Modified;
-            //    await _Models.SaveChangesAsync();
-            //    ViewBag["Message"] = "Profile sucesfully updated.";
-            //    return View(userModel);
-            //}
+			return View(userModel);
+		}
 
-            return View(userModel);
-        }
+		[HttpPost]
+		public async Task ShowImagesToggle()
+		{
+			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
 
-        public async Task<IActionResult> Appearance(int? UserId)
-        {
-            UserModel userModel = new UserModel();
+			if (userModel == null)
+			{
+				return;
+			}
 
-            if (UserId == null)
-            {
-                return View(null);
-            }
+			if (userModel.ShowImages)
+			{
+				userModel.ShowImages = false;
+			}
+			else if (!userModel.ShowImages)
+			{
+				userModel.ShowImages = true;
+			}
 
-            userModel = await _Models.Users.AsNoTracking().FirstOrDefaultAsync(us => us.Id == UserId);
+			await userManager.UpdateAsync(userModel);
+		}
 
-            if (userModel == null)
-            {
-                return NotFound();
-            }
+		public async Task<IActionResult> Security()
+		{
+			PasswordUser passwordUser = new PasswordUser();
+			passwordUser.User = await userManager.GetUserAsync(HttpContext.User);
 
-            return View(userModel);
-        }
+			if (passwordUser.User == null)
+			{
+				return RedirectToAction("Logout", "Account");
+			}
 
-        [HttpPost]
-        public async Task<IActionResult> Appearance(int? UserId, bool ShowImages)
-        {
-            UserModel userModel = new UserModel();
+			if (TempData["ErrorMessage"] != null)
+			{
+				ViewBag.ErrorMessage = TempData["ErrorMessage"].ToString();
+			}
 
-            if (UserId == null)
-            {
-                return View(null);
-            }
+			if (TempData["Message"] != null)
+			{
+				ViewBag.Message = TempData["Message"].ToString();
+			}
 
-            userModel = await _Models.Users.AsNoTracking().FirstOrDefaultAsync(us => us.Id == UserId);
+			return View(passwordUser);
+		}
 
-            if (userModel == null)
-            {
-                return NotFound();
-            }
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Security(PasswordUser passwordUser)
+		{
+			passwordUser.User = await userManager.GetUserAsync(HttpContext.User);
 
-            if (userModel.ShowImages)
-            {
-                userModel.ShowImages = false;
-            }
-            else if (!userModel.ShowImages)
-            {
-                userModel.ShowImages = true;
-            }
+			if (passwordUser.User == null)
+			{
+				return RedirectToAction("Logout", "Account");
+			}
 
-            _Models.Attach(userModel).State = EntityState.Modified;
-            await _Models.SaveChangesAsync();
+			PasswordVerificationResult Pswrdresult = passwordHasher.VerifyHashedPassword(passwordUser.User, passwordUser.User.PasswordHash, passwordUser.OldPassword);
 
-            return View(userModel);
-        }
+			if (Pswrdresult == PasswordVerificationResult.Success)
+			{
+				passwordUser.User.PasswordHash = passwordHasher.HashPassword(passwordUser.User, passwordUser.NewPassword);
 
-        public async Task<IActionResult> Security(int? UserId)
-        {
-            UserModel userModel = new UserModel();
+				IdentityResult result = await userManager.UpdateAsync(passwordUser.User);
 
-            if (UserId == null)
-            {
-                return View(null);
-            }
+				if (result.Succeeded)
+				{
+					ViewBag.Message = "Password successfully updated.";
+					return View(passwordUser);
+				}
+				else
+				{
+					ViewBag.ErrorMessage = "New password is invalid";
+					return View(passwordUser);
+				}
+			}
+			else
+			{
+				ViewBag.ErrorMessage = "Old Password is invalid.";
+				return View(passwordUser);
+			}
+		}
 
-            userModel = await _Models.Users.AsNoTracking().FirstOrDefaultAsync(us => us.Id == UserId);
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> ChangeEmail(string newEmail)
+		{
+			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
 
-            if (userModel == null)
-            {
-                return NotFound();
-            }
+			if (userModel == null)
+			{
+				return RedirectToAction("Logout", "Account");
+			}
 
-            if (TempData["ErrorMessage"] != null)
-            {
-                ViewBag.ErrorMessage = TempData["ErrorMessage"].ToString();
-            }
+			if (userModel.Email == newEmail)
+			{
+				TempData["ErrorMessage"] = "Email address is the same.";
+				return RedirectToAction("Security");
+			}
 
-            if (TempData["Message"] != null)
-            {
-                ViewBag.Message = TempData["Message"].ToString();
-            }
+			if (!string.IsNullOrEmpty(newEmail))
+			{
+				userModel.Email = newEmail;
+				IdentityResult result = await userManager.UpdateAsync(userModel);
+				if (result.Succeeded)
+				{
+					TempData["Message"] = "Email address successfully updated.";
+				}
+				else
+				{
+					TempData["ErrorMessage"] = "Sorry something went worng.";
+				}
+			}
 
-            return View(userModel);
-        }
+			return RedirectToAction("Security");
+		}
 
-        [HttpPost]
-        public async Task<IActionResult> Security(UserModel UserPassword, string OldPassword)
-        {
-            UserModel userModel = new UserModel();
-
-            userModel = await _Models.Users.AsNoTracking().FirstOrDefaultAsync(us => us.Id == UserPassword.Id);
-
-            if (OldPassword != userModel.Password)
-            {
-                ViewBag.ErrorMessage = "Old Password is invalid";
-                return View(userModel);
-            }
-
-            if (userModel == null)
-            {
-                return NotFound();
-            }
-
-            if (!string.IsNullOrEmpty(UserPassword.Password))
-            {
-                userModel.Password = UserPassword.Password;
-
-                _Models.Attach(userModel).State = EntityState.Modified;
-                await _Models.SaveChangesAsync();
-                ViewBag.Message = "Password successfully updated.";
-            }
-
-            return View(userModel);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> ChangeEmail(UserModel UserEmail)
-        {
-            UserModel userModel = new UserModel();
-
-            userModel = await _Models.Users.AsNoTracking().FirstOrDefaultAsync(us => us.Id == UserEmail.Id);
-
-            if (userModel == null)
-            {
-                return NotFound();
-            }
-
-            if (userModel.EmailAddress == UserEmail.EmailAddress)
-            {
-                TempData["ErrorMessage"] = "Email address is the same.";
-                return RedirectToAction("Security", new { UserId = UserEmail.Id });
-            }
-
-            if (!string.IsNullOrEmpty(UserEmail.EmailAddress))
-            {
-                userModel.EmailAddress = UserEmail.EmailAddress;
-
-                _Models.Attach(userModel).State = EntityState.Modified;
-                await _Models.SaveChangesAsync();
-                TempData["Message"] = "Email address successfully updated.";
-            }
-
-            return RedirectToAction("Security", new { UserId = UserEmail.Id });
-        }
-
-        private async Task<byte[]> GetBytes(IFormFile formFile)
-        {
-            await using var memoryStream = new MemoryStream();
-            await formFile.CopyToAsync(memoryStream);
-            return memoryStream.ToArray();
-        }
-    }
+		private async Task<byte[]> GetBytes(IFormFile formFile)
+		{
+			await using var memoryStream = new MemoryStream();
+			await formFile.CopyToAsync(memoryStream);
+			return memoryStream.ToArray();
+		}
+	}
 }

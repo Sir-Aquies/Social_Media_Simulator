@@ -1,0 +1,50 @@
+﻿@model RegisterModel
+
+@{
+	ViewData["Title"] = "Register";
+}
+
+<link rel="stylesheet" href="~/css/RegisterCSS.css" asp-append-version="true" />
+
+<div style="margin:5rem"></div>
+
+<div class="form-container">
+	<h1 style="text-align:center">Register</h1>
+
+	<form method="post">
+		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+		<div class="field-container">
+			<label asp-for="Email"></label>
+			<input asp-for="Email" />
+			<span asp-validation-for="Email" class="text-danger"></span>
+
+			<label asp-for="UserName"></label>
+			<input asp-for="UserName" />
+			<span asp-validation-for="UserName" class="text-danger"></span>
+
+			<label asp-for="DateofBirth"></label>
+			<input asp-for="DateofBirth" />
+			<span asp-validation-for="DateofBirth" class="text-danger"></span>
+
+			<label asp-for="Password"></label>
+			<input asp-for="Password" id="Password" />
+			<span asp-validation-for="Password" class="text-danger"></span>
+
+			<label asp-for="ConfirmPassword"></label>
+			<input asp-for="ConfirmPassword" />
+			<span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+		</div>
+
+		<div class="button-container">
+			<a asp-area="" asp-action="Login">Log in instead</a>
+			<input type="submit" value="Create Account" />
+		</div>
+	</form>
+</div>
+
+@section Scripts {
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
+	}

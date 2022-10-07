@@ -3,33 +3,35 @@ using Microsoft.AspNetCore.Mvc;
 using WebProject.Models;
 using WebProject.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebProject.Controllers
 {
+	[Authorize]
 	public class ProfileController : Controller
 	{
 		private readonly WebProjectContext _Models;
 		private readonly ILogger<ProfileController> _Logger;
+		private readonly UserManager<UserModel> userManager;
 
-		public ProfileController(WebProjectContext Models, ILogger<ProfileController> logger)
+		public ProfileController(WebProjectContext Models, UserManager<UserModel> manager, ILogger<ProfileController> logger)
 		{
 			_Models = Models;
 			_Logger = logger;
+			userManager = manager;
 		}
 
-		public async Task<IActionResult> Index(int? UserId)
+		public async Task<IActionResult> Index()
 		{
-			if (UserId == null)
-			{
-				return View(null);
-			}
-
-			UserModel userModel = await _Models.Users.Include(u => u.Posts).AsNoTracking().FirstOrDefaultAsync(us => us.Id == UserId);
+			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
 
 			if (userModel == null)
 			{
-				return NotFound();
-			}
+                return RedirectToAction("Logout", "Account");
+            }
+
+			userModel.Posts = await _Models.Posts.Where(u => u.UserId == userModel.Id).ToListAsync();
 
 			if (TempData["ErrorMessage"] != null)
 			{
@@ -45,112 +47,101 @@ namespace WebProject.Controllers
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> Index(string Content, int UserId, IFormFile pic)
+		public async Task<IActionResult> CreatePost(string Content, IFormFile Media)
 		{
+			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
 			PostModel post = new PostModel();
-			post.UserModelId = UserId;
 
-			if (Content != null)
+			if (!string.IsNullOrEmpty(Content))
 			{
-				post.PostContent = Content;
+				post.Content = Content;
 			}
 
-			if (pic != null)
+			if (Media != null)
 			{
-				post.Media = await GetBytes(pic);
-				//var picbyte = await GetBytes(pic);
-				//post.Media = Convert.ToBase64String(picbyte);
-				//TODO - change the byte[] to nvarchar(MAX).
+				post.Media = Convert.ToBase64String(await GetBytes(Media));
 			}
 
-			if (!ModelState.IsValid)
+			if (!string.IsNullOrEmpty(post.Content) || post.Media != null)
 			{
-				return RedirectToAction("UserPage", "Profile", new { UserId = UserId });
+				post.UserId = userModel.Id;
+				_Models.Posts.Add(post);
+				await _Models.SaveChangesAsync();
 			}
 
-			_Models.Posts.Add(post);
-			await _Models.SaveChangesAsync();
-
-			return RedirectToAction("Index", new { UserId });
+			return RedirectToAction("Index");
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> EditPost(int? PostId, int UserId, string Content, IFormFile Media, string DeleteMedia)
+		public async Task<IActionResult> EditPost(int PostId, string Content, IFormFile Media, string DeleteMedia)
 		{
-			PostModel postModel = await _Models.Posts.FirstOrDefaultAsync(us => us.Id == PostId);
-			
-			if (postModel != null)
+			PostModel post = await _Models.Posts.FirstOrDefaultAsync(p => p.Id == PostId);
+			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
+
+			if (Media != null)
 			{
-				if (Media != null)
-				{
-					postModel.Media = await GetBytes(Media);
-				}
-				else if (DeleteMedia == "true" && Media == null)
-				{
-					postModel.Media = null;
-				}
+				post.Media = Convert.ToBase64String(await GetBytes(Media));
+			}
+			else if (DeleteMedia == "true" && Media == null)
+			{
+				post.Media = null;
+			}
 
-				if (!string.IsNullOrEmpty(Content) && Content != postModel.PostContent)
-				{
-					postModel.PostContent = Content;
-				}
+			if (!string.IsNullOrEmpty(Content) && Content != post.Content)
+			{
+				post.Content = Content;
+			}
 
-				postModel.IsEdited = true;
-				_Models.Attach(postModel).State = EntityState.Modified;
+			if (!string.IsNullOrEmpty(post.Content) || post.Media != null)
+			{
+				post.IsEdited = true;
+				_Models.Posts.Update(post);
 				await _Models.SaveChangesAsync();
 				TempData["Message"] = "Post successfully updated.";
+				return RedirectToAction("Index");
 			}
 			else
 			{
 				TempData["ErrorMessage"] = "Sorry, something went wrong";
-				return RedirectToAction("Index", new { UserId = UserId });
 			}
 
-			return RedirectToAction("Index", new { UserId = UserId });
+			return RedirectToAction("Index");
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> LookforPost(int? PostId)
+		public async Task<IActionResult> LookforPost(int PostId)
 		{
-			if (PostId == null)
-			{
-				return View();
-			}
-
-			PostModel postModel = await _Models.Posts.FirstOrDefaultAsync(us => us.Id == PostId);
+			PostModel postModel = await _Models.Posts.AsNoTracking().FirstOrDefaultAsync(us => us.Id == PostId);
 
 			if (postModel == null)
-			{
-				return View();
-			}
-
-			return PartialView("PartialEditPost", postModel);
-		}
-
-		[HttpGet]
-		public IActionResult LookForCreatePost() => PartialView("CreatePost");
-
-		public async Task<IActionResult> DeletePost(int? PostId, int? UserId)
-		{
-			if (PostId == null)
 			{
 				return NotFound();
 			}
 
+			return PartialView("EditPost", postModel);
+		}
+
+		[HttpPost]
+		public IActionResult LookForCreatePost() => PartialView("CreatePost");
+
+		[HttpPost]
+		public async Task<IActionResult> DeletePost(int PostId)
+		{
+			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
 			PostModel postModel = await _Models.Posts.FirstOrDefaultAsync(us => us.Id == PostId);
 
-			if (postModel != null)
+            if (userModel == null)
+            {
+                return RedirectToAction("Logout", "Account");
+            }
+
+            if (postModel != null)
 			{
-				//postModel.PostContent = null;
-				//postModel.UserModelId = 0;
-				//postModel.Media = null;
-				//.Attach(postModel).State = EntityState.Modified;
 				_Models.Remove(postModel);
-				// TODO - make it so that i doesn't remove the post from the database.
 				await _Models.SaveChangesAsync();
 			}
 
-			return RedirectToAction("Index", new { UserId = UserId });
+			return RedirectToAction("Index");
 		}
 
 		private async Task<byte[]> GetBytes(IFormFile formFile)
