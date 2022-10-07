@@ -1,24 +1,20 @@
 ﻿/*Global Changes*/
-div.SettingsCenterBox {
+.settings-center-box {
 	width: 100%;
 	margin-right: 0;
 	border: 0;
 	display: block;
 }
 
-/*div.SettingsCenterBox *{
-	font-size: var(--SmallTextsize) !important;
-}*/
-
-div.AllContainerSettings {
+.all-container-settings {
 	flex-direction: column;
 }
 
-div.LeftBoxSettings {
+.left-box-settings {
 	width: 100%;
 }
 
-div.ActionsBox {
+.actions-container {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
@@ -26,7 +22,7 @@ div.ActionsBox {
 	margin: 0;
 }
 
-div.ActionsBox a {
+.actions-container a {
 	text-decoration: none;
 	width: fit-content;
 	padding: 0 0 0.4rem 0;
@@ -35,16 +31,16 @@ div.ActionsBox a {
 	font-size: 16px;
 }
 
-div.ActionsBox a:hover {
+.actions-container a:hover {
 	font-size: 17px;
 }
 
 /*EditProfilePage*/
-.EditProfileForm {
+.edit-profile-form {
 	width: 100%;
 }
 
-div.SettingsPicFrame {
+.settings-pic-frame {
 	width: 60%;
 	display: flex;
 	flex-wrap: wrap;
@@ -52,9 +48,7 @@ div.SettingsPicFrame {
 	align-items: flex-start;
 }
 
-div.SettingsPicFrame img {
-	width: 100%;
-	height: auto;
+.settings-pic-frame img {
 	max-width: 15rem;
 	max-height: 15rem;
 	border-radius: 50%;
@@ -62,28 +56,27 @@ div.SettingsPicFrame img {
 	margin-bottom: 0.5rem;
 }
 
-div.InputSettings {
+.input-settings {
 	width: 100% !important;
 	padding: 0;
 	border-radius: 0 !important;
 	/*border: 1px solid blue;*/
 }
 
-div.InputSettings input, textarea, label{
+.input-settings input, textarea, label{
 	font-size: var(--textsize);
-	margin: 0;
 	color: var(--colortext);
 	height: fit-content;
 }
 
-div.InputSettings input {
+.input-settings input {
 	width: 100%;
 	margin-bottom: 0.8rem;
 	background-color: transparent;
 	border: 1px solid var(--BorderColor);
 }
 
-div.InputSettings textarea {
+.input-settings textarea {
 	min-height: 15rem;
 	width: 100%;
 	max-width: 40rem;
@@ -92,11 +85,11 @@ div.InputSettings textarea {
 	border: 1px solid var(--BorderColor);
 }
 
-div.SettingsButton {
+.settings-button {
 	width: 100%;
 }
 
-.ButtonEdit {
+.button-edit {
 	background-color: transparent;
 	border: 1px solid var(--BorderColor);
 	padding: 0.5rem;
@@ -107,11 +100,11 @@ div.SettingsButton {
 }
 
 /*AppearanceOptionsPage*/
-div.AppearanceOptions * {
+.appearance-options * {
 	font-size: var(--textsize);
 }
 
-div.AppearanceOptions br, hr{
+.appearance-options br, hr {
 	margin: 0.5rem;
 }
 
@@ -189,58 +182,30 @@ div.AppearanceOptions br, hr{
 		display: none;
 	}
 
-	.left-box {
-		display: block;
-		width: 39.5%;
-		height: 100%;
-		margin-right: 0.5%;
-	}
-		
-	.post-info .post-option-button {
-		margin-right: 1.2rem;
-	}
-
-	.post-form {
-		left: 0;
-		right: unset;
-	}
-
-	.post-form input {
-		text-align: left;
-	}
-
-	.post-div {
-		width: 50rem;
-	}
-
-	.center-box {
-		width: 60%;
-	}
-
 	/*EditProfilePage*/
-	div.SettingsCenterBox{
+	.settings-center-box{
 		width: 60%;
 	}
 
-	div.SettingsPicFrame {
+	.settings-pic-frame {
 		width: 30%;
 		float: right;
 	}
 
-	div.InputSettings {
+	.input-settings {
 		width: 70% !important;
 		float: left;
 	}
 
-	div.InputSettings input {
+	.input-settings input {
 		width: 80%;
 	}
 
-	div.InputSettings textarea {
+	.input-settings textarea {
 		width: 80%;
 	}
 
-	div.SettingsButton {
+	.settings-button {
 		clear: both;
 	}
 }

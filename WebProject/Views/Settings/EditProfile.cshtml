@@ -7,77 +7,63 @@
 <link rel="stylesheet" href="~/css/RegisterCSS.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/HomePageMid.css" asp-append-version="true" />
 
-@*@if (!string.IsNullOrEmpty(ViewBag.Message)){
-	<div class="AlertMessage" id="MessageSuccess">@ViewBag.Message <div class="CloseButton" onclick="this.parentElement.style.display='none';"></div></div>
-}*@
-
-<div class="AllContainer AllContainerSettings">
-	<div class="LeftBoxSettings">
+<div class="all-container all-container-settings">
+	<div class="left-box-settings">
 		<partial name="SettingsActions"></partial>
 	</div>
 
 	<hr style="margin: 0.5rem 0" />
 
-	<div class="SettingsCenterBox CenterBox">
-		@if (Model is UserModel && Model != null)
+	<div class="settings-center-box center-box">
+		@if (Model is UserModel)
 		{
-			<form method="post" enctype="multipart/form-data" class="EditProfileForm">
-				<input type="hidden" asp-for="Id" value="@Model.Id" />
-				<div class="FieldContainer InputSettings">
+			<form method="post" enctype="multipart/form-data" class="edit-profile-form">
+				<input type="hidden" name="Id" value="@Model.Id" />
+
+				<div class="field-container input-settings">
 					<label>Username</label>
-					<input asp-for="Username" value="@Model.Username" />
-					<span asp-validation-for="Username" class="text-danger"></span>
+					<input name="UserName" value="@Model.UserName" />
+					<span asp-validation-for="UserName" class="text-danger"></span>
 
-					<label>First name</label>
-					@if (!string.IsNullOrEmpty(Model.FirstName))
+					<label>Name</label>
+					@if (!string.IsNullOrEmpty(Model.Name))
 					{
-						<input asp-for="FirstName" value="@Model.FirstName" />
+						<input name="Name" value="@Model.Name" />
 					}
 					else
 					{
-						<input asp-for="FirstName" />
+						<input name="Name" />
 					}
-					<span asp-validation-for="FirstName" class="text-danger"></span>
-
-					<label>Last name</label>
-					@if (!string.IsNullOrEmpty(Model.LastName))
-					{
-						<input asp-for="LastName" value="@Model.LastName" />
-					}
-					else
-					{
-						<input asp-for="LastName" />
-					}
-					<span asp-validation-for="LastName" class="text-danger"></span>
+					<span asp-validation-for="Name" class="text-danger"></span>
 
 					<label>Description</label>
 					@if (!string.IsNullOrEmpty(Model.Description))
 					{
-						<textarea asp-for="Description">@Model.Description</textarea>
+						<textarea name="Description">@Model.Description</textarea>
 					}
 					else
 					{
-						<textarea asp-for="Description"></textarea>
+						<textarea name="Description"></textarea>
 					}
 					<span asp-validation-for="Description" class="text-danger"></span>
 				</div>
 
-				<div class="SettingsPicFrame">
+				<div class="settings-pic-frame">
 					@if (Model.ProfilePicture != null)
 					{
-						<img src="data:image/png;base64,@Convert.ToBase64String(Model.ProfilePicture)" id="SettingsFrame" />
+						<img src="data:image/png;base64,@Model.ProfilePicture" id="SettingsFrame" />
 					}
 					else
 					{
-						<img src="~/Valentine.jpg" id="SettingsFrame" />
+						<img src="" id="SettingsFrame" />
 					}
-					<input type="button" value="Edit Picture" onclick="FakeCall()" class="ButtonEdit" />
+					<input type="button" value="Edit Picture" onclick="FakeCall()" class="button-edit" />
 					<input type="file" id="Settingsfile" name="ProfilePicture" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" onchange="SettingImagePreview(this)" style="display:none;"/>
 				</div>
 
-				<div class="SettingsButton">
+				<div class="settings-button">
 					<p>For changing the password and email address check "Passwords and Security".</p>
-					<input type="submit" value="Update profile" class="ButtonEdit" />
+					<input type="submit" value="Update profile" class="button-edit" />
 				</div>
 
 			</form>

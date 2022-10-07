@@ -7,17 +7,17 @@
 <link rel="stylesheet" href="~/css/RegisterCSS.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/HomePageMid.css" asp-append-version="true" />
 
-<div class="AllContainer AllContainerSettings">
-	<div class="LeftBoxSettings">
+<div class="all-container all-container-settings">
+	<div class="left-box-settings">
 		<partial name="SettingsActions"></partial>
 	</div>
 
 	<hr style="margin: 0.5rem 0" />
 
-	<div class="SettingsCenterBox CenterBox"><br />
-		@if (Model is UserModel && Model != null)
+	<div class="settings-center-box center-box"><br />
+		@if (Model is UserModel)
 		{
-			<div class="AppearanceOptions">
+			<div class="appearance-options">
 				<label>Change mode</label>
 				<hr />
 				<input type="radio" id="LightMode" name="mode" value="Lightmode" onclick="ChangeMode()" />
@@ -27,7 +27,6 @@
 
 				<br />
 				<br />
-				@*<input class="ButtonEdit" type="button" onclick="ChangeMode()" value="Apply changes"/>*@
 
 				<br />
 				<label>Customize Appareance</label>
@@ -50,22 +49,21 @@
 
 				<br />
 				<br />
-				<input class="ButtonEdit" type="button" onclick="CostumAppareance()" value="Apply changes" />
+				<input class="button-edit" type="button" onclick="CostumAppareance()" value="Apply changes" />
 
 				<br />
 				<label>Post Settings</label>
 				<hr />
 
-				<input id="ModelId" type="hidden" value="@Model.Id" />
 				<label>Auto-show post images</label>
 				<label class="Switch">
 					@if (Model.ShowImages)
 					{
-						<input id="Submit" type="checkbox" name="ShowImages" class="ToggleButton" value="@Model.ShowImages" checked />
+						<input id="ShowImages" type="checkbox" class="ToggleButton" value="@Model.ShowImages" checked />
 					}
 					else
 					{
-						<input id="Submit" type="checkbox" name="ShowImages" class="ToggleButton" value="@Model.ShowImages" />
+						<input id="ShowImages" type="checkbox" class="ToggleButton" value="@Model.ShowImages" />
 					}
 					<span class="BallButton round"></span>
 				</label>
@@ -77,6 +75,7 @@
 
 <script src="~/lib/jquery/dist/jquery.js"></script>
 <script src="~/js/AppearanceJS.js" asp-append-version="true"></script>
+
 <script>
 if (savedTheme == "Darkmode") {
     document.getElementById("DarkMode").checked = true;

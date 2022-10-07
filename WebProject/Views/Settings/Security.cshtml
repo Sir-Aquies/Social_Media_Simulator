@@ -1,4 +1,4 @@
-﻿@model UserModel
+﻿@model PasswordUser
 @{
 	ViewData["Title"] = "Passwords and Security";
 }
@@ -7,34 +7,35 @@
 <link rel="stylesheet" href="~/css/RegisterCSS.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/HomePageMid.css" asp-append-version="true" />
 
-<div class="AllContainer AllContainerSettings">
-	<div class="LeftBoxSettings">
+<div class="all-container all-container-settings">
+	<div class="left-box-settings">
 		<partial name="SettingsActions"></partial>
 	</div>
 
 	<hr style="margin: 0.5rem 0" />
 
-	<div class="SettingsCenterBox CenterBox"><br />
+	<div class="settings-center-box center-box"><br />
 		<label>Change password</label>
 		<hr style="margin: 0.5rem" />
 
 		<form method="post">
-			<input type="hidden" asp-for="Id" value="@Model.Id"/>
-			<div class="FieldContainer InputSettings">
+			<div asp-validation-summary="All" class="text-danger"></div>
+			<div class="field-container input-settings">
 				<label>Old Password</label>
-				<input name="OldPassword" type="password"/>
+				<input asp-for="OldPassword"/>
+				<span asp-validation-for="OldPassword" class="text-danger"></span>
 
 				<label>New password</label>
-				<input asp-for="Password"/>
-				<span asp-validation-for="Password" class="text-danger"></span>
+				<input asp-for="NewPassword" />
+				<span asp-validation-for="NewPassword" class="text-danger"></span>
 
 				<label>Confirm new password</label>
-				<input asp-for="ConfirmPassword"/>
-				<span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+				<input asp-for="ConfirmNewPassword"/>
+				<span asp-validation-for="ConfirmNewPassword" class="text-danger"></span>
 			</div>
 
-			<div class="SettingsButton">
-				<input type="submit" value="Update password" class="ButtonEdit"/>
+			<div class="settings-button">
+				<input type="submit" value="Update password" class="button-edit"/>
 			</div>
 		</form>
 
@@ -44,34 +45,31 @@
 		<hr style="margin: 0.5rem" />
 		
 		<label>Current email address: </label>
-		<label><b>@Model.EmailAddress</b></label>
+		<label><b>@Model.User.Email</b></label>
 
 		<br style="margin: 0.5rem;"/>
 
-		<form method="post" novalidate action="ChangeEmail" id="myform">
-			<input type="hidden" asp-for="Id" value="@Model.Id" />
-			<div class="FieldContainer InputSettings">
+		<form method="post" action="ChangeEmail" id="myform">
+			<div class="field-container input-settings">
 				<label>New email address</label>
-				<input asp-for="EmailAddress" />
-				<span asp-validation-for="EmailAddress" class="text-danger"></span>
+				<input name="Email" />
 			</div>
 
-			<div class="SettingsButton">
-				<input type="submit" value="Update email address" class="ButtonEdit" form="myform" />
+			<div class="settings-button">
+				<input type="submit" value="Update email address" class="button-edit" form="myform" />
 			</div>
 		</form>
 	</div>
 </div>
 
+@section Scripts {
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
+}
 <script>
 	const Message = document.getElementById("MessageSuccess");
 	if (Message) {
 		setInterval(function () { Message.style.display = "none" }, 30000);
 	}
 </script>
-
-@section Scripts {
-	@{
-		await Html.RenderPartialAsync("_ValidationScriptsPartial");
-	}
-	}

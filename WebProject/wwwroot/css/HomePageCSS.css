@@ -49,11 +49,11 @@ div.center-box {
 .create-post-button {
 	width: fit-content;
 	padding: 0.5rem 2rem;
-	background-color: var(--BackgroundColor);
+	background-color: transparent;
 	height: max-content;
 	margin: 0 auto;
 	display: block;
-	border-radius: 1rem;
+	border-radius: 0.5rem;
 	border: 1px solid var(--BorderColor);
 	font-size: var(--textsize);
 }
@@ -89,7 +89,7 @@ div.center-box {
 .post-form {
 	display: none;
 	position: absolute;
-	background-color: rgb(30, 30, 30);
+	background-color: var(--ShadowColor);
 	justify-content: right;
 	flex-direction: column;
 	right: 0;
@@ -101,7 +101,6 @@ div.center-box {
 	border: 0;
 	width: 100%;
 	height: fit-content;
-	margin: 0;
 	text-align: right;
 }
 
@@ -142,6 +141,8 @@ div.center-box {
 .post-content img {
 	max-width: 100%;
 	height: auto;
+	display: block;
+	margin: 0.5rem auto;
 }
 
 .post-content img.ImgFinder {
@@ -229,10 +230,38 @@ div.center-box {
 	text-align: center;
 }
 
+@media only screen and (min-width: 820px) {
+	.left-box {
+		display: block;
+		width: 40%;
+		height: 100%;
+	}
+	.post-info .post-option-button {
+		margin-right: 1.2rem;
+	}
+
+	.post-form {
+		left: 0;
+		right: unset;
+	}
+
+	.post-form input {
+		text-align: left;
+	}
+
+	.post-div {
+		width: 50rem;
+	}
+
+	.center-box {
+		width: 60%;
+	}
+}
+
 @media only screen and (min-width: 1600px) {
 	div.left-box {
 		display: block;
-		width: 24%;
+		width: 25%;
 	}
 
 	img.user-pic {
@@ -243,8 +272,7 @@ div.center-box {
 	}
 
 	div.center-box {
-		width: 49%;
-		margin-right: 1%;
+		width: 50%;
 	}
 
 	div.right-box {

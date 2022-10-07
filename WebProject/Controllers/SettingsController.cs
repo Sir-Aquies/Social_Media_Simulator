@@ -14,6 +14,7 @@ namespace WebProject.Controllers
 		private readonly WebProjectContext _Models;
 		private readonly UserManager<UserModel> userManager;
 		private readonly IPasswordHasher<UserModel> passwordHasher;
+
 		public SettingsController(WebProjectContext Models, IPasswordHasher<UserModel> passwordHshr, UserManager<UserModel> manager)
 		{
 			_Models = Models;
@@ -27,7 +28,7 @@ namespace WebProject.Controllers
 
 			if (userModel == null)
 			{
-				return NotFound();
+				return RedirectToAction("Logout", "Account");
 			}
 
 			return View(userModel);
@@ -76,8 +77,7 @@ namespace WebProject.Controllers
 			}
 			else
 			{
-				ViewBag.ErrorMessage = "User not found";
-				return View(userModel);
+				return RedirectToAction("Logout", "Account");
 			}
 		}
 
@@ -87,21 +87,20 @@ namespace WebProject.Controllers
 
 			if (userModel == null)
 			{
-				return NotFound();
+				return RedirectToAction("Logout", "Account");
 			}
 
 			return View(userModel);
 		}
 
 		[HttpPost]
-		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Appearance(bool ShowImages)
+		public async Task ShowImagesToggle()
 		{
 			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
 
 			if (userModel == null)
 			{
-				return NotFound();
+				return;
 			}
 
 			if (userModel.ShowImages)
@@ -114,17 +113,16 @@ namespace WebProject.Controllers
 			}
 
 			await userManager.UpdateAsync(userModel);
-
-			return View(userModel);
 		}
 
 		public async Task<IActionResult> Security()
 		{
-			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
+			PasswordUser passwordUser = new PasswordUser();
+			passwordUser.User = await userManager.GetUserAsync(HttpContext.User);
 
-			if (userModel == null)
+			if (passwordUser.User == null)
 			{
-				return NotFound();
+				return RedirectToAction("Logout", "Account");
 			}
 
 			if (TempData["ErrorMessage"] != null)
@@ -137,40 +135,44 @@ namespace WebProject.Controllers
 				ViewBag.Message = TempData["Message"].ToString();
 			}
 
-			return View(userModel);
+			return View(passwordUser);
 		}
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Security(string newPassword, string oldPassword)
+		public async Task<IActionResult> Security(PasswordUser passwordUser)
 		{
-			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
+			passwordUser.User = await userManager.GetUserAsync(HttpContext.User);
 
-			if (string.IsNullOrEmpty(oldPassword))
+			if (passwordUser.User == null)
 			{
-				ViewBag.ErrorMessage = "Old Password is invalid";
-				return View(userModel);
+				return RedirectToAction("Logout", "Account");
 			}
 
-			if (!string.IsNullOrEmpty(newPassword))
-			{
-				userModel.PasswordHash = passwordHasher.HashPassword(userModel, newPassword);
+			PasswordVerificationResult Pswrdresult = passwordHasher.VerifyHashedPassword(passwordUser.User, passwordUser.User.PasswordHash, passwordUser.OldPassword);
 
-				IdentityResult result = await userManager.UpdateAsync(userModel);
+			if (Pswrdresult == PasswordVerificationResult.Success)
+			{
+				passwordUser.User.PasswordHash = passwordHasher.HashPassword(passwordUser.User, passwordUser.NewPassword);
+
+				IdentityResult result = await userManager.UpdateAsync(passwordUser.User);
 
 				if (result.Succeeded)
 				{
 					ViewBag.Message = "Password successfully updated.";
-					return View(userModel);
+					return View(passwordUser);
 				}
 				else
 				{
-					ViewBag.ErrorMessage = "Sorry something went worng.";
-					return View(userModel);
+					ViewBag.ErrorMessage = "New password is invalid";
+					return View(passwordUser);
 				}
 			}
-
-			return View(userModel);
+			else
+			{
+				ViewBag.ErrorMessage = "Old Password is invalid.";
+				return View(passwordUser);
+			}
 		}
 
 		[HttpPost]
@@ -181,7 +183,7 @@ namespace WebProject.Controllers
 
 			if (userModel == null)
 			{
-				return NotFound();
+				return RedirectToAction("Logout", "Account");
 			}
 
 			if (userModel.Email == newEmail)

@@ -28,8 +28,8 @@ namespace WebProject.Controllers
 
 			if (userModel == null)
 			{
-				return NotFound();
-			}
+                return RedirectToAction("Logout", "Account");
+            }
 
 			userModel.Posts = await _Models.Posts.Where(u => u.UserId == userModel.Id).ToListAsync();
 
@@ -124,12 +124,18 @@ namespace WebProject.Controllers
 		[HttpPost]
 		public IActionResult LookForCreatePost() => PartialView("CreatePost");
 
+		[HttpPost]
 		public async Task<IActionResult> DeletePost(int PostId)
 		{
 			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
 			PostModel postModel = await _Models.Posts.FirstOrDefaultAsync(us => us.Id == PostId);
 
-			if (postModel != null && postModel.UserId == userModel.Id)
+            if (userModel == null)
+            {
+                return RedirectToAction("Logout", "Account");
+            }
+
+            if (postModel != null)
 			{
 				_Models.Remove(postModel);
 				await _Models.SaveChangesAsync();
