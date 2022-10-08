@@ -4,72 +4,62 @@
 }
 
 <link rel="stylesheet" href="~/css/HomePageCSS.css" asp-append-version="true"/>
-<link rel="stylesheet" href="~/css/RegisterCSS.css" asp-append-version="true" />
-<link rel="stylesheet" href="~/css/HomePageMid.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/FormsCSS.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/SettingsCSS.css" asp-append-version="true" />
 
-<div class="all-container all-container-settings">
-	<div class="left-box-settings">
+<div class="box-container">
+	<div class="top-box">
 		<partial name="SettingsActions"></partial>
 	</div>
 
 	<hr style="margin: 0.5rem 0" />
 
-	<div class="settings-center-box center-box"><br />
-		@if (Model is UserModel)
-		{
-			<div class="appearance-options">
-				<label>Change mode</label>
-				<hr />
-				<input type="radio" id="LightMode" name="mode" value="Lightmode" onclick="ChangeMode()" />
-				<label for="LightMode">Light mode</label>
-				<input type="radio" id="DarkMode" name="mode" value="Darkmode" onclick="ChangeMode()" />
-				<label for="DarkMode">Dark mode</label>
+	<div class="center-box">
+		<div class="appearance-options">
+			<label class="label-block">Change mode</label>
+			<hr />
 
-				<br />
-				<br />
+			<label for="LightMode">Light mode</label>
+			<input type="radio" id="LightMode" name="mode" value="Lightmode" onclick="ChangeMode()" />
 
-				<br />
-				<label>Customize Appareance</label>
-				<hr />
+			<label for="DarkMode">Dark mode</label>
+			<input type="radio" id="DarkMode" name="mode" value="Darkmode" onclick="ChangeMode()" />
 
-				<label>Background Color</label><br />
-				<input type="color" id="ColorBackground" value="#141414" />
-				<br />
-				<label>Layout Color</label><br />
-				<input type="color" id="ColorLayout" value="#0f0f0f" />
-				<br />
-				<label>Text Color</label><br />
-				<input type="color" id="ColorText" value="#ffffff" />
-				<br />
-				<label>Border Color</label><br />
-				<input type="color" id="ColorBorder" value="#ffffff" />
-				<br />
-				<label>Shadow Color</label><br />
-				<input type="color" id="ColorShadow" value="#1b1b1b" />
+			<label class="label-block">Customize Appareance</label>
+			<hr />
 
-				<br />
-				<br />
-				<input class="button-edit" type="button" onclick="CostumAppareance()" value="Apply changes" />
+			<label class="label-block">Background Color</label>
+			<input type="color" id="ColorBackground" value="#141414" />
 
-				<br />
-				<label>Post Settings</label>
-				<hr />
+			<label class="label-block">Layout Color</label>
+			<input type="color" id="ColorLayout" value="#0f0f0f" />
 
-				<label>Auto-show post images</label>
-				<label class="Switch">
-					@if (Model.ShowImages)
-					{
-						<input id="ShowImages" type="checkbox" class="ToggleButton" value="@Model.ShowImages" checked />
-					}
-					else
-					{
-						<input id="ShowImages" type="checkbox" class="ToggleButton" value="@Model.ShowImages" />
-					}
-					<span class="BallButton round"></span>
-				</label>
+			<label class="label-block">Text Color</label>
+			<input type="color" id="ColorText" value="#ffffff" />
 
-			</div>
-		}
+			<label class="label-block">Border Color</label>
+			<input type="color" id="ColorBorder" value="#ffffff" />
+
+			<label class="label-block">Shadow Color</label>
+			<input type="color" id="ColorShadow" value="#1b1b1b" />
+
+			<input class="button-edit" type="button" onclick="CostumAppareance()" value="Apply changes" />
+
+			<label class="label-block">Post Settings</label>
+
+			<label>Auto-show post images</label>
+			<label class="Switch">
+				@if (Model.ShowImages)
+				{
+					<input id="ShowImages" type="checkbox" class="ToggleButton" value="@Model.ShowImages" checked />
+				}
+				else
+				{
+					<input id="ShowImages" type="checkbox" class="ToggleButton" value="@Model.ShowImages" />
+				}
+				<span class="BallButton round"></span>
+			</label>
+		</div>
 	</div>
 </div>
 
@@ -78,7 +68,7 @@
 
 <script>
 if (savedTheme == "Darkmode") {
-    document.getElementById("DarkMode").checked = true;
+	document.getElementById("DarkMode").checked = true;
 }
 
 if (savedTheme == "Lightmode") {

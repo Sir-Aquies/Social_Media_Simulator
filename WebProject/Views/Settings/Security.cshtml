@@ -4,23 +4,23 @@
 }
 
 <link rel="stylesheet" href="~/css/HomePageCSS.css" asp-append-version="true"/>
-<link rel="stylesheet" href="~/css/RegisterCSS.css" asp-append-version="true" />
-<link rel="stylesheet" href="~/css/HomePageMid.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/FormsCSS.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/SettingsCSS.css" asp-append-version="true" />
 
-<div class="all-container all-container-settings">
-	<div class="left-box-settings">
+<div class="box-container">
+	<div class="top-box">
 		<partial name="SettingsActions"></partial>
 	</div>
 
-	<hr style="margin: 0.5rem 0" />
+	<hr style="margin: 0.5rem" />
 
-	<div class="settings-center-box center-box"><br />
+	<div class="center-box">
 		<label>Change password</label>
 		<hr style="margin: 0.5rem" />
 
 		<form method="post">
 			<div asp-validation-summary="All" class="text-danger"></div>
-			<div class="field-container input-settings">
+			<div class="field-container">
 				<label>Old Password</label>
 				<input asp-for="OldPassword"/>
 				<span asp-validation-for="OldPassword" class="text-danger"></span>

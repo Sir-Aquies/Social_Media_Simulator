@@ -153,11 +153,3 @@ function SettingImagePreview(input) {
 function FakeCall() {
 	document.getElementById("Settingsfile").click();
 };
-
-/*ProfileIndex*/
-function ShowPostImg(element) {
-	const img = element.nextElementSibling;
-	img.id = "currentimg";
-	$(`#${img.id}`).slideToggle();
-	img.id = "";
-};

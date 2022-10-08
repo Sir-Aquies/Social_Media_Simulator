@@ -1,16 +1,13 @@
-﻿/*Global Changes*/
-.settings-center-box {
-	width: 100%;
-	margin-right: 0;
-	border: 0;
+﻿.center-box {
+	border: 1px solid red !important;
 	display: block;
 }
 
-.all-container-settings {
+.box-container {
 	flex-direction: column;
 }
 
-.left-box-settings {
+.top-box {
 	width: 100%;
 }
 
@@ -36,10 +33,6 @@
 }
 
 /*EditProfilePage*/
-.edit-profile-form {
-	width: 100%;
-}
-
 .settings-pic-frame {
 	width: 60%;
 	display: flex;
@@ -48,41 +41,35 @@
 	align-items: flex-start;
 }
 
+.field-container {
+	border: 1px solid green;
+}
+
+.field-container > input {
+	display: block;
+	padding: 0.4rem;
+	width: 90%;
+}
+
+.field-container > label {
+	display: block;
+}
+
+.field-container > textarea {
+	display: block;
+	padding: 0.4rem;
+	width: 90%;
+	height: 15rem;
+}
+
 .settings-pic-frame img {
+	width: 100%;
+	height: auto;
 	max-width: 15rem;
 	max-height: 15rem;
 	border-radius: 50%;
 	border: 1px solid var(--BorderColor);
 	margin-bottom: 0.5rem;
-}
-
-.input-settings {
-	width: 100% !important;
-	padding: 0;
-	border-radius: 0 !important;
-	/*border: 1px solid blue;*/
-}
-
-.input-settings input, textarea, label{
-	font-size: var(--textsize);
-	color: var(--colortext);
-	height: fit-content;
-}
-
-.input-settings input {
-	width: 100%;
-	margin-bottom: 0.8rem;
-	background-color: transparent;
-	border: 1px solid var(--BorderColor);
-}
-
-.input-settings textarea {
-	min-height: 15rem;
-	width: 100%;
-	max-width: 40rem;
-	margin-bottom: 0.8rem;
-	background-color: transparent;
-	border: 1px solid var(--BorderColor);
 }
 
 .settings-button {
@@ -104,10 +91,9 @@
 	font-size: var(--textsize);
 }
 
-.appearance-options br, hr {
-	margin: 0.5rem;
+.appearance-options > .label-block {
+	display: block;
 }
-
 
 .Switch {
 	position: relative;
@@ -170,42 +156,33 @@
 }
 
 @media only screen and (min-width: 820px) {
-	div.HeadHome {
-		display: none;
-	}
-
-	div.DisplayTab {
-		display: none;
-	}
-
-	div.UserInfoMobile {
-		display: none;
-	}
-
 	/*EditProfilePage*/
-	.settings-center-box{
-		width: 60%;
-	}
-
 	.settings-pic-frame {
 		width: 30%;
 		float: right;
 	}
 
-	.input-settings {
+	.field-container {
 		width: 70% !important;
 		float: left;
 	}
 
-	.input-settings input {
-		width: 80%;
+	.field-container > input {
+		width: 70%;
 	}
 
-	.input-settings textarea {
+	.field-container > textarea {
 		width: 80%;
+		height: 20rem;
 	}
 
 	.settings-button {
 		clear: both;
+	}
+}
+
+@media only screen and (min-width: 1600px) {
+	.center-box {
+		width: 60% !important;
 	}
 }

@@ -2,34 +2,29 @@
 	box-sizing: border-box;
 }
 
-body {
-	background-color: var(--BackgroundColor);
-	color: var(--colortext);
-}
-
-div.form-container {
+.form-container {
 	width: 100%;
 	padding: 1.5rem;
 	border-radius: 0.7rem;
 }
 
-div.field-container {
+.field-container {
 	width: 100%;
 	color: var(--colortext);
 	font-size: var(--textsize);
 	margin-bottom: 1.5rem;
 }
 
-div.field-container input, textarea {
+.field-container > input, textarea {
 	width: 100%;
 	border: 1px solid var(--BorderColor);
 	background-color: transparent;
 	border-radius: 0.7rem;
-	padding: 0.4rem 0.8rem;
+	padding: 0.4rem 0.5rem;
 	margin-bottom: 0.5rem;
 }
 
-div.button-container {
+.button-container {
 	width: 100%;
 	margin-right: auto;
 	margin-left: auto;
@@ -40,7 +35,7 @@ div.button-container {
 	justify-content: space-around;
 }
 
-div.button-container input {
+.button-container > input {
 	background-color: transparent;
 	width: fit-content;
 	padding: 0.6rem;
@@ -48,7 +43,7 @@ div.button-container input {
 	border-radius: 0.5rem;
 }
 
-div.button-container a {
+.button-container a {
 	border: 1px solid var(--BorderColor);
 	border-radius: 0.5rem;
 	width: fit-content;
@@ -58,14 +53,14 @@ div.button-container a {
 }
 
 @media only screen and (min-width: 820px) {
-	div.form-container {
+	.form-container {
 		margin-right: auto;
 		margin-left: auto;
 		width: 50%;
 		border: 1px solid var(--BorderColor);
 	}
 
-	div.button-container {
+	.button-container {
 		display: flex;
 		flex-wrap: nowrap;
 	}

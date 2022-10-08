@@ -17,24 +17,28 @@
 </head>
 <body>
 	<header>
-		<nav class="HeadBar">
-			<div class="HeadContainer">
-				<div class="HeadHome">
+		<nav class="head-bar">
+			<div class="head-container">
+				<div class="head-home">
 					<!--Image that when click display the DisplayTab with the user info-->
-					@if (@Model is UserModel){
-						<img src="data:image/png;base64,@Model.ProfilePicture" id="UserMobilePic" class="UserInfoMobile" onclick="ToggleTab()" onmousedown="event.stopPropagation();" />
+					@if (Model is UserModel){
+						<img src="data:image/png;base64,@Model.ProfilePicture" id="UserMobilePic" class="user-info-mobile" onclick="ToggleTab()" onmousedown="event.stopPropagation();" />
+					}
+
+					@if (Model is PasswordUser){
+						<img src="data:image/png;base64,@Model.User.ProfilePicture" id="UserMobilePic" class="user-info-mobile" onclick="ToggleTab()" onmousedown="event.stopPropagation();" />
 					}
 				</div>
 
-				<div class="HeadList" id="HeadList" onmousedown="event.stopPropagation();">
-					<div class="HeadListButtonContainer">
-						<div class="HeadListButton"></div>
-						<div class="HeadListButton"></div>
-						<div class="HeadListButton"></div>
+				<div class="head-list" id="HeadList" onmousedown="event.stopPropagation();">
+					<div class="head-list-buttons">
+						<div></div>
+						<div></div>
+						<div></div>
 					</div>
 					
-					<div class="TabList" id="TabList" onclick="event.stopPropagation();">
-						@if (Model is UserModel)
+					<div class="tab-list" id="TabList" onclick="event.stopPropagation();">
+						@if (Model is UserModel || Model is PasswordUser)
 						{
 							<a asp-area="" asp-controller="Profile" asp-action="Index">Home</a>
 						}
@@ -49,51 +53,30 @@
 							<a asp-area="" asp-controller="Account" asp-action="Register">Register</a>
 						}
 						
-						@if (Model is UserModel)
+						@if (Model is UserModel || Model is PasswordUser)
 						{
-							<a class="Right" asp-area="" asp-controller="Settings" asp-action="EditProfile">Settings</a>
+							<a class="right" asp-area="" asp-controller="Settings" asp-action="EditProfile">Settings</a>
 						}
 					</div>
 				</div>
 			</div>
 		</nav>
-		<!--div that is display when UserMobilePic is clicked-->
-		<div class="DisplayTab" id="DisplayTab" onmousedown="event.stopPropagation();">
-			<div class="UserInfo">
-				@if (@Model is UserModel)
-				{
-					if (Model.ProfilePicture != null)
-					{
-						<img src="data:image/png;base64,@Model.ProfilePicture" class="UserProfilePic" />
-					}
-					else
-					{
-						<img class="UserProfilePic" src="" />
-					}
 
-					<p style="font-size: 2.5rem;">@Model.UserName</p>
-
-					@if (!string.IsNullOrEmpty(Model.Name))
-					{
-						<p>@Model.Name</p>
-					}
-
-					@if (!string.IsNullOrEmpty(Model.Description))
-					{
-						<p class="UserDescription">@Model.Description</p>
-					}
-
-					<p>Born: @Model.DateofBirth.ToShortDateString()</p>
-				}
-			</div>
-		</div>
+		@if (Model is UserModel)
+		{
+			<partial name="UserDisplayTab" model="Model"></partial>
+		}
+		else if (Model is PasswordUser)
+		{
+			<partial name="UserDisplayTab" model="Model.User"></partial>
+		}
 
 		@if (!string.IsNullOrEmpty(ViewBag.Message)){
-			<div class="AlertMessage" id="MessageSuccess">@ViewBag.Message <div class="CloseButton" onclick="this.parentElement.style.display='none';"></div></div>
+			<div class="alert-message" id="MessageSuccess">@ViewBag.Message <div class="close-button" onclick="this.parentElement.style.display='none';"></div></div>
 		}
 		else if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
 		{
-			<div class="AlertMessage" id="MessageSuccess">@ViewBag.ErrorMessage <div class="CloseButton" onclick="this.parentElement.style.display='none';"></div></div>
+			<div class="alert-message" id="MessageSuccess">@ViewBag.ErrorMessage <div class="close-button" onclick="this.parentElement.style.display='none';"></div></div>
 		}
 	</header>
 

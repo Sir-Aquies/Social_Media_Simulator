@@ -4,71 +4,60 @@
 }
 
 <link rel="stylesheet" href="~/css/HomePageCSS.css" asp-append-version="true" />
-<link rel="stylesheet" href="~/css/RegisterCSS.css" asp-append-version="true" />
-<link rel="stylesheet" href="~/css/HomePageMid.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/FormsCSS.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/SettingsCSS.css" asp-append-version="true" />
 
-<div class="all-container all-container-settings">
-	<div class="left-box-settings">
+<div class="box-container">
+	<div class="top-box">
 		<partial name="SettingsActions"></partial>
 	</div>
 
 	<hr style="margin: 0.5rem 0" />
 
-	<div class="settings-center-box center-box">
-		@if (Model is UserModel)
-		{
-			<form method="post" enctype="multipart/form-data" class="edit-profile-form">
-				<input type="hidden" name="Id" value="@Model.Id" />
+	<div class="center-box">
+		<form method="post" enctype="multipart/form-data">
+			<input type="hidden" name="Id" value="@Model.Id" />
 
-				<div class="field-container input-settings">
-					<label>Username</label>
-					<input name="UserName" value="@Model.UserName" />
-					<span asp-validation-for="UserName" class="text-danger"></span>
+			<div class="field-container">
+				<label>Username</label>
+				<input name="UserName" value="@Model.UserName" />
+				<span asp-validation-for="UserName" class="text-danger"></span>
 
-					<label>Name</label>
-					@if (!string.IsNullOrEmpty(Model.Name))
-					{
-						<input name="Name" value="@Model.Name" />
-					}
-					else
-					{
-						<input name="Name" />
-					}
-					<span asp-validation-for="Name" class="text-danger"></span>
+				<label>Name</label>
+				@if (!string.IsNullOrEmpty(Model.Name))
+				{
+					<input name="Name" value="@Model.Name" />
+				}
+				else
+				{
+					<input name="Name" />
+				}
+				<span asp-validation-for="Name" class="text-danger"></span>
 
-					<label>Description</label>
-					@if (!string.IsNullOrEmpty(Model.Description))
-					{
-						<textarea name="Description">@Model.Description</textarea>
-					}
-					else
-					{
-						<textarea name="Description"></textarea>
-					}
-					<span asp-validation-for="Description" class="text-danger"></span>
-				</div>
+				<label>Description</label>
+				<textarea name="Description">@if(!string.IsNullOrEmpty(Model.Description)){@Model.Description;}</textarea>
 
-				<div class="settings-pic-frame">
-					@if (Model.ProfilePicture != null)
-					{
-						<img src="data:image/png;base64,@Model.ProfilePicture" id="SettingsFrame" />
-					}
-					else
-					{
-						<img src="" id="SettingsFrame" />
-					}
-					<input type="button" value="Edit Picture" onclick="FakeCall()" class="button-edit" />
-					<input type="file" id="Settingsfile" name="ProfilePicture" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" onchange="SettingImagePreview(this)" style="display:none;"/>
-				</div>
+				<span asp-validation-for="Description" class="text-danger"></span>
+			</div>
 
-				<div class="settings-button">
-					<p>For changing the password and email address check "Passwords and Security".</p>
-					<input type="submit" value="Update profile" class="button-edit" />
-				</div>
+			<div class="settings-pic-frame">
+				@if (Model.ProfilePicture != null)
+				{
+					<img src="data:image/png;base64,@Model.ProfilePicture" id="SettingsFrame" />
+				}
+				else
+				{
+					<img src="" id="SettingsFrame" />
+				}
+				<input type="button" value="Edit Picture" onclick="FakeCall()" class="button-edit" />
+				<input type="file" id="Settingsfile" name="ProfilePicture" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" onchange="SettingImagePreview(this)" style="display:none;" />
+			</div>
 
-			</form>
-		}
-		
+			<div class="settings-button">
+				<p>For changing the password and email address check "Passwords and Security".</p>
+				<input type="submit" value="Update profile" class="button-edit" />
+			</div>
+		</form>
 	</div>
 </div>
 

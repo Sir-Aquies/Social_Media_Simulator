@@ -1,14 +1,13 @@
 ﻿:root {
-    /*--BackgroundColor: rgb(47, 0, 102);*/
     --BackgroundColor: rgb(20, 20, 20);
     --LayoutColor: rgb(15, 15, 15);
     --ShadowColor: rgb(27, 27, 27);
     --BorderColor: rgb(255, 255, 255);
     --colortext: white;
     --postBorder: rgb(128, 128, 128);
-    --SmallTextsize: 1rem;
-    --textsize: 1.2rem;
-    --BigTextsize: 1.5rem;
+    --SmallTextsize: 0.8rem;
+    --textsize: 1rem;
+    --BigTextsize: 1.2rem;
 }
 
 [data-theme="light"] {
@@ -18,6 +17,13 @@
     --BorderColor: rgb(0, 0, 0);
     --colortext: black;
 }
+
+body {
+    background-color: var(--BackgroundColor) !important;
+    color: var(--colortext) !important;
+    font-size: var(--textsize) !important;
+}
+
 
 /*
     --BackgroundColor: #121212;

@@ -1,0 +1,110 @@
+﻿.post-container {
+	width: 100%;
+	padding: 0.8rem;
+	border-top: 1px solid var(--BorderColor);
+}
+
+.post-container:last-child {
+	border-bottom: 1px solid var(--BorderColor);
+}
+
+.post-info {
+	width: 100%;
+	position: relative;
+	display: flex;
+	align-items: center;
+}
+
+.post-option-button {
+	position: relative;
+	margin-left: auto;
+}
+
+.post-option-button span {
+	transform: rotate(90deg);
+	font-size: 1.7rem;
+	display: block;
+}
+
+.post-form {
+	display: none;
+	position: absolute;
+	background-color: var(--ShadowColor);
+	justify-content: right;
+	flex-direction: column;
+	right: 0;
+	z-index: 50;
+}
+
+.post-form input {
+	background-color: transparent;
+	border: 0;
+	width: 100%;
+	height: fit-content;
+	text-align: right;
+}
+
+.post-form input:hover {
+	background-color: rgb(24, 24, 24);
+}
+
+.post-info img {
+	width: 3.3rem;
+	height: 3.3rem;
+	border-radius: 50%;
+	margin-right: 0.5rem;
+	border: 1px solid var(--BorderColor);
+}
+
+.post-content {
+	width: 100%;
+	height: fit-content;
+}
+
+.post-content div {
+	overflow-x: hidden;
+	overflow-y: auto;
+	width: 100%;
+	max-height: 35rem;
+	text-align: left;
+	white-space: pre-wrap;
+}
+
+.flip-div {
+	width: 100%;
+	text-align: center !important;
+	background-color: var(--ShadowColor);
+	border: 1px solid var(--BorderColor);
+	cursor: pointer;
+}
+
+.post-content img {
+	max-width: 100%;
+	height: auto;
+	display: block;
+	margin: 0.5rem auto;
+}
+
+.post-content img.ImgFinder {
+	display: none;
+}
+
+.post-stats {
+	width: 100%;
+	display: flex;
+	justify-content: left;
+	flex-wrap: wrap;
+}
+
+.post-stats button {
+	background-color: Transparent;
+	width: max-content;
+	padding: 0.5rem;
+	font-size: var(--SmallTextsize);
+	border: 0;
+	margin-right: 0.8rem;
+}
+
+.post-stats button span {
+	font-size: var(--SmallTextsize);
+}

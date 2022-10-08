@@ -53,65 +53,7 @@
 
 			if (Model.Posts.Any())
 			{
-				foreach (var p in Model.Posts.Reverse())
-				{
-					<div class="post-container">
-						<div class="post-info">
-							@if (Model.ProfilePicture != null) {
-								<img src="data:image/png;base64,@Model.ProfilePicture" />
-							}
-							else {
-								<img />
-							}
-
-							@if (p.IsEdited)
-							{
-								<span>@Model.UserName</span> <i style="font-size: 14px; margin-left: 0.5rem;">(This post is edited)</i>
-							}
-							else
-							{
-								<span>@Model.UserName</span>
-							}
-
-							<div type="button" class="post-option-button" id="PostOptionButton" onclick="OptionButton(this);" onmousedown="event.stopPropagation()"><span>...</span>
-								<form method="post" enctype="multipart/form-data" onmousedown="event.stopPropagation()" onclick="event.stopPropagation();" class="post-form">
-									<input type="hidden" name="PostId" value="@p.Id"/>
-
-									<input type="button" value="Edit" onclick="EditPostWindow(@p.Id.ToString(), this);" />
-									<input type="submit" value="Delete" formaction="@Url.Action("DeletePost")" />
-								</form>
-							</div>
-						</div>
-
-						<div class="post-content">
-							@if (!string.IsNullOrEmpty(p.Content))
-							{
-								<div>@p.Content</div>
-							}
-
-							@if (p.Media != null && Model.ShowImages)
-							{
-								<img src="data:image/png;base64,@p.Media" />
-							}
-							else if (p.Media != null && !Model.ShowImages)
-							{
-								<div class="flip-div" onclick="ShowPostImg(this)">Show Image</div>
-								<img id="" src="data:image/png;base64,@p.Media" class="ImgFinder"/>
-							}
-						</div>
-
-						<div class="post-stats">
-							<button type="button">
-								<span>@p.Likes  Likes</span>
-							</button>
-
-							<button type="button">
-								<span>0  Comments</span>
-							</button>
-						</div>
-
-					</div>
-				}
+				<partial name="PostDisplayer" model="Model.Posts"></partial>
 			}
 		}
 	</div>
@@ -124,6 +66,5 @@
 <div id="PostDiv" class="post-div" ondblclick="event.stopPropagation()"></div>
 <div id="EditPostDiv" class="post-div" ondblclick="event.stopPropagation()"></div>
 
-<script src="~/lib/jquery/dist/jquery.js"></script>
 <script src="~/js/PostWindows.js" asp-append-version="true"></script>
 <script src="~/js/ImagePrev.js" asp-append-version="true"></script>

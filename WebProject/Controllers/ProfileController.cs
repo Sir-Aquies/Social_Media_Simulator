@@ -28,10 +28,15 @@ namespace WebProject.Controllers
 
 			if (userModel == null)
 			{
-                return RedirectToAction("Logout", "Account");
-            }
+				return RedirectToAction("Logout", "Account");
+			}
 
-			userModel.Posts = await _Models.Posts.Where(u => u.UserId == userModel.Id).ToListAsync();
+			userModel.Posts = await _Models.Posts.Where(u => u.UserId == userModel.Id).AsNoTracking().ToListAsync();
+
+			foreach(PostModel post in userModel.Posts)
+			{
+				post.User = userModel;
+			}
 
 			if (TempData["ErrorMessage"] != null)
 			{
@@ -130,12 +135,12 @@ namespace WebProject.Controllers
 			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
 			PostModel postModel = await _Models.Posts.FirstOrDefaultAsync(us => us.Id == PostId);
 
-            if (userModel == null)
-            {
-                return RedirectToAction("Logout", "Account");
-            }
+			if (userModel == null)
+			{
+				return RedirectToAction("Logout", "Account");
+			}
 
-            if (postModel != null)
+			if (postModel != null)
 			{
 				_Models.Remove(postModel);
 				await _Models.SaveChangesAsync();
