@@ -47,6 +47,7 @@ img.user-pic {
 
 .center-box {
 	width: 100%;
+	height: fit-content;
 	border-left: 1px solid var(--BorderColor);
 	border-right: 1px solid var(--BorderColor);
 	display: flex;
@@ -58,6 +59,7 @@ img.user-pic {
 	width: 100%;
 	padding: 1rem;
 	border-top: 1px solid var(--BorderColor);
+	border-bottom: 1px solid var(--BorderColor);
 }
 
 .create-post-button {

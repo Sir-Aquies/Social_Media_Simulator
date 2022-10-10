@@ -5,10 +5,9 @@
 }
 
 <link rel="stylesheet" href="~/css/HomePageCSS.css" asp-append-version="true"/>
-<link rel="stylesheet" href="~/css/HomePageMid.css" asp-append-version="true"/>
 
 <div class="box-container">
-	<div class="left-box" id="LeftBoxV">
+	<div class="left-box">
 		<div class="user-info">
 			@if (Model.ProfilePicture != null) {
 				<img src="data:image/png;base64,@Model?.ProfilePicture" class="user-pic" />

@@ -1,0 +1,41 @@
+﻿@model DynamicUser
+@{
+	ViewData["Title"] = Model.PageUser.UserName ?? "NULL";
+}
+
+<link rel="stylesheet" href="~/css/HomePageCSS.css" asp-append-version="true"/>
+
+<div class="box-container">
+	<div class="left-box">
+		<div class="user-info">
+			@if (Model.PageUser.ProfilePicture != null) {
+				<img src="data:image/png;base64,@Model.PageUser?.ProfilePicture" class="user-pic" />
+			}
+			else
+			{
+				<img class="user-pic" src="" />
+			}
+
+			<div class="user-username">@Model.PageUser?.UserName</div>
+
+			<div class="user-name">@Model.PageUser?.Name</div>
+
+			<div class="user-description">@Model.PageUser?.Description</div>
+
+			<div class="user-dob">@Model.PageUser?.DateofBirth.ToShortDateString()</div>
+		</div>
+	</div>
+
+	<div class="center-box">
+		@if (Model.PageUser.Posts.Any())
+		{
+			<partial name="PostDisplayer" model="Model.PageUser?.Posts.Reverse().ToList()"></partial>
+		}
+	</div>
+
+	<div class="right-box">
+
+	</div>
+</div>
+
+<script src="~/js/ImagePrev.js" asp-append-version="true"></script>

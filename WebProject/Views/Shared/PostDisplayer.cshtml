@@ -22,9 +22,10 @@
 				<span>@post.User.UserName</span>
 			}
 
-			<div type="button" class="post-option-button" id="PostOptionButton" onclick="OptionButton(this);" onmousedown="event.stopPropagation()"><span>...</span>
+			<div class="post-option-button" id="PostOptionButton" onclick="OptionButton(this);" onmousedown="event.stopPropagation()">
+				<span>...</span>
 				<form method="post" enctype="multipart/form-data" onmousedown="event.stopPropagation()" onclick="event.stopPropagation();" class="post-form">
-					<input type="hidden" name="PostId" value="@post.Id"/>
+					<input type="hidden" name="PostId" value="@post.Id" />
 
 					<input type="button" value="Edit" onclick="EditPostWindow(@post.Id.ToString(), this);" />
 					<input type="submit" value="Delete" formaction="@Url.Action("DeletePost")" />

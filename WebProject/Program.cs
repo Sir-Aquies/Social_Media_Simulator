@@ -47,6 +47,8 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapControllerRoute(name: "Users", pattern: "{UserName}", defaults: new { controller = "User", action = "UserPage"});
+
 app.MapControllerRoute(
 	name: "default",
 	pattern: "{controller=Profile}/{action=Index}/{id?}");
