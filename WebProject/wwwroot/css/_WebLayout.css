@@ -87,7 +87,7 @@ img.user-info-mobile {
 
 .tab-list a {
 	text-decoration: none;
-	font-size: var(--textsize);
+	font-size: var(--BigTextsize);
 	color: var(--colortext);
 	margin: 0.5rem;
 }
@@ -130,7 +130,7 @@ img.user-info-mobile {
 .display-tab {
 	display: block;
 	position: absolute;
-	width: 60%;
+	width: 100%;
 	background-color: var(--LayoutColor);
 	height: 110vh;
 	transition: all 0.5s;
@@ -141,9 +141,19 @@ img.user-info-mobile {
 	transform: translate(100%, 0);
 }
 
+@media only screen and (min-width: 225px) {
+	.display-tab {
+		width: 80%;
+	}
+}
+
 @media only screen and (min-width: 564px) {
 	.tab-list a.right {
 		margin-left: auto;
+	}
+
+	.display-tab {
+		width: 60%;
 	}
 
 	.head-list {

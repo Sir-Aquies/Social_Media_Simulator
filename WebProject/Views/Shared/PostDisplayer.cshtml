@@ -33,10 +33,7 @@
 		</div>
 
 		<div class="post-content">
-			@if (!string.IsNullOrEmpty(post.Content))
-			{
-				<div>@post.Content</div>
-			}
+			<div>@post?.Content</div>
 
 			@if (post.Media != null && post.User.ShowImages)
 			{

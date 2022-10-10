@@ -1,5 +1,9 @@
-﻿.center-box {
-	border: 1px solid red !important;
+﻿* {
+	box-sizing: border-box;
+}
+
+.center-box {
+	border: none !important;
 	display: block;
 }
 
@@ -33,16 +37,9 @@
 }
 
 /*EditProfilePage*/
-.settings-pic-frame {
-	width: 60%;
+.flex-container {
 	display: flex;
 	flex-wrap: wrap;
-	justify-content: center;
-	align-items: flex-start;
-}
-
-.field-container {
-	border: 1px solid green;
 }
 
 .field-container > input {
@@ -62,6 +59,10 @@
 	height: 15rem;
 }
 
+.settings-pic-frame {
+	width: 60%;
+}
+
 .settings-pic-frame img {
 	width: 100%;
 	height: auto;
@@ -69,7 +70,12 @@
 	max-height: 15rem;
 	border-radius: 50%;
 	border: 1px solid var(--BorderColor);
-	margin-bottom: 0.5rem;
+	display: block;
+	margin: 0 auto 0.5rem auto;
+}
+
+.settings-pic-frame > input {
+	margin: 0 auto;
 }
 
 .settings-button {
@@ -77,22 +83,20 @@
 }
 
 .button-edit {
+	display: block;
 	background-color: transparent;
 	border: 1px solid var(--BorderColor);
 	padding: 0.5rem;
+	height: fit-content;
 	width: fit-content;
-	border-radius: 1rem;
+	border-radius: 0.7rem;
 	font-size: var(--textsize);
-	display: block;
 }
 
 /*AppearanceOptionsPage*/
-.appearance-options * {
-	font-size: var(--textsize);
-}
-
 .appearance-options > .label-block {
 	display: block;
+	margin-top: 0.5rem;
 }
 
 .Switch {
@@ -100,7 +104,6 @@
 	display: inline-block;
 	width: 60px;
 	height: 34px;
-	float: right;
 }
 
 .ToggleButton {
@@ -157,14 +160,20 @@
 
 @media only screen and (min-width: 820px) {
 	/*EditProfilePage*/
+	.center-box {
+		width: 80% !important;
+	}
+
+	.flex-container {
+		flex-wrap: nowrap;
+	}
+
 	.settings-pic-frame {
 		width: 30%;
-		float: right;
 	}
 
 	.field-container {
 		width: 70% !important;
-		float: left;
 	}
 
 	.field-container > input {
@@ -174,10 +183,6 @@
 	.field-container > textarea {
 		width: 80%;
 		height: 20rem;
-	}
-
-	.settings-button {
-		clear: both;
 	}
 }
 

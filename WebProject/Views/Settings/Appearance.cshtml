@@ -12,21 +12,23 @@
 		<partial name="SettingsActions"></partial>
 	</div>
 
-	<hr style="margin: 0.5rem 0" />
+	<hr style="margin: 0.5rem" />
 
 	<div class="center-box">
 		<div class="appearance-options">
-			<label class="label-block">Change mode</label>
-			<hr />
+			<h4>Change mode</h4>
+			<hr style="margin: 0.2rem 0 0.5rem;" />
 
 			<label for="LightMode">Light mode</label>
 			<input type="radio" id="LightMode" name="mode" value="Lightmode" onclick="ChangeMode()" />
-
+			<br />
 			<label for="DarkMode">Dark mode</label>
 			<input type="radio" id="DarkMode" name="mode" value="Darkmode" onclick="ChangeMode()" />
 
-			<label class="label-block">Customize Appareance</label>
-			<hr />
+			<div style="margin: 1.5rem;"></div>
+
+			<h4>Customize Appareance</h4>
+			<hr style="margin: 0.2rem 0 0.5rem;" />
 
 			<label class="label-block">Background Color</label>
 			<input type="color" id="ColorBackground" value="#141414" />
@@ -43,11 +45,16 @@
 			<label class="label-block">Shadow Color</label>
 			<input type="color" id="ColorShadow" value="#1b1b1b" />
 
-			<input class="button-edit" type="button" onclick="CostumAppareance()" value="Apply changes" />
+			<div style="margin: 0.9rem;"></div>
 
-			<label class="label-block">Post Settings</label>
+			<button class="button-edit" type="button" onclick="CostumAppareance()">Apply changes</button>
 
-			<label>Auto-show post images</label>
+			<div style="margin: 1.5rem;"></div>
+
+			<h4>Post Settings</h4>
+			<hr style="margin: 0.2rem 0 0.5rem;" />
+
+			<label style="margin-right: 7rem;">Auto-show post images</label>
 			<label class="Switch">
 				@if (Model.ShowImages)
 				{

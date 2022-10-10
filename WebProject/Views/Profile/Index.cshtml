@@ -1,14 +1,7 @@
 ﻿@model UserModel
 
 @{
-	if (@Model != null)
-	{
-		ViewData["Title"] = @Model.UserName;
-	} 
-	else
-	{
-		ViewData["Title"] = "Home";
-	}
+	ViewData["Title"] = @Model.UserName;
 }
 
 <link rel="stylesheet" href="~/css/HomePageCSS.css" asp-append-version="true"/>
@@ -17,44 +10,32 @@
 <div class="box-container">
 	<div class="left-box" id="LeftBoxV">
 		<div class="user-info">
-			@if (Model is UserModel)
-			{
-				if (Model.ProfilePicture != null) {
-					<img src="data:image/png;base64,@Model.ProfilePicture" class="user-pic" />
-				}
-				else
-				{
-					<img class="user-pic" src=""/>
-				}
-				
-				<div>@Model.UserName</div>
-
-				@if (!string.IsNullOrEmpty(Model.Name))
-				{
-					<div>@Model.Name</div>
-				}
-
-				@if (!string.IsNullOrEmpty(Model.Description))
-				{
-					<div class="user-description">@Model.Description</div>
-				}
-
-				<div>Born: @Model.DateofBirth.ToShortDateString()</div>
+			@if (Model.ProfilePicture != null) {
+				<img src="data:image/png;base64,@Model?.ProfilePicture" class="user-pic" />
 			}
+			else
+			{
+				<img class="user-pic" src="" />
+			}
+
+			<div class="user-username">@Model?.UserName</div>
+
+			<div class="user-name">@Model?.Name</div>
+
+			<div class="user-description">@Model?.Description</div>
+
+			<div class="user-dob">@Model?.DateofBirth.ToShortDateString()</div>
 		</div>
 	</div>
 
 	<div class="center-box">
-		@if (Model is UserModel)
-		{
-			<div class="post-container">
-				<button type="button" class="create-post-button" onclick="CreatePostWindow()">Create New Post</button>
-			</div>
+		<div class="create-post-container">
+			<button type="button" class="create-post-button" onclick="CreatePostWindow()">Create New Post</button>
+		</div>
 
-			if (Model.Posts.Any())
-			{
-				<partial name="PostDisplayer" model="Model.Posts"></partial>
-			}
+		@if (Model.Posts.Any())
+		{
+			<partial name="PostDisplayer" model="Model?.Posts.Reverse().ToList()"></partial>
 		}
 	</div>
 

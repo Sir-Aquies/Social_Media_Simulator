@@ -32,7 +32,7 @@ namespace WebProject.Controllers
 			}
 
 			userModel.Posts = await _Models.Posts.Where(u => u.UserId == userModel.Id).AsNoTracking().ToListAsync();
-
+			
 			foreach(PostModel post in userModel.Posts)
 			{
 				post.User = userModel;

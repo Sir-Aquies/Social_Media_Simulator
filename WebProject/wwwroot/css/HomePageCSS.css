@@ -13,6 +13,16 @@
 	display: none;
 }
 
+.user-info {
+	width: 100%;
+	padding-left: 0.6rem;
+	font-size: var(--BigTextsize);
+}
+
+.user-info > div {
+	margin: 0.5rem;
+}
+
 img.user-pic {
 	width: 20vh;
 	height: 20vh;
@@ -22,13 +32,17 @@ img.user-pic {
 	display: block;
 }
 
-.user-info {
-	width: 100%;
-	font-size: var(--BigTextsize);
+.user-username {
+	font-size: 2rem;
 }
 
-.user-info .user-description {
+.user-description {
 	white-space: pre-wrap;
+	font-size: var(--textsize)
+}
+
+.user-dob {
+	font-size: var(--textsize)
 }
 
 .center-box {
@@ -38,6 +52,12 @@ img.user-pic {
 	display: flex;
 	flex-wrap: wrap;
 	align-content: flex-start;
+}
+
+.create-post-container {
+	width: 100%;
+	padding: 1rem;
+	border-top: 1px solid var(--BorderColor);
 }
 
 .create-post-button {
@@ -62,6 +82,7 @@ img.user-pic {
 		width: 40%;
 		height: 100%;
 	}
+
 	.post-info .post-option-button {
 		margin-right: 1.2rem;
 	}
@@ -71,9 +92,9 @@ img.user-pic {
 		right: unset;
 	}
 
-	.post-form input {
-		text-align: left;
-	}
+		.post-form input {
+			text-align: left;
+		}
 
 	.center-box {
 		width: 60%;

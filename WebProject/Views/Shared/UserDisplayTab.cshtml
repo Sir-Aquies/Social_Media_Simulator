@@ -11,18 +11,12 @@
 			<img class="user-pic" src="" />
 		}
 
-		<div>@Model.UserName</div>
+		<div class="user-username">@Model?.UserName</div>
 
-		@if (!string.IsNullOrEmpty(Model.Name))
-		{
-			<div>@Model.Name</div>
-		}
+		<div class="user-name">@Model?.Name</div>
 
-		@if (!string.IsNullOrEmpty(Model.Description))
-		{
-			<div class="user-description">@Model.Description</div>
-		}
+		<div class="user-description">@Model?.Description</div>
 
-		<div>Born: @Model.DateofBirth.ToShortDateString()</div>
+		<div class="user-dob">@Model?.DateofBirth.ToShortDateString()</div>
 	</div>
 </div>

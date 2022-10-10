@@ -20,6 +20,7 @@
 	border: 1px solid var(--BorderColor);
 	background-color: transparent;
 	border-radius: 0.7rem;
+	color: var(--colortext);
 	padding: 0.4rem 0.5rem;
 	margin-bottom: 0.5rem;
 }
@@ -38,6 +39,7 @@
 .button-container > input {
 	background-color: transparent;
 	width: fit-content;
+	color: var(--colortext);
 	padding: 0.6rem;
 	border: 1px solid var(--BorderColor);
 	border-radius: 0.5rem;

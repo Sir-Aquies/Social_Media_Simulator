@@ -4,7 +4,7 @@
 	border-top: 1px solid var(--BorderColor);
 }
 
-.post-container:last-child {
+.post-container:last-of-type {
 	border-bottom: 1px solid var(--BorderColor);
 }
 
@@ -13,6 +13,7 @@
 	position: relative;
 	display: flex;
 	align-items: center;
+	margin-bottom: 0.5rem;
 }
 
 .post-option-button {
