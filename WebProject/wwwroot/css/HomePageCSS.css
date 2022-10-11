@@ -94,9 +94,9 @@ img.user-pic {
 		right: unset;
 	}
 
-		.post-form input {
-			text-align: left;
-		}
+	.post-form input {
+		text-align: left;
+	}
 
 	.center-box {
 		width: 60%;
@@ -105,7 +105,6 @@ img.user-pic {
 
 @media only screen and (min-width: 1600px) {
 	div.left-box {
-		display: block;
 		width: 30%;
 	}
 

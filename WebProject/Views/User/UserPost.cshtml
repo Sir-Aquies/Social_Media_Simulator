@@ -1,0 +1,73 @@
+﻿@model DynamicUser
+
+@foreach (PostModel post in Model.PageUser.Posts.Reverse())
+{
+	<div class="post-container">
+		<div class="post-info">
+			@if (post.User.ProfilePicture != null) {
+				<img src="data:image/png;base64,@post.User.ProfilePicture" alt="@post.User.UserName"/>
+			}
+			else {
+				<img alt="@post.User.UserName" />
+			}
+
+			<span>@post.User.UserName</span>
+
+			@if (post.IsEdited)
+			{
+				<i style="font-size: 14px; margin-left: 0.8rem;">(This post is edited)</i>
+			}
+
+			@*<div class="post-option-button" id="PostOptionButton" onclick="OptionButton(this);" onmousedown="event.stopPropagation()">
+				<span>...</span>
+			</div>*@
+		</div>
+
+		<div class="post-content">
+			<div>@post?.Content</div>
+
+			@if (post.Media != null && Model.User.ShowImages)
+			{
+				<img src="data:image/png;base64,@post.Media" alt="@post.User.UserName" />
+			}
+			else if (post.Media != null && !Model.User.ShowImages)
+			{
+				<div class="flip-div" onclick="ShowPostImg(this)">Show Image</div>
+				<img id="" src="data:image/png;base64,@post.Media" class="ImgFinder" alt="@post.User.UserName" />
+			}
+		</div>
+
+		<div class="post-stats">
+			<button id="LikeButton" type="button">
+				<span id="LikesAmount">@post.Likes</span> Likes
+			</button>
+
+			<button type="button" onclick="CreateCommentTab(@post.Id)">
+				<span>@post.Comments.Count()</span> Comments
+			</button>
+		</div>
+
+		@foreach(CommentModel comment in post.Comments)
+		{
+			<div class="post-comments">
+				<div class="post-commments-user">
+					<img src="data:image/png;base64,@comment.User?.ProfilePicture" alt="@comment.User?.UserName" />
+					<a asp-action="UserPage" asp-route-UserName="@comment.User?.UserName">@comment.User?.UserName</a>
+				</div>
+
+				<div class="post-comments-content">@comment?.Content</div>
+			</div>
+		}
+	</div>
+}
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script>
+	function ShowPostImg(element) {
+		const img = element.nextElementSibling;
+		img.id = "currentimg";
+		$(`#${img.id}`).slideToggle();
+		img.id = "";
+	};
+</script>
+

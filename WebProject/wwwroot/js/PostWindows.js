@@ -62,6 +62,39 @@ function RemoveEditPostTab() {
 	document.body.style.overflow = "auto";
 }
 
+function CreateComment() {
+
+}
+
+function CreateCommentTab(postId) {
+	$.post("/User/LookForCreateComment", {PostId : postId}, function (data, status) {
+		if (status === "success") {
+			const commentdiv = document.getElementById("CommentDiv");
+			const tab = Background();
+			tab.addEventListener("dblclick", () => { RemoveCreateCommentTab() });
+			document.body.style.overflow = "hidden";
+			commentdiv.style.display = "block";
+			tab.appendChild(commentdiv);
+
+			$('#CommentDiv').html(data);
+		}
+	});
+}
+
+function RemoveCreateCommentTab() {
+	const commentdiv = document.getElementById("CommentDiv");
+	const tab = document.getElementById("BlackBackground");
+
+	commentdiv.style.display = "none";
+	document.body.appendChild(commentdiv);
+
+	if (tab) {
+		tab.remove();
+	}
+
+	document.body.style.overflow = "auto";
+}
+
 function Background() {
 	var tab = document.createElement("div");
 	tab.id = "BlackBackground";

@@ -4,28 +4,27 @@
 }
 
 <link rel="stylesheet" href="~/css/HomePageCSS.css" asp-append-version="true" />
-
-<style>
-	.user-table {
-		width: 100%;
-		display: flex;
-		flex-direction: column;
-	}
-</style>
+<link rel="stylesheet" href="~/css/UserCSS.css" asp-append-version="true"/>
 
 <div class="box-container">
-	<div class="left-box">
-	</div>
+	@*<div class="left-box">
+	</div>*@
 
 	<div class="center-box">
 		<div class="users-table" id="UsersTable">
 
 		</div>
 	</div>
-
-	<div class="right-box">
-	</div>
 </div>
 
 <script src="~/lib/jquery/dist/jquery.js"></script>
-<script src="~/js/CommandScripts.js" asp-append-version="true"></script>
+
+<script>
+	$(document).ready(function () {
+		$.get("/User/GetUsers", function (data, status) {
+			if (status === "success") {
+				$('#UsersTable').html(data);
+			}
+		});
+	});
+</script>

@@ -4,6 +4,8 @@
 }
 
 <link rel="stylesheet" href="~/css/HomePageCSS.css" asp-append-version="true"/>
+<link rel="stylesheet" href="~/css/PostContainer.css" asp-append-version="true" />
+
 
 <div class="box-container">
 	<div class="left-box">
@@ -27,10 +29,7 @@
 	</div>
 
 	<div class="center-box">
-		@if (Model.PageUser.Posts.Any())
-		{
-			<partial name="PostDisplayer" model="Model.PageUser?.Posts.Reverse().ToList()"></partial>
-		}
+		<partial name="UserPost" model="Model"></partial>
 	</div>
 
 	<div class="right-box">
@@ -38,4 +37,8 @@
 	</div>
 </div>
 
+<div id="CommentDiv" class="post-div" ondblclick="event.stopPropagation()"></div>
+
 <script src="~/js/ImagePrev.js" asp-append-version="true"></script>
+<script src="~/js/PostScript.js" asp-append-version="true"></script>
+<script src="~/js/PostWindows.js" asp-append-version="true"></script>

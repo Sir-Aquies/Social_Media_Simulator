@@ -12,8 +12,8 @@
 	width: 100%;
 	position: relative;
 	display: flex;
-	align-items: center;
 	margin-bottom: 0.5rem;
+	font-size: var(--BigTextsize);
 }
 
 .post-option-button {
@@ -95,6 +95,7 @@
 	display: flex;
 	justify-content: left;
 	flex-wrap: wrap;
+	margin-bottom: 0.6rem;
 }
 
 .post-stats button {
@@ -108,4 +109,37 @@
 
 .post-stats button span {
 	font-size: var(--SmallTextsize);
+}
+
+.post-comments {
+	width: 90%;
+	margin: 0 1rem auto;
+	border-bottom: 1px solid var(--BorderColor);
+}
+
+.post-commments-user {
+	width: 100%;
+	display: flex;
+	padding: 0.4rem;
+	align-items: center;
+	border-bottom: 1px solid var(--BorderColor);
+	margin-bottom: 0.2rem;
+}
+
+.post-commments-user img {
+	width: 3.3rem;
+	height: 3.3rem;
+	border: 1px solid var(--BorderColor);
+	border-radius: 50%;
+	margin-right: 0.8rem;
+}
+
+.post-commments-user a {
+	text-decoration: none;
+	font-size: var(--BigTextsize);
+	color: var(--colortext);
+}
+
+.post-comments-content {
+	white-space: pre-wrap;
 }
