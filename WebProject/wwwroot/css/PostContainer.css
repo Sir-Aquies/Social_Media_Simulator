@@ -10,10 +10,17 @@
 
 .post-info {
 	width: 100%;
-	position: relative;
 	display: flex;
+	align-items: center;
 	margin-bottom: 0.5rem;
+	font-size: var(--SmallTextsize);
+}
+
+.post-info-username {
+	text-decoration: none;
+	color: var(--colortext);
 	font-size: var(--BigTextsize);
+	margin-right: 0.5rem;
 }
 
 .post-option-button {
@@ -95,7 +102,6 @@
 	display: flex;
 	justify-content: left;
 	flex-wrap: wrap;
-	margin-bottom: 0.6rem;
 }
 
 .post-stats button {
@@ -113,7 +119,8 @@
 
 .post-comments {
 	width: 100%;
-	margin: 0 auto 0.5rem;
+	margin: 0.5rem auto;
+	padding: 0.8rem;
 	background-color: var(--ShadowColor);
 	border: 1px solid var(--BorderColor);
 }
@@ -121,8 +128,9 @@
 .post-commments-user {
 	width: 100%;
 	display: flex;
-	padding: 0.8rem 0.8rem 0;
 	align-items: center;
+	margin-bottom: 0.5rem;
+	font-size: var(--SmallTextsize);
 }
 
 .post-commments-user img {
@@ -137,9 +145,25 @@
 	text-decoration: none;
 	font-size: var(--BigTextsize);
 	color: var(--colortext);
+	margin-right: 0.6rem;
 }
 
 .post-comments-content {
-	padding: 0.4rem 0.8rem;
 	white-space: pre-wrap;
+}
+
+.post-comments-stats {
+	width: 100%;
+	display: flex;
+	justify-content: left;
+	flex-wrap: wrap;
+}
+
+.post-comments-stats button {
+	background-color: Transparent;
+	width: max-content;
+	padding: 0.5rem;
+	font-size: var(--SmallTextsize);
+	border: 0;
+	margin-right: 0.8rem;
 }

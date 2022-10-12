@@ -19,7 +19,7 @@ namespace WebProject.Controllers
 		}
 
 		[AllowAnonymous]
-		public async Task<IActionResult> LoginAsync(string returnUrl)
+		public IActionResult LoginAsync(string returnUrl)
 		{
             if (User.Identity.IsAuthenticated)
             {
@@ -56,7 +56,7 @@ namespace WebProject.Controllers
 		}
 
 		[AllowAnonymous]
-		public async Task<IActionResult> RegisterAsync()
+		public IActionResult RegisterAsync()
 		{
             if (User.Identity.IsAuthenticated)
             {

@@ -31,7 +31,7 @@ namespace WebProject.Controllers
 				return RedirectToAction("Logout", "Account");
 			}
 
-			userModel.Posts = await _Models.Posts.Where(u => u.UserId == userModel.Id).AsNoTracking().ToListAsync();
+			userModel.Posts = await _Models.Posts.Where(u => u.UserId == userModel.Id).Include(p => p.Comments).ThenInclude(c => c.User).AsNoTracking().ToListAsync();
 			
 			foreach(PostModel post in userModel.Posts)
 			{
@@ -55,6 +55,12 @@ namespace WebProject.Controllers
 		public async Task<IActionResult> CreatePost(string Content, IFormFile Media)
 		{
 			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
+
+			if (userModel == null)
+			{
+				return RedirectToAction("Logout", "Account");
+			}
+
 			PostModel post = new PostModel();
 
 			if (!string.IsNullOrEmpty(Content))
@@ -69,6 +75,7 @@ namespace WebProject.Controllers
 
 			if (!string.IsNullOrEmpty(post.Content) || post.Media != null)
 			{
+				post.PostDate = DateTime.Now;
 				post.UserId = userModel.Id;
 				_Models.Posts.Add(post);
 				await _Models.SaveChangesAsync();
@@ -100,9 +107,12 @@ namespace WebProject.Controllers
 			if (!string.IsNullOrEmpty(post.Content) || post.Media != null)
 			{
 				post.IsEdited = true;
+				post.EditedDate = DateTime.Now;
+
 				_Models.Posts.Update(post);
 				await _Models.SaveChangesAsync();
 				TempData["Message"] = "Post successfully updated.";
+
 				return RedirectToAction("Index");
 			}
 			else

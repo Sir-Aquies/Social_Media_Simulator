@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebProject.Data;
 
@@ -11,9 +12,10 @@ using WebProject.Data;
 namespace WebProject.Migrations
 {
     [DbContext(typeof(WebProjectContext))]
-    partial class WebProjectContextModelSnapshot : ModelSnapshot
+    [Migration("20221012194326_Migration2")]
+    partial class Migration2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +23,6 @@ namespace WebProject.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
-
-            modelBuilder.Entity("CommentLikes", b =>
-                {
-                    b.Property<int>("CommentId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("CommentId", "UserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("CommentLikes");
-                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -170,21 +157,6 @@ namespace WebProject.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("PostLikes", b =>
-                {
-                    b.Property<int>("PostId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("PostId", "UserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("PostLikes");
-                });
-
             modelBuilder.Entity("WebProject.Models.CommentModel", b =>
                 {
                     b.Property<int>("Id")
@@ -267,6 +239,9 @@ namespace WebProject.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
+                    b.Property<int?>("CommentModelId")
+                        .HasColumnType("int");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
@@ -310,6 +285,9 @@ namespace WebProject.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<int?>("PostModelId")
+                        .HasColumnType("int");
+
                     b.Property<string>("ProfilePicture")
                         .HasColumnType("nvarchar(max)");
 
@@ -328,6 +306,8 @@ namespace WebProject.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CommentModelId");
+
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -336,24 +316,9 @@ namespace WebProject.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
+                    b.HasIndex("PostModelId");
+
                     b.ToTable("AspNetUsers", (string)null);
-                });
-
-            modelBuilder.Entity("CommentLikes", b =>
-                {
-                    b.HasOne("WebProject.Models.CommentModel", null)
-                        .WithMany()
-                        .HasForeignKey("CommentId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_CommentLikes_Comment_CommentId");
-
-                    b.HasOne("WebProject.Models.UserModel", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_CommentLikes_User_UserId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -407,23 +372,6 @@ namespace WebProject.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("PostLikes", b =>
-                {
-                    b.HasOne("WebProject.Models.PostModel", null)
-                        .WithMany()
-                        .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_PostLikes_Post_PostId");
-
-                    b.HasOne("WebProject.Models.UserModel", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
-                        .HasConstraintName("FK_PostLikes_User_UserId");
-                });
-
             modelBuilder.Entity("WebProject.Models.CommentModel", b =>
                 {
                     b.HasOne("WebProject.Models.PostModel", "Post")
@@ -452,9 +400,27 @@ namespace WebProject.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("WebProject.Models.UserModel", b =>
+                {
+                    b.HasOne("WebProject.Models.CommentModel", null)
+                        .WithMany("UsersLikes")
+                        .HasForeignKey("CommentModelId");
+
+                    b.HasOne("WebProject.Models.PostModel", null)
+                        .WithMany("UsersLikes")
+                        .HasForeignKey("PostModelId");
+                });
+
+            modelBuilder.Entity("WebProject.Models.CommentModel", b =>
+                {
+                    b.Navigation("UsersLikes");
+                });
+
             modelBuilder.Entity("WebProject.Models.PostModel", b =>
                 {
                     b.Navigation("Comments");
+
+                    b.Navigation("UsersLikes");
                 });
 
             modelBuilder.Entity("WebProject.Models.UserModel", b =>

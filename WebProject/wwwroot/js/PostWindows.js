@@ -62,40 +62,6 @@ function RemoveEditPostTab() {
 	document.body.style.overflow = "auto";
 }
 
-function CreateCommentTab(postId) {
-	const arr = window.location.href.split('/');
-	const userName = arr[arr.length - 1];
-
-	if (postId !== undefined && userName) {
-		$.post("/User/LookForCreateComment", { PostId: postId, Username: userName }, function (data, status) {
-			if (status === "success") {
-				const commentdiv = document.getElementById("CommentDiv");
-				const tab = Background();
-				tab.addEventListener("dblclick", () => { RemoveCreateCommentTab() });
-				document.body.style.overflow = "hidden";
-				commentdiv.style.display = "block";
-				tab.appendChild(commentdiv);
-
-				$('#CommentDiv').html(data);
-			}
-		});
-	}
-}
-
-function RemoveCreateCommentTab() {
-	const commentdiv = document.getElementById("CommentDiv");
-	const tab = document.getElementById("BlackBackground");
-
-	commentdiv.style.display = "none";
-	document.body.appendChild(commentdiv);
-
-	if (tab) {
-		tab.remove();
-	}
-
-	document.body.style.overflow = "auto";
-}
-
 function Background() {
 	var tab = document.createElement("div");
 	tab.id = "BlackBackground";

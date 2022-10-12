@@ -12,32 +12,28 @@ namespace WebProject.Models
 		/// <summary>
 		/// User's date of birth { datetime2(7) }.
 		/// </summary>
-		[Required]
-		[DataType(DataType.Date)]
-		[Display(Name = "Date of birth:")]
 		public DateTime DateofBirth { get; set; }
 		/// <summary>
 		/// User's description { nvarchar(1000) }.
 		/// </summary>
-		[StringLength(1000)]
 		public string Description { get; set; }
 		/// <summary>
 		/// User's profile picture { image }.
 		/// </summary>
-		[BindNever]
 		public string ProfilePicture { get; set; }
 		/// <summary>
 		/// User's publish posts { Table }
 		/// </summary>
-		public ICollection<PostModel> Posts { get; set; }
+		public IList<PostModel> Posts { get; set; }
 		/// <summary>
 		/// User's favorite posts { Table }
 		/// </summary>
 		[NotMapped]
-		[BindNever]
-		public ICollection<PostModel> FavoritePost { get; set; }
+		public IList<PostModel> FavoritePost { get; set; }
 		[BindNever]
 		public bool ShowImages { get; set; } = true;
-		public ICollection<CommentModel> Comments { get; set; }
+		public IList<CommentModel> Comments { get; set; }
+		public IList<PostModel> LikedPost { get; set; }
+		public IList<CommentModel> LikedComments { get; set; }
 	}
 }

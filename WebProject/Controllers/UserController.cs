@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿#nullable disable
+using Microsoft.AspNetCore.Mvc;
 using WebProject.Models;
 using WebProject.Data;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +23,7 @@ namespace WebProject.Controllers
 		{
 			if (string.IsNullOrEmpty(UserName))
 			{
-				//TODO - create a not found page.s
+				//TODO - create a not found page
 				NotFound();
 			}
 
@@ -111,7 +112,8 @@ namespace WebProject.Controllers
 				{
 					Content = Content,
 					UserId = userModel.Id,
-					PostId = PostId
+					PostId = PostId,
+					Date = DateTime.Now,
 				};
 
 				_Models.Add(comment);
@@ -121,6 +123,64 @@ namespace WebProject.Controllers
 			}
 
 			return RedirectToAction("AllUsers");
+		}
+
+		[HttpPost]
+		public async Task<string> LikePost(int PostId)
+		{
+			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
+
+			if (userModel != null && PostId != 0)
+			{
+				PostModel post = await _Models.Posts.Include(p => p.UsersLikes).FirstOrDefaultAsync(p => p.Id == PostId);
+
+				if (post.UsersLikes.Contains(userModel))
+				{
+					post.Likes--;
+					post.UsersLikes.Remove(userModel);
+					await _Models.SaveChangesAsync();
+					return "-";
+				} 
+				else
+				{
+					post.Likes++;
+					post.UsersLikes.Add(userModel);
+					await _Models.SaveChangesAsync();
+					return "+";
+				}
+
+			}
+
+			return "0";
+		}
+
+		[HttpPost]
+		public async Task<string> LikeComment(int CommentId)
+		{
+			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
+
+			if (userModel != null && CommentId != 0)
+			{
+				CommentModel comment = await _Models.Comments.Include(p => p.UsersLikes).FirstOrDefaultAsync(p => p.Id == CommentId);
+
+				if (comment.UsersLikes.Contains(userModel))
+				{
+					comment.Likes--;
+					comment.UsersLikes.Remove(userModel);
+					await _Models.SaveChangesAsync();
+					return "-";
+				}
+				else
+				{
+					comment.Likes++;
+					comment.UsersLikes.Add(userModel);
+					await _Models.SaveChangesAsync();
+					return "+";
+				}
+
+			}
+
+			return "0";
 		}
 	}
 }

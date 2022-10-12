@@ -7,19 +7,26 @@
 	<div class="post-container">
 		<div class="post-info">
 			@if (post.User.ProfilePicture != null) {
-				<img src="data:image/png;base64,@post.User.ProfilePicture" />
+				<img src="data:image/png;base64,@post.User.ProfilePicture" alt="@post.User.UserName" />
 			}
 			else {
-				<img />
+				<img alt="@post.User.UserName" />
+			}
+
+			<a class="post-info-username" asp-action="UserPage" asp-controller="User" asp-route-UserName="@post.User.UserName">@post.User.UserName</a>
+
+			@if (post.PostDate.ToString("MM/dd/yyyy") == DateTime.Today.ToString("MM/dd/yyyy"))
+			{
+				<span>@post.PostDate.ToString("hh:mm tt")</span>
+			}
+			else 
+			{
+				<span>@post.PostDate.ToString("MM/dd/yyyy")</span>
 			}
 
 			@if (post.IsEdited)
 			{
-				<span>@post.User.UserName</span> <i style="font-size: 14px; margin-left: 0.5rem;">(This post is edited)</i>
-			}
-			else
-			{
-				<span>@post.User.UserName</span>
+				<i style="font-size: 14px; margin-left: 0.5rem;">(This post was edited @post?.EditedDate.ToString("MM/dd/yyyy"))</i>
 			}
 
 			<div class="post-option-button" id="PostOptionButton" onclick="OptionButton(this);" onmousedown="event.stopPropagation()">
@@ -32,31 +39,56 @@
 				</form>
 			</div>
 		</div>
-
+		 
 		<div class="post-content">
 			<div>@post?.Content</div>
 
 			@if (post.Media != null && post.User.ShowImages)
 			{
-				<img src="data:image/png;base64,@post.Media" />
+				<img src="data:image/png;base64,@post.Media" alt="@post.User.UserName Post" />
 			}
 			else if (post.Media != null && !post.User.ShowImages)
 			{
 				<div class="flip-div" onclick="ShowPostImg(this)">Show Image</div>
-				<img id="" src="data:image/png;base64,@post.Media" class="ImgFinder"/>
+				<img id="" src="data:image/png;base64,@post.Media" class="ImgFinder" alt="@post.User.UserName FlipPost" />
 			}
 		</div>
 
 		<div class="post-stats">
-			<button type="button">
-				<span>@post.Likes  Likes</span>
+			<button type="button" onclick="LikePost(@post.Id, this.children[0])">
+				<span>@post.Likes</span> Likes
 			</button>
 
 			<button type="button">
-				<span>0  Comments</span>
+				<span>@post.Comments.Count()</span> Comments
 			</button>
 		</div>
 
+		@foreach (CommentModel comment in post.Comments)
+		{
+			<div class="post-comments">
+				<div class="post-commments-user">
+					<img src="data:image/png;base64,@comment.User?.ProfilePicture" alt="@comment.User.UserName" />
+					<a class="post-commments-username" asp-action="UserPage" asp-route-UserName="@comment.User.UserName">@comment.User.UserName</a>
+					@if (comment.Date.ToString("MM/dd/yyyy") == DateTime.Today.ToString("MM/dd/yyyy"))
+					{
+						<span>@comment.Date.ToString("hh:mm tt")</span>
+					}
+					else
+					{
+						<span>@comment.Date.ToString("MM/dd/yyyy")</span>
+					}
+				</div>
+
+				<div class="post-comments-content">@comment?.Content</div>
+
+				<div class="post-comments-stats">
+					<button type="button" onclick="LikeComment(@comment.Id, this.children[0])">
+						<span>@comment.Likes</span> Likes
+					</button>
+				</div>
+			</div>
+		}
 	</div>
 }
 
