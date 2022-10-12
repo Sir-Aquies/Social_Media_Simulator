@@ -22,6 +22,7 @@ namespace WebProject.Controllers
 		{
 			if (string.IsNullOrEmpty(UserName))
 			{
+				//TODO - create a not found page.s
 				NotFound();
 			}
 
@@ -30,6 +31,11 @@ namespace WebProject.Controllers
 			if (userModel == null)
 			{
 				return RedirectToAction("Logout", "Account");
+			}
+
+			if (userModel.UserName == UserName)
+			{
+				return RedirectToAction("Index", "Profile");
 			}
 
 			UserModel page = await userManager.FindByNameAsync(UserName);
@@ -41,11 +47,6 @@ namespace WebProject.Controllers
 				{
 					post.User = page;
 				}
-			}
-			else
-			{
-				NotFound();
-				//TODO - create a not found page.
 			}
 
 			DynamicUser dynamic = new()
@@ -76,10 +77,16 @@ namespace WebProject.Controllers
 		}
 
 		[HttpPost]
-		public IActionResult LookForCreateComment(int PostId) => PartialView("CreateComment", PostId);
+		public IActionResult LookForCreateComment(int PostId, string UserName)
+		{
+			TempData["PostId"] = PostId;
+			TempData["UserName"] = UserName;
+
+			return PartialView("CreateComment");
+		}
 
 		[HttpPost]
-		public async Task<IActionResult> CreateComment(string Content, int PostId)
+		public async Task<IActionResult> CreateComment(string Content)
 		{
 			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
 
@@ -88,7 +95,17 @@ namespace WebProject.Controllers
 				return RedirectToAction("Logout", "Account");
 			}
 
-			if (!string.IsNullOrEmpty(Content) && PostId != 0)
+			string UserName = "";
+			int PostId = 0;
+			bool PostIdBool = false;
+
+			if (!string.IsNullOrEmpty(TempData["PostId"]?.ToString()) && !string.IsNullOrEmpty(TempData["UserName"]?.ToString()))
+			{
+				UserName = TempData["UserName"]?.ToString() ?? "empty";
+				PostIdBool = int.TryParse(TempData["PostId"]?.ToString(), out PostId);
+			}
+
+			if (!string.IsNullOrEmpty(Content) && PostIdBool && !string.IsNullOrEmpty(UserName))
 			{
 				CommentModel comment = new()
 				{
@@ -99,9 +116,11 @@ namespace WebProject.Controllers
 
 				_Models.Add(comment);
 				await _Models.SaveChangesAsync();
+
+				return RedirectToAction("UserPage", new { UserName });
 			}
 
-			return RedirectToAction("UserPage");
+			return RedirectToAction("AllUsers");
 		}
 	}
 }

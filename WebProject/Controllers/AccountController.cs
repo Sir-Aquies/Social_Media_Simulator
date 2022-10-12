@@ -19,9 +19,14 @@ namespace WebProject.Controllers
 		}
 
 		[AllowAnonymous]
-		public IActionResult Login(string returnUrl)
+		public async Task<IActionResult> LoginAsync(string returnUrl)
 		{
-			LoginModel login = new LoginModel();
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToActionPermanent("Index", "Profile");
+            }
+
+            LoginModel login = new LoginModel();
 			login.ReturnUrl = returnUrl;
 			return View(login);
 		}
@@ -51,7 +56,15 @@ namespace WebProject.Controllers
 		}
 
 		[AllowAnonymous]
-		public IActionResult Register() => View();
+		public async Task<IActionResult> RegisterAsync()
+		{
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToActionPermanent("Index", "Profile");
+            }
+
+            return View();
+        }
 
 		[HttpPost]
 		[AllowAnonymous]

@@ -112,34 +112,34 @@
 }
 
 .post-comments {
-	width: 90%;
-	margin: 0 1rem auto;
-	border-bottom: 1px solid var(--BorderColor);
+	width: 100%;
+	margin: 0 auto 0.5rem;
+	background-color: var(--ShadowColor);
+	border: 1px solid var(--BorderColor);
 }
 
 .post-commments-user {
 	width: 100%;
 	display: flex;
-	padding: 0.4rem;
+	padding: 0.8rem 0.8rem 0;
 	align-items: center;
-	border-bottom: 1px solid var(--BorderColor);
-	margin-bottom: 0.2rem;
 }
 
 .post-commments-user img {
-	width: 3.3rem;
-	height: 3.3rem;
+	width: 3rem;
+	height: 3rem;
 	border: 1px solid var(--BorderColor);
 	border-radius: 50%;
 	margin-right: 0.8rem;
 }
 
-.post-commments-user a {
+.post-commments-username {
 	text-decoration: none;
 	font-size: var(--BigTextsize);
 	color: var(--colortext);
 }
 
 .post-comments-content {
+	padding: 0.4rem 0.8rem;
 	white-space: pre-wrap;
 }

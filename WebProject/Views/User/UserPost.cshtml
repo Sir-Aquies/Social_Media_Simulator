@@ -42,7 +42,7 @@
 				<span id="LikesAmount">@post.Likes</span> Likes
 			</button>
 
-			<button type="button" onclick="CreateCommentTab(@post.Id)">
+			<button type="button" onclick="CreateCommentTab(@post?.Id)">
 				<span>@post.Comments.Count()</span> Comments
 			</button>
 		</div>
@@ -52,7 +52,7 @@
 			<div class="post-comments">
 				<div class="post-commments-user">
 					<img src="data:image/png;base64,@comment.User?.ProfilePicture" alt="@comment.User?.UserName" />
-					<a asp-action="UserPage" asp-route-UserName="@comment.User?.UserName">@comment.User?.UserName</a>
+					<a class="post-commments-username" asp-action="UserPage" asp-route-UserName="@comment.User?.UserName">@comment.User?.UserName</a>
 				</div>
 
 				<div class="post-comments-content">@comment?.Content</div>

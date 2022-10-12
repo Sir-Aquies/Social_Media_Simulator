@@ -62,23 +62,24 @@ function RemoveEditPostTab() {
 	document.body.style.overflow = "auto";
 }
 
-function CreateComment() {
-
-}
-
 function CreateCommentTab(postId) {
-	$.post("/User/LookForCreateComment", {PostId : postId}, function (data, status) {
-		if (status === "success") {
-			const commentdiv = document.getElementById("CommentDiv");
-			const tab = Background();
-			tab.addEventListener("dblclick", () => { RemoveCreateCommentTab() });
-			document.body.style.overflow = "hidden";
-			commentdiv.style.display = "block";
-			tab.appendChild(commentdiv);
+	const arr = window.location.href.split('/');
+	const userName = arr[arr.length - 1];
 
-			$('#CommentDiv').html(data);
-		}
-	});
+	if (postId !== undefined && userName) {
+		$.post("/User/LookForCreateComment", { PostId: postId, Username: userName }, function (data, status) {
+			if (status === "success") {
+				const commentdiv = document.getElementById("CommentDiv");
+				const tab = Background();
+				tab.addEventListener("dblclick", () => { RemoveCreateCommentTab() });
+				document.body.style.overflow = "hidden";
+				commentdiv.style.display = "block";
+				tab.appendChild(commentdiv);
+
+				$('#CommentDiv').html(data);
+			}
+		});
+	}
 }
 
 function RemoveCreateCommentTab() {
