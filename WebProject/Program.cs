@@ -51,7 +51,7 @@ app.MapControllerRoute(name: "Users", pattern: "{UserName}", defaults: new { con
 
 app.MapControllerRoute(
 	name: "default",
-	pattern: "{controller=Profile}/{action=Index}/{id?}");
+	pattern: "{controller=User}/{action=UserPage}/{id?}");
 
 app.MapRazorPages();
 

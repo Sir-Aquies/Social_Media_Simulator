@@ -7,13 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Pages\Views\**" />
-    <Content Remove="Pages\Views\**" />
-    <EmbeddedResource Remove="Pages\Views\**" />
-    <None Remove="Pages\Views\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="Views\Shared\_ValidationScriptsPartial.cshtml" />
     <None Include="wwwroot\css\_WebLayout.css" />
   </ItemGroup>

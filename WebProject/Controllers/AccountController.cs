@@ -19,14 +19,15 @@ namespace WebProject.Controllers
 		}
 
 		[AllowAnonymous]
-		public IActionResult LoginAsync(string returnUrl)
+		public async Task<IActionResult> Login(string returnUrl)
 		{
-            if (User.Identity.IsAuthenticated)
-            {
-                return RedirectToActionPermanent("Index", "Profile");
-            }
+			if (User.Identity.IsAuthenticated)
+			{
+				UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
+				return RedirectToActionPermanent("UserPage", "User", new { userModel.UserName });
+			}
 
-            LoginModel login = new LoginModel();
+			LoginModel login = new LoginModel();
 			login.ReturnUrl = returnUrl;
 			return View(login);
 		}
@@ -47,24 +48,31 @@ namespace WebProject.Controllers
 
 					if (result.Succeeded)
 					{
+						if (login.ReturnUrl == $"/{ user.UserName}")
+						{
+							return RedirectToAction("UserPage", "User", new { user.UserName });
+						}
+
 						return Redirect(login.ReturnUrl ?? "/");
 					}
 				}
+
 				ModelState.AddModelError(nameof(login.UserName), "Login Failed: Invalid User Name or password");
 			}
 			return View(login);
 		}
 
 		[AllowAnonymous]
-		public IActionResult RegisterAsync()
+		public async Task<IActionResult> Register()
 		{
-            if (User.Identity.IsAuthenticated)
-            {
-                return RedirectToActionPermanent("Index", "Profile");
-            }
+			if (User.Identity.IsAuthenticated)
+			{
+				UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
+				return RedirectToActionPermanent("UserPage", "User", new { userModel.UserName });
+			}
 
-            return View();
-        }
+			return View();
+		}
 
 		[HttpPost]
 		[AllowAnonymous]
@@ -84,7 +92,7 @@ namespace WebProject.Controllers
 
 				if (result.Succeeded)
 				{
-					return RedirectToAction("Index", "Profile");
+					return RedirectToAction("Login", "Account");
 				}
 				else
 				{
@@ -100,7 +108,7 @@ namespace WebProject.Controllers
 		public async Task<IActionResult> Logout()
 		{
 			await signInManager.SignOutAsync();
-			return RedirectToAction("Index");
+			return RedirectToAction("Login", "Account");
 		}
 	}
 }

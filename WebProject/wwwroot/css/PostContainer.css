@@ -28,32 +28,44 @@
 	margin-left: auto;
 }
 
-.post-option-button span {
+.post-option-button > div {
 	transform: rotate(90deg);
+	cursor: pointer;
 	font-size: 1.7rem;
-	display: block;
 }
 
 .post-form {
 	display: none;
 	position: absolute;
 	background-color: var(--ShadowColor);
+	padding: 0.5rem;
 	justify-content: right;
 	flex-direction: column;
-	right: 0;
 	z-index: 50;
 }
 
-.post-form input {
+.post-form > input {
 	background-color: transparent;
 	border: 0;
+	font-size: var(--textsize);
 	width: 100%;
 	height: fit-content;
 	text-align: right;
 }
 
-.post-form input:hover {
+.post-form > input:hover {
 	background-color: rgb(24, 24, 24);
+}
+
+@media only screen and (min-width: 820px) {
+	.post-form {
+		left: 0;
+		right: unset;
+	}
+
+	.post-form input {
+		text-align: left;
+	}
 }
 
 .post-info img {
@@ -107,7 +119,7 @@
 .post-stats button {
 	background-color: Transparent;
 	width: max-content;
-	padding: 0.5rem;
+	padding: 0.3rem;
 	font-size: var(--SmallTextsize);
 	border: 0;
 	margin-right: 0.8rem;
@@ -162,7 +174,7 @@
 .post-comments-stats button {
 	background-color: Transparent;
 	width: max-content;
-	padding: 0.5rem;
+	padding: 0.3rem;
 	font-size: var(--SmallTextsize);
 	border: 0;
 	margin-right: 0.8rem;

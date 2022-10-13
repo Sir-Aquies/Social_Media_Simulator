@@ -3,7 +3,7 @@
 	const userName = arr[arr.length - 1];
 
 	if (postId !== undefined && userName) {
-		$.post("/User/LookForCreateComment", { PostId: postId, Username: userName }, function (data, status) {
+		$.post("/Post/LookForCreateComment", { PostId: postId, Username: userName }, function (data, status) {
 			if (status === "success") {
 				const commentdiv = document.getElementById("CommentDiv");
 				const tab = Background();
@@ -32,17 +32,21 @@ function RemoveCreateCommentTab() {
 	document.body.style.overflow = "auto";
 }
 
-function LikePost(postId, likesAmount) {
+function LikePost(postId, button) {
+	likesAmount = button.children[0];
+
 	if (postId != undefined) {
-		$.post("/User/LikePost", { PostId: postId }, function (data, status) {
+		$.post("/Post/LikePost", { PostId: postId }, function (data, status) {
 			if (status === "success") {
 				if (data === "+") {
 					let likes = parseInt(likesAmount.innerHTML);
 					likesAmount.innerHTML = ++likes;
+					button.style.fontWeight = "bold";
 				}
 				else if (data === "-") {
 					let likes = parseInt(likesAmount.innerHTML);
 					likesAmount.innerHTML = --likes;
+					button.style.fontWeight = "normal";
 				}
 				
 			}
@@ -50,24 +54,27 @@ function LikePost(postId, likesAmount) {
 	}
 }
 
-function LikeComment(commentId, likesAmount) {
+function LikeComment(commentId, button) {
+	likesAmount = button.children[0];
+
 	if (commentId != undefined) {
-		$.post("/User/LikeComment", { CommentId: commentId }, function (data, status) {
+		$.post("/Post/LikeComment", { CommentId: commentId }, function (data, status) {
 			if (status === "success") {
 				if (data === "+") {
 					let likes = parseInt(likesAmount.innerHTML);
 					likesAmount.innerHTML = ++likes;
+					button.style.fontWeight = "bold";
 				}
 				else if (data === "-") {
 					let likes = parseInt(likesAmount.innerHTML);
 					likesAmount.innerHTML = --likes;
+					button.style.fontWeight = "normal";
 				}
 
 			}
 		});
 	}
 }
-
 
 function Background() {
 	var tab = document.createElement("div");

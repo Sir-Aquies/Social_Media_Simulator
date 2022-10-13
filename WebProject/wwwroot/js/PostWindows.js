@@ -1,5 +1,5 @@
 ﻿function CreatePostWindow() {
-	$.post("Profile/LookForCreatePost", function (data, status) {
+	$.post("/Post/LookForCreatePost", function (data, status) {
 		if (status === "success") {
 			const postdiv = document.getElementById("PostDiv");
 			const tab = Background();
@@ -29,7 +29,7 @@ function RemoveTab() {
 
 function OptionButton(post) {
 	var option = post.children[1];
-	option.style.display = "inline";
+	option.style.display = "flex";
 
 	document.addEventListener("mousedown", () => {
 		option.style.display = "none";
@@ -41,15 +41,17 @@ function EditPostWindow(postid, input) {
 	input.parentElement.style.display = "none";
 	document.addEventListener("mousedown", () => { });
 
-	$.post("Profile/LookforPost", { PostId: postid }, function (data, status) {
-		const tab = Background();
-		document.body.style.overflow = "hidden";
-		const partial = document.getElementById("EditPostDiv");
-		partial.style.display = "block";
-		tab.appendChild(partial);
-		tab.addEventListener("dblclick", () => { RemoveEditPostTab() })
+	$.post("/Post/LookforPost", { PostId: postid }, function (data, status) {
+		if (status === "success") {
+			const tab = Background();
+			document.body.style.overflow = "hidden";
+			const partial = document.getElementById("EditPostDiv");
+			partial.style.display = "block";
+			tab.appendChild(partial);
+			tab.addEventListener("dblclick", () => { RemoveEditPostTab() })
 
-		$('#EditPostDiv').html(data);
+			$('#EditPostDiv').html(data);
+        }
 	});
 }
 

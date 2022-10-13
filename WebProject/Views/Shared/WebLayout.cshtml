@@ -43,9 +43,13 @@
 					</div>
 					
 					<div class="tab-list" id="TabList" onclick="event.stopPropagation();">
-						@if (Model is not null && Model is not LoginModel)
+						@if (Model is DynamicUser || Model is PasswordUser)
 						{
-							<a asp-area="" asp-controller="Profile" asp-action="Index">Home</a>
+							<a asp-area="" asp-controller="User" asp-action="UserPage" asp-route-UserName="@Model.User.UserName">Home</a>
+						}
+						else if (Model is UserModel)
+						{
+							<a asp-area="" asp-controller="User" asp-action="UserPage" asp-route-UserName="@Model.UserName">Home</a>
 						}
 
 						@if (Model is null || Model is LoginModel)

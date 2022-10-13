@@ -4,7 +4,8 @@
 {
 	<div class="post-container">
 		<div class="post-info">
-			@if (post.User.ProfilePicture != null) {
+			@if (post.User.ProfilePicture != null) 
+			{
 				<img src="data:image/png;base64,@post.User.ProfilePicture" alt="@post.User.UserName"/>
 			}
 			else {
@@ -24,12 +25,28 @@
 
 			@if (post.IsEdited)
 			{
-				<i style="font-size: 14px; margin-left: 0.5rem;">(This post was edited @post.EditedDate.ToString("MM/dd/yyyy"))</i>
+				@if (post.EditedDate.ToString("MM/dd/yyyy") == DateTime.Today.ToString("MM/dd/yyyy"))
+				{
+					<i style="font-size: 14px; margin-left: 0.5rem;">(This post was edited @post.EditedDate.ToString("hh:mm tt"))</i>
+				}
+				else
+				{
+					<i style="font-size: 14px; margin-left: 0.5rem;">(This post was edited @post.EditedDate.ToString("MM/dd/yyyy"))</i>
+				}
 			}
 
-			@*<div class="post-option-button" id="PostOptionButton" onclick="OptionButton(this);" onmousedown="event.stopPropagation()">
-				<span>...</span>
-			</div>*@
+			@if (Model.PageUser == Model.User)
+			{
+				<div class="post-option-button" onclick="OptionButton(this);" onmousedown="event.stopPropagation()">
+					<div>...</div>
+					<form method="post" enctype="multipart/form-data" asp-action="DeletePost" asp-controller="Profile" onmousedown="event.stopPropagation()" onclick="event.stopPropagation();" class="post-form">
+						<input type="hidden" name="PostId" value="@post.Id" />
+
+						<input type="button" value="Edit" onclick="EditPostWindow(@post.Id, this);" />
+						<input type="submit" value="Delete"/>
+					</form>
+				</div>
+			}
 		</div>
 
 		<div class="post-content">
@@ -47,9 +64,18 @@
 		</div>
 
 		<div class="post-stats">
-			<button type="button" onclick="LikePost(@post.Id, this.children[0])">
-				<span>@post.Likes</span> Likes
-			</button>
+			@if (Model.User.LikedPost.Any(p => p.Id == post.Id))
+			{
+				<button style="font-weight:bold" type="button" onclick="LikePost(@post.Id, this)">
+					<span>@post.Likes</span> Likes
+				</button>
+			}
+			else 
+			{
+				<button type="button" onclick="LikePost(@post.Id, this)">
+					<span>@post.Likes</span> Likes
+				</button>
+			}
 
 			<button type="button" onclick="CreateCommentTab(@post.Id)">
 				<span>@post.Comments.Count()</span> Comments
@@ -70,6 +96,7 @@
 					}
 
 					<a class="post-commments-username" asp-action="UserPage" asp-route-UserName="@comment.User.UserName">@comment.User.UserName</a>
+
 					@if (comment.Date.ToString("MM/dd/yyyy") == DateTime.Today.ToString("MM/dd/yyyy"))
 					{
 						<span>@comment.Date.ToString("hh:mm tt")</span>
@@ -83,9 +110,18 @@
 				<div class="post-comments-content">@comment?.Content</div>
 
 				<div class="post-comments-stats">
-					<button type="button" onclick="LikeComment(@comment.Id, this.children[0])">
-						<span>@comment.Likes</span> Likes
-					</button>
+					@if (Model.User.LikedComments.Any(c => c.Id == comment.Id))
+					{
+						<button style="font-weight:bold" type="button" onclick="LikeComment(@comment.Id, this)">
+							<span>@comment.Likes</span> Likes
+						</button>
+					}
+					else 
+					{
+						<button type="button" onclick="LikeComment(@comment.Id, this)">
+							<span>@comment.Likes</span> Likes
+						</button>
+					}
 				</div>
 			</div>
 		}
@@ -93,6 +129,7 @@
 }
 
 <script src="~/lib/jquery/dist/jquery.js"></script>
+
 <script>
 	function ShowPostImg(element) {
 		const img = element.nextElementSibling;
