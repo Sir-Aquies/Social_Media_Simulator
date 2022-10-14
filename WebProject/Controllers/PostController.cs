@@ -81,7 +81,7 @@ namespace WebProject.Controllers
 				TempData["Message"] = "Post successfully updated.";
 
 				return RedirectToAction("UserPage", "User", new { userModel.UserName });
-            }
+			}
 			else
 			{
 				TempData["ErrorMessage"] = "Sorry, something went wrong";
@@ -107,10 +107,16 @@ namespace WebProject.Controllers
 		public async Task<IActionResult> DeletePost(int PostId)
 		{
 			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
-			PostModel postModel = await _Models.Posts.FirstOrDefaultAsync(us => us.Id == PostId);
+			PostModel postModel = await _Models.Posts.Include(p => p.Comments).ThenInclude(c => c.UsersLikes).Include(p => p.UsersLikes).FirstOrDefaultAsync(us => us.Id == PostId);
 
 			if (postModel != null)
 			{
+				postModel.UsersLikes.Clear();
+				foreach (CommentModel comment in postModel.Comments)
+				{
+					comment.UsersLikes.Clear();
+				}
+
 				_Models.Remove(postModel);
 				await _Models.SaveChangesAsync();
 			}
@@ -188,6 +194,22 @@ namespace WebProject.Controllers
 			}
 
 			return RedirectToAction("UserPage", "User", new { userModel.UserName });
+		}
+
+		public async Task<IActionResult> DeleteComment(int CommentId)
+		{
+			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
+			CommentModel comment = await _Models.Comments.Include(c => c.UsersLikes)
+					.Include(c => c.Post).ThenInclude(p => p.User).FirstOrDefaultAsync(c => c.Id == CommentId);
+
+			if (comment != null)
+			{
+				comment.UsersLikes.Clear();
+				_Models.Comments.Remove(comment);
+				await _Models.SaveChangesAsync();
+			}
+
+			return RedirectToAction("UserPage", "User", new { UserName = comment.Post.User.UserName });
 		}
 
 		[HttpPost]

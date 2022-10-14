@@ -39,9 +39,9 @@ namespace WebProject.Data
 				entity.HasMany(p => p.UsersLikes).WithMany(u => u.LikedPost).UsingEntity<Dictionary<string, object>>(
 						"PostLikes",
 						p => p
-							.HasOne<UserModel>().WithMany().HasForeignKey("UserId").HasConstraintName("FK_PostLikes_User_UserId").OnDelete(DeleteBehavior.NoAction), 
+							.HasOne<UserModel>().WithMany().HasForeignKey("UserId").HasConstraintName("FK_PostLikes_User_UserId").OnDelete(DeleteBehavior.Cascade), 
 						p => p
-							.HasOne<PostModel>().WithMany().HasForeignKey("PostId").HasConstraintName("FK_PostLikes_Post_PostId").OnDelete(DeleteBehavior.NoAction));
+							.HasOne<PostModel>().WithMany().HasForeignKey("PostId").HasConstraintName("FK_PostLikes_Post_PostId").OnDelete(DeleteBehavior.ClientCascade));
 			});
 
 			builder.Entity<CommentModel>(entity =>
@@ -58,9 +58,9 @@ namespace WebProject.Data
 				entity.HasMany(p => p.UsersLikes).WithMany(u => u.LikedComments).UsingEntity<Dictionary<string, object>>(
 						"CommentLikes",
 						p => p
-							.HasOne<UserModel>().WithMany().HasForeignKey("UserId").HasConstraintName("FK_CommentLikes_User_UserId").OnDelete(DeleteBehavior.NoAction),
+							.HasOne<UserModel>().WithMany().HasForeignKey("UserId").HasConstraintName("FK_CommentLikes_User_UserId").OnDelete(DeleteBehavior.Cascade),
 						p => p
-							.HasOne<CommentModel>().WithMany().HasForeignKey("CommentId").HasConstraintName("FK_CommentLikes_Comment_CommentId").OnDelete(DeleteBehavior.NoAction));
+							.HasOne<CommentModel>().WithMany().HasForeignKey("CommentId").HasConstraintName("FK_CommentLikes_Comment_CommentId").OnDelete(DeleteBehavior.ClientCascade));
 			});
 		}
 	}

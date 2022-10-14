@@ -35,11 +35,11 @@
 				}
 			}
 
-			@if (Model.PageUser == Model.User)
+			@if (Model.PageUser.Id == Model.User.Id)
 			{
 				<div class="post-option-button" onclick="OptionButton(this);" onmousedown="event.stopPropagation()">
 					<div>...</div>
-					<form method="post" enctype="multipart/form-data" asp-action="DeletePost" asp-controller="Profile" onmousedown="event.stopPropagation()" onclick="event.stopPropagation();" class="post-form">
+					<form method="post" enctype="multipart/form-data" asp-action="DeletePost" asp-controller="Post" onmousedown="event.stopPropagation()" onclick="event.stopPropagation();" class="post-form">
 						<input type="hidden" name="PostId" value="@post.Id" />
 
 						<input type="button" value="Edit" onclick="EditPostWindow(@post.Id, this);" />
@@ -104,6 +104,19 @@
 					else
 					{
 						<span>@comment.Date.ToString("MM/dd/yyyy")</span>
+					}
+
+					@if (Model.User.Id == comment.User.Id)
+					{
+						<div class="post-option-button" onclick="OptionButton(this);" onmousedown="event.stopPropagation()">
+							<div>...</div>
+							<form method="post" enctype="multipart/form-data" asp-action="DeleteComment" asp-controller="Post" onmousedown="event.stopPropagation()" onclick="event.stopPropagation();" class="post-form">
+								<input type="hidden" name="CommentId" value="@comment.Id" />
+
+								@*<input type="button" value="Edit" onclick="EditPostWindow(@post.Id, this);" />*@
+								<input type="submit" value="Delete"/>
+							</form>
+						</div>
 					}
 				</div>
 
