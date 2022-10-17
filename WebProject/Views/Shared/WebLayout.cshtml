@@ -10,7 +10,7 @@
 	<link rel="stylesheet" href="~/css/WebVariables.css" asp-append-version="true"/>
 	<script src="~/js/ChangeMode.js" asp-append-version="true"></script>
 
-	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
 	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 	<link rel="stylesheet" href="~/WebProject.styles.css" asp-append-version="true" />
 	<link rel="stylesheet" href="~/css/_WebLayout.css" asp-append-version="true" />
@@ -21,12 +21,17 @@
 			<div class="head-container">
 				<div class="head-home">
 					<!--Image that when click display the DisplayTab with the user info-->
-					@if (Model is UserModel){
+					@if (Model is UserModel)
+					{
 						<img src="data:image/png;base64,@Model.ProfilePicture" id="UserMobilePic" class="user-info-mobile" onclick="ToggleTab()" onmousedown="event.stopPropagation();" />
 					}
-
-					@if (Model is PasswordUser){
+					else if (Model is PasswordUser)
+					{
 						<img src="data:image/png;base64,@Model.User.ProfilePicture" id="UserMobilePic" class="user-info-mobile" onclick="ToggleTab()" onmousedown="event.stopPropagation();" />
+					}
+					else if (Model is DynamicUser)
+					{
+						<img src="data:image/png;base64,@Model.PageUser.ProfilePicture" id="UserMobilePic" class="user-info-mobile" onclick="ToggleTab()" onmousedown="event.stopPropagation();" />
 					}
 				</div>
 
@@ -38,23 +43,24 @@
 					</div>
 					
 					<div class="tab-list" id="TabList" onclick="event.stopPropagation();">
-						@if (Model is UserModel || Model is PasswordUser)
+						@if (Model is DynamicUser || Model is PasswordUser)
 						{
-							<a asp-area="" asp-controller="Profile" asp-action="Index">Home</a>
+							<a asp-area="" asp-controller="User" asp-action="UserPage" asp-route-UserName="@Model.User.UserName">Home</a>
 						}
-						else
+						else if (Model is UserModel)
 						{
-							<a asp-area="" asp-controller="Profile" asp-action="Index">Home</a>
+							<a asp-area="" asp-controller="User" asp-action="UserPage" asp-route-UserName="@Model.UserName">Home</a>
 						}
 
-						@if (Model is not UserModel && Model is not PasswordUser)
+						@if (Model is null || Model is LoginModel)
 						{
 							<a asp-area="" asp-controller="Account" asp-action="Login">Log in</a>
 							<a asp-area="" asp-controller="Account" asp-action="Register">Register</a>
 						}
 						
-						@if (Model is UserModel || Model is PasswordUser)
+						@if (Model is not null && Model is not LoginModel)
 						{
+							<a asp-area="" asp-controller="User" asp-action="AllUsers">Users</a>
 							<a class="right" asp-area="" asp-controller="Settings" asp-action="EditProfile">Settings</a>
 						}
 					</div>
@@ -69,6 +75,10 @@
 		else if (Model is PasswordUser)
 		{
 			<partial name="UserDisplayTab" model="Model.User"></partial>
+		}
+		else if (Model is DynamicUser)
+		{
+			<partial name="UserDisplayTab" model="Model.PageUser"></partial>
 		}
 
 		@if (!string.IsNullOrEmpty(ViewBag.Message)){

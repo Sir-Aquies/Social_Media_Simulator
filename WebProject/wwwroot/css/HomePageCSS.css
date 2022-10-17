@@ -15,7 +15,7 @@
 
 .user-info {
 	width: 100%;
-	padding-left: 0.6rem;
+	padding: 0.6rem;
 	font-size: var(--BigTextsize);
 }
 
@@ -47,6 +47,7 @@ img.user-pic {
 
 .center-box {
 	width: 100%;
+	height: fit-content;
 	border-left: 1px solid var(--BorderColor);
 	border-right: 1px solid var(--BorderColor);
 	display: flex;
@@ -58,6 +59,7 @@ img.user-pic {
 	width: 100%;
 	padding: 1rem;
 	border-top: 1px solid var(--BorderColor);
+	border-bottom: 1px solid var(--BorderColor);
 }
 
 .create-post-button {
@@ -92,9 +94,9 @@ img.user-pic {
 		right: unset;
 	}
 
-		.post-form input {
-			text-align: left;
-		}
+	.post-form input {
+		text-align: left;
+	}
 
 	.center-box {
 		width: 60%;
@@ -103,7 +105,6 @@ img.user-pic {
 
 @media only screen and (min-width: 1600px) {
 	div.left-box {
-		display: block;
 		width: 30%;
 	}
 

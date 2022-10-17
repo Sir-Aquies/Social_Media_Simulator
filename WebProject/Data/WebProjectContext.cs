@@ -30,15 +30,37 @@ namespace WebProject.Data
 					.HasColumnType("datetime2")
 					.HasDefaultValueSql("getdate()");
 
+				entity.Property(p => p.EditedDate)
+					.HasColumnType("datetime2")
+					.HasDefaultValueSql("getdate()");
+
 				entity.HasOne(p => p.User).WithMany(u => u.Posts).HasForeignKey(p => p.UserId).OnDelete(DeleteBehavior.Cascade);
+
+				entity.HasMany(p => p.UsersLikes).WithMany(u => u.LikedPost).UsingEntity<Dictionary<string, object>>(
+						"PostLikes",
+						p => p
+							.HasOne<UserModel>().WithMany().HasForeignKey("UserId").HasConstraintName("FK_PostLikes_User_UserId").OnDelete(DeleteBehavior.Cascade), 
+						p => p
+							.HasOne<PostModel>().WithMany().HasForeignKey("PostId").HasConstraintName("FK_PostLikes_Post_PostId").OnDelete(DeleteBehavior.ClientCascade));
 			});
 
 			builder.Entity<CommentModel>(entity =>
 			{
 				entity.HasKey(c => c.Id);
 
-				entity.HasOne(c => c.User).WithMany(u => u.Comments).HasForeignKey(c => c.UserId).OnDelete(DeleteBehavior.Restrict);
+				entity.Property(c => c.Date)
+					.HasColumnType("datetime2")
+					.HasDefaultValueSql("getdate()");
+
+				entity.HasOne(c => c.User).WithMany(u => u.Comments).HasForeignKey(c => c.UserId).OnDelete(DeleteBehavior.NoAction);
 				entity.HasOne(c => c.Post).WithMany(p => p.Comments).HasForeignKey(c => c.PostId).OnDelete(DeleteBehavior.Cascade);
+
+				entity.HasMany(p => p.UsersLikes).WithMany(u => u.LikedComments).UsingEntity<Dictionary<string, object>>(
+						"CommentLikes",
+						p => p
+							.HasOne<UserModel>().WithMany().HasForeignKey("UserId").HasConstraintName("FK_CommentLikes_User_UserId").OnDelete(DeleteBehavior.Cascade),
+						p => p
+							.HasOne<CommentModel>().WithMany().HasForeignKey("CommentId").HasConstraintName("FK_CommentLikes_Comment_CommentId").OnDelete(DeleteBehavior.ClientCascade));
 			});
 		}
 	}

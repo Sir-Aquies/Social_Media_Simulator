@@ -1,0 +1,12 @@
+﻿<link rel="stylesheet" href="~/css/PostDiv.css" asp-append-version="true"/>
+
+<form method="post" asp-action="CreateComment" enctype="multipart/form-data">
+	<div id="ContentHolder" class="content-holder">
+		<textarea name="Content"></textarea>
+
+		<div class="button-holder">
+			<input type="button" value="Cancel" onclick="RemoveCreateCommentTab()" />
+			<input type="submit" value="Comment" />
+		</div>
+	</div>
+</form>

@@ -1,0 +1,154 @@
+﻿@model DynamicUser
+
+@foreach (PostModel post in Model.PageUser.Posts.Reverse())
+{
+	<div class="post-container">
+		<div class="post-info">
+			@if (post.User.ProfilePicture != null) 
+			{
+				<img src="data:image/png;base64,@post.User.ProfilePicture" alt="@post.User.UserName"/>
+			}
+			else {
+				<img alt="@post.User.UserName" />
+			}
+
+			<a class="post-info-username" asp-action="UserPage" asp-controller="User" asp-route-UserName="@post.User.UserName">@post.User.UserName</a>
+
+			@if (post.PostDate.ToString("MM/dd/yyyy") == DateTime.Today.ToString("MM/dd/yyyy"))
+			{
+				<span>@post.PostDate.ToString("hh:mm tt")</span>
+			}
+			else
+			{
+				<span>@post.PostDate.ToString("MM/dd/yyyy")</span>
+			}
+
+			@if (post.IsEdited)
+			{
+				@if (post.EditedDate.ToString("MM/dd/yyyy") == DateTime.Today.ToString("MM/dd/yyyy"))
+				{
+					<i style="font-size: 14px; margin-left: 0.5rem;">(This post was edited @post.EditedDate.ToString("hh:mm tt"))</i>
+				}
+				else
+				{
+					<i style="font-size: 14px; margin-left: 0.5rem;">(This post was edited @post.EditedDate.ToString("MM/dd/yyyy"))</i>
+				}
+			}
+
+			@if (Model.PageUser.Id == Model.User.Id)
+			{
+				<div class="post-option-button" onclick="OptionButton(this);" onmousedown="event.stopPropagation()">
+					<div>...</div>
+					<form method="post" enctype="multipart/form-data" asp-action="DeletePost" asp-controller="Post" onmousedown="event.stopPropagation()" onclick="event.stopPropagation();" class="post-form">
+						<input type="hidden" name="PostId" value="@post.Id" />
+
+						<input type="button" value="Edit" onclick="EditPostWindow(@post.Id, this);" />
+						<input type="submit" value="Delete"/>
+					</form>
+				</div>
+			}
+		</div>
+
+		<div class="post-content">
+			<div>@post?.Content</div>
+
+			@if (post.Media != null && Model.User.ShowImages)
+			{
+				<img src="data:image/png;base64,@post.Media" alt="@post.User.UserName" />
+			}
+			else if (post.Media != null && !Model.User.ShowImages)
+			{
+				<div class="flip-div" onclick="ShowPostImg(this)">Show Image</div>
+				<img id="" src="data:image/png;base64,@post.Media" class="ImgFinder" alt="@post.User.UserName" />
+			}
+		</div>
+
+		<div class="post-stats">
+			@if (Model.User.LikedPost.Any(p => p.Id == post.Id))
+			{
+				<button style="font-weight:bold" type="button" onclick="LikePost(@post.Id, this)">
+					<span>@post.Likes</span> Likes
+				</button>
+			}
+			else 
+			{
+				<button type="button" onclick="LikePost(@post.Id, this)">
+					<span>@post.Likes</span> Likes
+				</button>
+			}
+
+			<button type="button" onclick="CreateCommentTab(@post.Id)">
+				<span>@post.Comments.Count()</span> Comments
+			</button>
+		</div>
+
+		@foreach(CommentModel comment in post.Comments)
+		{
+			<div class="post-comments">
+				<div class="post-commments-user">
+					@if (comment.User.ProfilePicture != null)
+					{
+						<img src="data:image/png;base64,@comment.User.ProfilePicture" alt="@comment.User.UserName" />
+					}
+					else 
+					{
+						<img src="" alt="@comment.User.UserName" />
+					}
+
+					<a class="post-commments-username" asp-action="UserPage" asp-route-UserName="@comment.User.UserName">@comment.User.UserName</a>
+
+					@if (comment.Date.ToString("MM/dd/yyyy") == DateTime.Today.ToString("MM/dd/yyyy"))
+					{
+						<span>@comment.Date.ToString("hh:mm tt")</span>
+					}
+					else
+					{
+						<span>@comment.Date.ToString("MM/dd/yyyy")</span>
+					}
+
+					@if (Model.User.Id == comment.User.Id)
+					{
+						<div class="post-option-button" onclick="OptionButton(this);" onmousedown="event.stopPropagation()">
+							<div>...</div>
+							<form method="post" enctype="multipart/form-data" asp-action="DeleteComment" asp-controller="Post" onmousedown="event.stopPropagation()" onclick="event.stopPropagation();" class="post-form">
+								<input type="hidden" name="CommentId" value="@comment.Id" />
+
+								@*<input type="button" value="Edit" onclick="EditPostWindow(@post.Id, this);" />*@
+								<input type="submit" value="Delete"/>
+							</form>
+						</div>
+					}
+				</div>
+
+				<div class="post-comments-content">@comment?.Content</div>
+
+				<div class="post-comments-stats">
+					@if (Model.User.LikedComments.Any(c => c.Id == comment.Id))
+					{
+						<button style="font-weight:bold" type="button" onclick="LikeComment(@comment.Id, this)">
+							<span>@comment.Likes</span> Likes
+						</button>
+					}
+					else 
+					{
+						<button type="button" onclick="LikeComment(@comment.Id, this)">
+							<span>@comment.Likes</span> Likes
+						</button>
+					}
+				</div>
+			</div>
+		}
+	</div>
+}
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+
+<script>
+	function ShowPostImg(element) {
+		const img = element.nextElementSibling;
+		img.id = "currentimg";
+		$(`#${img.id}`).slideToggle();
+		img.id = "";
+	};
+</script>
+
