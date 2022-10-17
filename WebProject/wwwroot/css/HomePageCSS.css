@@ -78,6 +78,15 @@ img.user-pic {
 	display: none;
 }
 
+.list-user-pic {
+	width: 4rem;
+	height: 4rem;
+}
+
+.list-user-description {
+	display: none !important;
+}
+
 @media only screen and (min-width: 820px) {
 	.left-box {
 		display: block;
@@ -121,7 +130,8 @@ img.user-pic {
 
 	div.right-box {
 		display: block;
-		width: 20%;
+		margin-left: 1%;
+		width: 19%;
 		height: 100%;
 	}
 }

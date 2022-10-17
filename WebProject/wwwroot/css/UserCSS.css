@@ -1,17 +1,16 @@
 ﻿.users-table {
-	width: 100%;
 	display: flex;
+	width: 100%;
 	flex-direction: column;
 }
 
 .list-user-container {
 	width: 100%;
-	padding: 0.7rem 0.4rem;
+	padding: 0.8rem 0.4rem;
 	height: fit-content;
 	display: flex;
-	justify-content: center;
-	border-top: 1px solid var(--BorderColor);
-	border-bottom: 1px solid var(--BorderColor);
+	align-items: center;
+	border: 1px solid var(--BorderColor);
 }
 
 .list-user-info {
@@ -49,6 +48,10 @@
 
 .list-user-description {
 	display: none;
+	overflow: hidden;
+	height: fit-content;
+	max-height: 7rem;
+	font-size: var(--SmallTextsize);
 }
 
 .box-container {
@@ -56,11 +59,6 @@
 }
 
 @media only screen and (min-width: 490px) {
-	.list-user-container {
-		align-items: center;
-		justify-content: unset;
-	}
-
 	.list-user-info {
 		width: 40%;
 		margin-right: 5%;
@@ -73,16 +71,11 @@
 	.list-user-description {
 		display: block;
 		width: 55%;
-		overflow: hidden;
-		height: fit-content;
-		max-height: 7rem;
-		font-size: var(--SmallTextsize);
 	}
 }
 
 @media only screen and (min-width: 810px) {
 	.list-user-container {
-		padding: 0.7rem 0.4rem;
 		padding-left: 5%;
 	}
 
@@ -90,13 +83,13 @@
 		width: 35%;
 	}
 
-	.center-box {
-		width: 100% !important;
+	.users-table {
+		width: 90%;
 	}
 }
 
 @media only screen and (min-width: 1000px) {
-	.center-box {
-		width: 80% !important;
+	.users-table {
+		width: 75%;
 	}
 }

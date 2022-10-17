@@ -91,11 +91,5 @@ namespace WebProject.Controllers
 
 			return View(userModel);
 		}
-
-		public async Task<IActionResult> GetUsers()
-		{
-			List<UserModel> users = await userManager.Users.ToListAsync();
-			return PartialView("UsersList", users);
-		}
 	}
 }

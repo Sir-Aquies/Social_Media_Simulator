@@ -7,24 +7,7 @@
 <link rel="stylesheet" href="~/css/UserCSS.css" asp-append-version="true"/>
 
 <div class="box-container">
-	@*<div class="left-box">
-	</div>*@
-
-	<div class="center-box">
-		<div class="users-table" id="UsersTable">
-
-		</div>
+	<div class="users-table">
+		@await Component.InvokeAsync("AllUsers")
 	</div>
 </div>
-
-<script src="~/lib/jquery/dist/jquery.js"></script>
-
-<script>
-	$(document).ready(function () {
-		$.get("/User/GetUsers", function (data, status) {
-			if (status === "success") {
-				$('#UsersTable').html(data);
-			}
-		});
-	});
-</script>

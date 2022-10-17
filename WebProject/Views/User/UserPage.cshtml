@@ -4,6 +4,7 @@
 	ViewData["Title"] = Model.PageUser.UserName ?? "NULL";
 }
 
+<link rel="stylesheet" href="~/css/UserCSS.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/HomePageCSS.css" asp-append-version="true"/>
 <link rel="stylesheet" href="~/css/PostContainer.css" asp-append-version="true" />
 
@@ -42,7 +43,7 @@
 	</div>
 
 	<div class="right-box">
-
+		@await Component.InvokeAsync("AllUsers")
 	</div>
 </div>
 

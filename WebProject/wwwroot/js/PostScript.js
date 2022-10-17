@@ -76,6 +76,36 @@ function LikeComment(commentId, button) {
 	}
 }
 
+function DeletePost(postId, input) {
+	input.parentElement.style.display = "none";
+
+	if (postId != undefined) {
+		$.post("/Post/DeletePost", { PostId: postId }, function (data, status) {
+			if (status === "success") {
+				if (data) {
+					const postContainer = input.parentElement.parentElement.parentElement.parentElement;
+					postContainer.remove();
+				}
+			}
+		});
+	}
+}
+
+function DeleteComment(commentId, input) {
+	input.parentElement.style.display = "none";
+
+	if (commentId != undefined) {
+		$.post("/Post/DeleteComment", { CommentId: commentId }, function (data, status) {
+			if (status === "success") {
+				if (data) {
+					const postContainer = input.parentElement.parentElement.parentElement.parentElement;
+					postContainer.remove();
+				}
+			}
+		});
+	}
+}
+
 function Background() {
 	var tab = document.createElement("div");
 	tab.id = "BlackBackground";

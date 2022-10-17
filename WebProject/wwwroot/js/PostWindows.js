@@ -33,7 +33,7 @@ function OptionButton(post) {
 
 	document.addEventListener("mousedown", () => {
 		option.style.display = "none";
-		document.addEventListener("mousedown", () => { });
+		this.removeEventListener("mousedown", arguments.callee);
 	});
 }
 
@@ -51,7 +51,7 @@ function EditPostWindow(postid, input) {
 			tab.addEventListener("dblclick", () => { RemoveEditPostTab() })
 
 			$('#EditPostDiv').html(data);
-        }
+		}
 	});
 }
 

@@ -104,9 +104,8 @@ namespace WebProject.Controllers
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> DeletePost(int PostId)
+		public async Task<bool> DeletePost(int PostId)
 		{
-			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
 			PostModel postModel = await _Models.Posts.Include(p => p.Comments).ThenInclude(c => c.UsersLikes).Include(p => p.UsersLikes).FirstOrDefaultAsync(us => us.Id == PostId);
 
 			if (postModel != null)
@@ -119,9 +118,12 @@ namespace WebProject.Controllers
 
 				_Models.Remove(postModel);
 				await _Models.SaveChangesAsync();
+				return true;
 			}
-
-			return RedirectToAction("UserPage", "User", new { userModel.UserName });
+			else
+			{
+				return false;
+			}
 		}
 
 		[HttpPost]
@@ -196,9 +198,8 @@ namespace WebProject.Controllers
 			return RedirectToAction("UserPage", "User", new { userModel.UserName });
 		}
 
-		public async Task<IActionResult> DeleteComment(int CommentId)
+		public async Task<bool> DeleteComment(int CommentId)
 		{
-			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
 			CommentModel comment = await _Models.Comments.Include(c => c.UsersLikes)
 					.Include(c => c.Post).ThenInclude(p => p.User).FirstOrDefaultAsync(c => c.Id == CommentId);
 
@@ -207,9 +208,13 @@ namespace WebProject.Controllers
 				comment.UsersLikes.Clear();
 				_Models.Comments.Remove(comment);
 				await _Models.SaveChangesAsync();
-			}
 
-			return RedirectToAction("UserPage", "User", new { UserName = comment.Post.User.UserName });
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
 
 		[HttpPost]
