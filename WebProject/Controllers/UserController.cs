@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace WebProject.Controllers
 {
@@ -21,6 +22,18 @@ namespace WebProject.Controllers
 			_Models = Models;
 			userManager = manager;
 			_Logger = logger;
+		}
+
+		public async Task<IActionResult> SearchUser(string UserName)
+		{
+			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
+
+			if (!string.IsNullOrEmpty(UserName))
+			{
+				return RedirectToAction("UserPage", new { UserName });
+			}
+
+			return RedirectToAction("UserPage", new { userModel.UserName });
 		}
 
 		public async Task<IActionResult> UserPage(string UserName)

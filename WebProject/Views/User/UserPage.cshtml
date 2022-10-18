@@ -31,14 +31,7 @@
 		</div>
 	</div>
 
-	<div class="center-box">
-		@if (Model.PageUser == Model.User) 
-		{
-			<div class="create-post-container">
-				<button type="button" class="create-post-button" onclick="CreatePostWindow()">Create New Post</button>
-			</div>
-		}
-
+	<div class="center-box" id="UserPostContainer">
 		<partial name="UserPost" model="Model"></partial>
 	</div>
 

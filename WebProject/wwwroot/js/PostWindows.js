@@ -13,6 +13,32 @@
 	});
 }
 
+function CreatePost(input) {
+	const content = input.parentElement.parentElement.children[0].value;
+	const [file] = input.parentElement.children[2].files;
+	var formData = new FormData();
+
+	if (file) {
+		formData.append("Media", file);
+	}
+
+	formData.append("Content", content);
+
+	$.ajax(
+		{
+			type: "POST",
+			url: "/Post/CreatePost",
+			data: formData,
+			contentType: false,
+			processData: false,
+			success: function (data) {
+				RemoveTab();
+				$("#UserPostContainer").html(data);
+			}
+		}
+	);
+}
+
 function RemoveTab() {
 	const postdiv = document.getElementById("PostDiv");
 	const tab = document.getElementById("BlackBackground");
@@ -39,7 +65,6 @@ function OptionButton(post) {
 
 function EditPostWindow(postid, input) {
 	input.parentElement.style.display = "none";
-	document.addEventListener("mousedown", () => { });
 
 	$.post("/Post/LookforPost", { PostId: postid }, function (data, status) {
 		if (status === "success") {
@@ -53,6 +78,40 @@ function EditPostWindow(postid, input) {
 			$('#EditPostDiv').html(data);
 		}
 	});
+}
+
+function EditPost(input) {
+	const content = input.parentElement.parentElement.children[0].value;
+	const [file] = input.parentElement.children[2].files;
+	var deleteMedia = false;
+	var formData = new FormData();
+
+	const oldFrame = document.getElementById("ImageFrame");
+
+	if (!oldFrame) {
+		deleteMedia = true;
+	}
+
+	if (file) {
+		formData.append("Media", file);
+	}
+
+	formData.append("DeleteMedia", deleteMedia);
+	formData.append("Content", content);
+
+	$.ajax(
+		{
+			type: "POST",
+			url: "/Post/EditPost",
+			data: formData,
+			contentType: false,
+			processData: false,
+			success: function (data) {
+				RemoveEditPostTab();
+				$("#UserPostContainer").html(data);
+			}
+		}
+	);
 }
 
 function RemoveEditPostTab() {

@@ -1,5 +1,12 @@
 ﻿@model DynamicUser
 
+@if (Model.PageUser.Id == Model.User.Id)
+{
+	<div class="create-post-container">
+		<button type="button" class="create-post-button" onclick="CreatePostWindow()">Create New Post</button>
+	</div>
+}
+
 @foreach (PostModel post in Model.PageUser.Posts.Reverse())
 {
 	<div class="post-container">

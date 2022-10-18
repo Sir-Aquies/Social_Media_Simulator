@@ -24,76 +24,130 @@ namespace WebProject.Controllers
 		public IActionResult LookForCreatePost() => PartialView("CreatePost");
 
 		[HttpPost]
-		public async Task<IActionResult> CreatePost(string Content, IFormFile Media)
+		public async Task<IActionResult> CreatePost(IFormFile Media, string Content)
 		{
 			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
 
-			PostModel post = new PostModel();
+			PostModel postModel = new();
 
 			if (!string.IsNullOrEmpty(Content))
 			{
-				post.Content = Content;
+				postModel.Content = Content;
 			}
 
 			if (Media != null)
 			{
-				post.Media = Convert.ToBase64String(await GetBytes(Media));
+				postModel.Media = Convert.ToBase64String(await GetBytes(Media));
 			}
 
-			if (!string.IsNullOrEmpty(post.Content) || post.Media != null)
+			if (!string.IsNullOrEmpty(postModel.Content) || postModel.Media != null)
 			{
-				post.PostDate = DateTime.Now;
-				post.UserId = userModel.Id;
-				_Models.Posts.Add(post);
+				postModel.PostDate = DateTime.Now;
+				postModel.UserId = userModel.Id;
+				_Models.Posts.Add(postModel);
 				await _Models.SaveChangesAsync();
 			}
 
-			return RedirectToAction("UserPage", "User", new { userModel.UserName });
+			userModel.LikedPost = await (from post in _Models.Posts where post.UsersLikes.Contains(userModel) select post).AsNoTracking().ToListAsync();
+			userModel.LikedComments = await (from com in _Models.Comments where com.UsersLikes.Contains(userModel) select com).AsNoTracking().ToListAsync();
+
+			UserModel page = new();
+
+			page = userModel;
+			page.Posts = await _Models.Posts.Include(p => p.Comments).ThenInclude(c => c.User).Where(p => p.UserId == page.Id).AsNoTracking().ToListAsync();
+			foreach (var post in page.Posts)
+			{
+				post.User = page;
+			}
+
+			DynamicUser dynamic = new()
+			{
+				User = userModel,
+				PageUser = page
+			};
+
+			return PartialView("UserPost", dynamic);
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> EditPost(int PostId, string Content, IFormFile Media, string DeleteMedia)
+		public async Task<IActionResult> EditPost(string Content, IFormFile Media, bool DeleteMedia)
 		{
-			PostModel post = await _Models.Posts.FirstOrDefaultAsync(p => p.Id == PostId);
+			int PostId = 0;
+			bool PostIdBool = false;
+
+			if (!string.IsNullOrEmpty(TempData["PostId"]?.ToString()))
+			{
+				PostIdBool = int.TryParse(TempData["PostId"]?.ToString(), out PostId);
+			}
+
+			PostModel postModel = new();
+
+			if (PostIdBool)
+			{
+				postModel = await _Models.Posts.FirstOrDefaultAsync(p => p.Id == PostId);
+			}
+			else
+			{
+				return NotFound();
+			}
+
 			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
 
 			if (Media != null)
 			{
-				post.Media = Convert.ToBase64String(await GetBytes(Media));
+				postModel.Media = Convert.ToBase64String(await GetBytes(Media));
 			}
-			else if (DeleteMedia == "true" && Media == null)
+			else if (DeleteMedia)
 			{
-				post.Media = null;
-			}
-
-			if (!string.IsNullOrEmpty(Content) && Content != post.Content)
-			{
-				post.Content = Content;
+				postModel.Media = null;
 			}
 
-			if (!string.IsNullOrEmpty(post.Content) || post.Media != null)
+			if (!string.IsNullOrEmpty(Content) && Content != postModel.Content)
 			{
-				post.IsEdited = true;
-				post.EditedDate = DateTime.Now;
+				postModel.Content = Content;
+			}
 
-				_Models.Posts.Update(post);
+			if (!string.IsNullOrEmpty(postModel.Content) || postModel.Media != null)
+			{
+				postModel.IsEdited = true;
+				postModel.EditedDate = DateTime.Now;
+
+				_Models.Posts.Update(postModel);
 				await _Models.SaveChangesAsync();
 				TempData["Message"] = "Post successfully updated.";
-
-				return RedirectToAction("UserPage", "User", new { userModel.UserName });
 			}
 			else
 			{
 				TempData["ErrorMessage"] = "Sorry, something went wrong";
 			}
 
-			return RedirectToAction("UserPage", "User", new { userModel.UserName });
+			userModel.LikedPost = await (from post in _Models.Posts where post.UsersLikes.Contains(userModel) select post).AsNoTracking().ToListAsync();
+			userModel.LikedComments = await (from com in _Models.Comments where com.UsersLikes.Contains(userModel) select com).AsNoTracking().ToListAsync();
+
+			UserModel page = new();
+
+			page = userModel;
+			page.Posts = await _Models.Posts.Include(p => p.Comments).ThenInclude(c => c.User).Where(p => p.UserId == page.Id).AsNoTracking().ToListAsync();
+			foreach (var post in page.Posts)
+			{
+				post.User = page;
+			}
+
+			DynamicUser dynamic = new()
+			{
+				User = userModel,
+				PageUser = page
+			};
+
+			return PartialView("UserPost", dynamic);
 		}
 
 		[HttpPost]
 		public async Task<IActionResult> LookforPost(int PostId)
 		{
 			PostModel postModel = await _Models.Posts.AsNoTracking().FirstOrDefaultAsync(us => us.Id == PostId);
+
+			TempData["PostId"] = PostId;
 
 			if (postModel == null)
 			{

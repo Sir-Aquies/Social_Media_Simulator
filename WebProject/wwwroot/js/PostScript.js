@@ -98,6 +98,8 @@ function DeleteComment(commentId, input) {
 		$.post("/Post/DeleteComment", { CommentId: commentId }, function (data, status) {
 			if (status === "success") {
 				if (data) {
+					const commentAmount = input.parentElement.parentElement.parentElement.parentElement.parentElement.children[2].children[1].children[0];
+					commentAmount.innerHTML = parseInt(commentAmount.innerHTML) - 1;
 					const postContainer = input.parentElement.parentElement.parentElement.parentElement;
 					postContainer.remove();
 				}

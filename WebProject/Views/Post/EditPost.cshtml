@@ -1,19 +1,15 @@
 ﻿@model PostModel
 <link rel="stylesheet" href="~/css/PostDiv.css" asp-append-version="true"/>
 
-@if (Model is PostModel)
-{
-	<form method="post" enctype="multipart/form-data" asp-action="EditPost">
-		<input type="hidden" name="PostId" value="@Model.Id" />
-
+<form>
 		<div id="EditContentHolder" class="content-holder">
-			<textarea name="Content">@Model.Content</textarea>
+			<textarea name="Content">@Model?.Content</textarea>
 
 			<div class="button-holder">
 				<input type="button" value="Cancel" onclick="RemoveEditPostTab()" />
 				<input type="button" value="Image" onclick="document.getElementById('EditFile').click()" />
 				<input type="file" id="EditFile" name="Media" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" onchange="EditImagePreview(this, document.getElementById('EditImageHolder'))" style="display: none;" />
-				<input type="submit" value="Edit" />
+				<input type="button" value="Edit" onclick="EditPost(this)"/>
 			</div>
 		</div>
 
@@ -21,7 +17,6 @@
 			@if (Model.Media != null)
 			{
 				<img id="SRC" src="data:image/png;base64,@Model.Media" style="display:none;"/>
-				<input type="hidden" id="DeleteMedia" name="DeleteMedia" value="false" />
 
 				<script>
 					EditImage(document.getElementById("SRC").src);
@@ -30,5 +25,4 @@
 		</div>
 
 	</form>
-}
 

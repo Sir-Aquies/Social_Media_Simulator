@@ -48,12 +48,7 @@ namespace WebProject.Controllers
 
 					if (result.Succeeded)
 					{
-						if (login.ReturnUrl == $"/{ user.UserName}")
-						{
-							return RedirectToAction("UserPage", "User", new { user.UserName });
-						}
-
-						return Redirect(login.ReturnUrl ?? "/");
+						return Redirect(login.ReturnUrl ?? $"/{user.UserName}");
 					}
 				}
 

@@ -68,11 +68,6 @@ function DeleteEditImagePreview() {
 	const contHolder = document.getElementById("EditContentHolder");
 	const imageHolder = document.getElementById('EditImageHolder');
 	const file = document.getElementById('EditFile');
-	const deleteMedia = document.getElementById("DeleteMedia");
-
-	if (deleteMedia) {
-		deleteMedia.value = "true";
-	}
 
 	imageFrame.remove();
 
