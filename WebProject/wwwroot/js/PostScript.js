@@ -18,6 +18,20 @@
 	}
 }
 
+function CreateComment(input) {
+	const content = input.parentElement.parentElement.children[0].value;
+	const token = $('input[name="__RequestVerificationToken"]').val();
+
+	if (content) {
+		$.post("/Post/CreateComment", { __RequestVerificationToken: token, Content: content }, function (data, status) {
+			if (status === "success") {
+				RemoveCreateCommentTab();
+				$("#UserPostContainer").html(data);
+			}
+		});
+	}
+}
+
 function RemoveCreateCommentTab() {
 	const commentdiv = document.getElementById("CommentDiv");
 	const tab = document.getElementById("BlackBackground");
@@ -32,23 +46,19 @@ function RemoveCreateCommentTab() {
 	document.body.style.overflow = "auto";
 }
 
-function LikePost(postId, button) {
-	likesAmount = button.children[0];
+function DeleteComment(commentId, input) {
+	input.parentElement.style.display = "none";
+	const token = $('input[name="__RequestVerificationToken"]').val();
 
-	if (postId != undefined) {
-		$.post("/Post/LikePost", { PostId: postId }, function (data, status) {
+	if (commentId != undefined) {
+		$.post("/Post/DeleteComment", { __RequestVerificationToken: token, CommentId: commentId }, function (data, status) {
 			if (status === "success") {
-				if (data === "+") {
-					let likes = parseInt(likesAmount.innerHTML);
-					likesAmount.innerHTML = ++likes;
-					button.style.fontWeight = "bold";
+				if (data) {
+					const commentAmount = input.parentElement.parentElement.parentElement.parentElement.parentElement.children[2].children[1].children[0];
+					commentAmount.innerHTML = parseInt(commentAmount.innerHTML) - 1;
+					const postContainer = input.parentElement.parentElement.parentElement.parentElement;
+					postContainer.remove();
 				}
-				else if (data === "-") {
-					let likes = parseInt(likesAmount.innerHTML);
-					likesAmount.innerHTML = --likes;
-					button.style.fontWeight = "normal";
-				}
-				
 			}
 		});
 	}
@@ -71,38 +81,6 @@ function LikeComment(commentId, button) {
 					button.style.fontWeight = "normal";
 				}
 
-			}
-		});
-	}
-}
-
-function DeletePost(postId, input) {
-	input.parentElement.style.display = "none";
-
-	if (postId != undefined) {
-		$.post("/Post/DeletePost", { PostId: postId }, function (data, status) {
-			if (status === "success") {
-				if (data) {
-					const postContainer = input.parentElement.parentElement.parentElement.parentElement;
-					postContainer.remove();
-				}
-			}
-		});
-	}
-}
-
-function DeleteComment(commentId, input) {
-	input.parentElement.style.display = "none";
-
-	if (commentId != undefined) {
-		$.post("/Post/DeleteComment", { CommentId: commentId }, function (data, status) {
-			if (status === "success") {
-				if (data) {
-					const commentAmount = input.parentElement.parentElement.parentElement.parentElement.parentElement.children[2].children[1].children[0];
-					commentAmount.innerHTML = parseInt(commentAmount.innerHTML) - 1;
-					const postContainer = input.parentElement.parentElement.parentElement.parentElement;
-					postContainer.remove();
-				}
 			}
 		});
 	}

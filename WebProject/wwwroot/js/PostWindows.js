@@ -16,6 +16,7 @@
 function CreatePost(input) {
 	const content = input.parentElement.parentElement.children[0].value;
 	const [file] = input.parentElement.children[2].files;
+	const token = $('input[name="__RequestVerificationToken"]').val();
 	var formData = new FormData();
 
 	if (file) {
@@ -23,6 +24,7 @@ function CreatePost(input) {
 	}
 
 	formData.append("Content", content);
+	formData.append("__RequestVerificationToken", token);
 
 	$.ajax(
 		{
@@ -82,6 +84,7 @@ function EditPostWindow(postid, input) {
 
 function EditPost(input) {
 	const content = input.parentElement.parentElement.children[0].value;
+	const token = $('input[name="__RequestVerificationToken"]').val();
 	const [file] = input.parentElement.children[2].files;
 	var deleteMedia = false;
 	var formData = new FormData();
@@ -98,6 +101,7 @@ function EditPost(input) {
 
 	formData.append("DeleteMedia", deleteMedia);
 	formData.append("Content", content);
+	formData.append("__RequestVerificationToken", token);
 
 	$.ajax(
 		{
@@ -121,6 +125,44 @@ function RemoveEditPostTab() {
 	document.body.appendChild(partial);
 	tab.remove();
 	document.body.style.overflow = "auto";
+}
+
+function LikePost(postId, button) {
+	likesAmount = button.children[0];
+
+	if (postId != undefined) {
+		$.post("/Post/LikePost", { PostId: postId }, function (data, status) {
+			if (status === "success") {
+				if (data === "+") {
+					let likes = parseInt(likesAmount.innerHTML);
+					likesAmount.innerHTML = ++likes;
+					button.style.fontWeight = "bold";
+				}
+				else if (data === "-") {
+					let likes = parseInt(likesAmount.innerHTML);
+					likesAmount.innerHTML = --likes;
+					button.style.fontWeight = "normal";
+				}
+
+			}
+		});
+	}
+}
+
+function DeletePost(postId, input) {
+	input.parentElement.style.display = "none";
+	const token = $('input[name="__RequestVerificationToken"]').val();
+
+	if (postId != undefined) {
+		$.post("/Post/DeletePost", { __RequestVerificationToken: token, PostId: postId }, function (data, status) {
+			if (status === "success") {
+				if (data) {
+					const postContainer = input.parentElement.parentElement.parentElement.parentElement;
+					postContainer.remove();
+				}
+			}
+		});
+	}
 }
 
 function Background() {

@@ -50,6 +50,7 @@
 					<div onmousedown="event.stopPropagation()" onclick="event.stopPropagation();" class="post-form">
 						<input type="button" value="Edit" onclick="EditPostWindow(@post.Id, this);" />
 						<input type="button" value="Delete" onclick="DeletePost(@post.Id, this)"/>
+						@Html.AntiForgeryToken()
 					</div>
 				</div>
 			}

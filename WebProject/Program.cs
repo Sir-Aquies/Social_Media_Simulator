@@ -2,6 +2,7 @@
 using WebProject.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using WebProject.Policies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,8 +19,15 @@ builder.Services.AddIdentity<UserModel, IdentityRole>().AddEntityFrameworkStores
 
 //builder.Services.ConfigureApplicationCookie(options =>
 //{
-	
+
 //});
+
+builder.Services.Configure<IdentityOptions>(opts =>
+{
+	opts.User.RequireUniqueEmail = true;
+});
+
+builder.Services.AddTransient<IUserValidator<UserModel>, UserNamePolicies>();
 
 var app = builder.Build();
 

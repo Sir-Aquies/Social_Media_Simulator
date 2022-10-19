@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿#nullable disable
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using WebProject.Models;
 using WebProject.Data;
 using Microsoft.AspNetCore.Authorization;
+using System.Collections.Generic;
 
 namespace WebProject.Controllers
 {
@@ -97,8 +99,14 @@ namespace WebProject.Controllers
 					}
 				}
 			}
+
 			return View();
 		}
+
+		//Passwords must be at least 6 characters.
+		//Passwords must have at least one non alphanumeric character.
+		//Passwords must have at least one digit('0'-'9').
+		//Passwords must have at least one uppercase('A'-'Z').
 
 		public async Task<IActionResult> Logout()
 		{

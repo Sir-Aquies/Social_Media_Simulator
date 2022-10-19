@@ -1,5 +1,4 @@
 ﻿@model PostModel
-<link rel="stylesheet" href="~/css/PostDiv.css" asp-append-version="true"/>
 
 <form>
 		<div id="EditContentHolder" class="content-holder">
@@ -23,6 +22,6 @@
 				</script>
 			}
 		</div>
-
-	</form>
+</form>
+@Html.AntiForgeryToken()
 

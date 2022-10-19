@@ -24,6 +24,7 @@ namespace WebProject.Controllers
 		public IActionResult LookForCreatePost() => PartialView("CreatePost");
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> CreatePost(IFormFile Media, string Content)
 		{
 			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
@@ -70,6 +71,7 @@ namespace WebProject.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> EditPost(string Content, IFormFile Media, bool DeleteMedia)
 		{
 			int PostId = 0;
@@ -93,53 +95,58 @@ namespace WebProject.Controllers
 
 			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
 
-			if (Media != null)
+			if (userModel.Id == postModel.UserId)
 			{
-				postModel.Media = Convert.ToBase64String(await GetBytes(Media));
+				if (Media != null)
+				{
+					postModel.Media = Convert.ToBase64String(await GetBytes(Media));
+				}
+				else if (DeleteMedia)
+				{
+					postModel.Media = null;
+				}
+
+				if (!string.IsNullOrEmpty(Content) && Content != postModel.Content)
+				{
+					postModel.Content = Content;
+				}
+
+				if (!string.IsNullOrEmpty(postModel.Content) || postModel.Media != null)
+				{
+					postModel.IsEdited = true;
+					postModel.EditedDate = DateTime.Now;
+
+					_Models.Posts.Update(postModel);
+					await _Models.SaveChangesAsync();
+					TempData["Message"] = "Post successfully updated.";
+				}
+				else
+				{
+					TempData["ErrorMessage"] = "Sorry, something went wrong";
+				}
+
+				userModel.LikedPost = await (from post in _Models.Posts where post.UsersLikes.Contains(userModel) select post).AsNoTracking().ToListAsync();
+				userModel.LikedComments = await (from com in _Models.Comments where com.UsersLikes.Contains(userModel) select com).AsNoTracking().ToListAsync();
+
+				UserModel page = new();
+
+				page = userModel;
+				page.Posts = await _Models.Posts.Include(p => p.Comments).ThenInclude(c => c.User).Where(p => p.UserId == page.Id).AsNoTracking().ToListAsync();
+				foreach (var post in page.Posts)
+				{
+					post.User = page;
+				}
+
+				DynamicUser dynamic = new()
+				{
+					User = userModel,
+					PageUser = page
+				};
+
+				return PartialView("UserPost", dynamic);
 			}
-			else if (DeleteMedia)
-			{
-				postModel.Media = null;
-			}
 
-			if (!string.IsNullOrEmpty(Content) && Content != postModel.Content)
-			{
-				postModel.Content = Content;
-			}
-
-			if (!string.IsNullOrEmpty(postModel.Content) || postModel.Media != null)
-			{
-				postModel.IsEdited = true;
-				postModel.EditedDate = DateTime.Now;
-
-				_Models.Posts.Update(postModel);
-				await _Models.SaveChangesAsync();
-				TempData["Message"] = "Post successfully updated.";
-			}
-			else
-			{
-				TempData["ErrorMessage"] = "Sorry, something went wrong";
-			}
-
-			userModel.LikedPost = await (from post in _Models.Posts where post.UsersLikes.Contains(userModel) select post).AsNoTracking().ToListAsync();
-			userModel.LikedComments = await (from com in _Models.Comments where com.UsersLikes.Contains(userModel) select com).AsNoTracking().ToListAsync();
-
-			UserModel page = new();
-
-			page = userModel;
-			page.Posts = await _Models.Posts.Include(p => p.Comments).ThenInclude(c => c.User).Where(p => p.UserId == page.Id).AsNoTracking().ToListAsync();
-			foreach (var post in page.Posts)
-			{
-				post.User = page;
-			}
-
-			DynamicUser dynamic = new()
-			{
-				User = userModel,
-				PageUser = page
-			};
-
-			return PartialView("UserPost", dynamic);
+			return NotFound();
 		}
 
 		[HttpPost]
@@ -158,26 +165,33 @@ namespace WebProject.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public async Task<bool> DeletePost(int PostId)
 		{
+			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
 			PostModel postModel = await _Models.Posts.Include(p => p.Comments).ThenInclude(c => c.UsersLikes).Include(p => p.UsersLikes).FirstOrDefaultAsync(us => us.Id == PostId);
 
-			if (postModel != null)
+			if (userModel.Id == postModel.UserId)
 			{
-				postModel.UsersLikes.Clear();
-				foreach (CommentModel comment in postModel.Comments)
+				if (postModel != null)
 				{
-					comment.UsersLikes.Clear();
-				}
+					postModel.UsersLikes.Clear();
+					foreach (CommentModel comment in postModel.Comments)
+					{
+						comment.UsersLikes.Clear();
+					}
 
-				_Models.Remove(postModel);
-				await _Models.SaveChangesAsync();
-				return true;
+					_Models.Remove(postModel);
+					await _Models.SaveChangesAsync();
+					return true;
+				}
+				else
+				{
+					return false;
+				}
 			}
-			else
-			{
-				return false;
-			}
+
+			return false;
 		}
 
 		[HttpPost]
@@ -219,6 +233,7 @@ namespace WebProject.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> CreateComment(string Content)
 		{
 			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
@@ -245,30 +260,55 @@ namespace WebProject.Controllers
 
 				_Models.Add(comment);
 				await _Models.SaveChangesAsync();
-
-				return RedirectToAction("UserPage", "User", new { UserName });
 			}
 
-			return RedirectToAction("UserPage", "User", new { userModel.UserName });
+			userModel.LikedPost = await (from post in _Models.Posts where post.UsersLikes.Contains(userModel) select post).AsNoTracking().ToListAsync();
+			userModel.LikedComments = await (from com in _Models.Comments where com.UsersLikes.Contains(userModel) select com).AsNoTracking().ToListAsync();
+
+			UserModel page = new();
+
+			page = await userManager.FindByNameAsync(UserName);
+			page.Posts = await _Models.Posts.Include(p => p.Comments).ThenInclude(c => c.User).Where(p => p.UserId == page.Id).AsNoTracking().ToListAsync();
+			foreach (var post in page.Posts)
+			{
+				post.User = page;
+			}
+
+			DynamicUser dynamic = new()
+			{
+				User = userModel,
+				PageUser = page
+			};
+
+			return PartialView("UserPost", dynamic);
 		}
 
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public async Task<bool> DeleteComment(int CommentId)
 		{
+			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
+
 			CommentModel comment = await _Models.Comments.Include(c => c.UsersLikes)
 					.Include(c => c.Post).ThenInclude(p => p.User).FirstOrDefaultAsync(c => c.Id == CommentId);
 
-			if (comment != null)
+			if (userModel.Id == comment.UserId)
 			{
-				comment.UsersLikes.Clear();
-				_Models.Comments.Remove(comment);
-				await _Models.SaveChangesAsync();
+				if (comment != null)
+				{
+					comment.UsersLikes.Clear();
+					_Models.Comments.Remove(comment);
+					await _Models.SaveChangesAsync();
 
-				return true;
+					return true;
+				}
+				else
+				{
+					return false;
+				}
 			}
-			else
-			{
-				return false;
-			}
+
+			return false;
 		}
 
 		[HttpPost]
