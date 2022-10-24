@@ -28,7 +28,7 @@ namespace WebProject.Controllers
 
 			if (userModel == null)
 			{
-				return RedirectToAction("Logout", "Account");
+				return RedirectToAction("Login", "Account");
 			}
 
 			return View(userModel);
@@ -39,6 +39,9 @@ namespace WebProject.Controllers
 		public async Task<IActionResult> EditProfile(string Description, string Name, string UserName, IFormFile ProfilePicture)
 		{
 			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
+			string oldUserN = userModel.UserName;
+			string oldName = userModel.Name;
+			string oldDesc = userModel.Description;
 
 			if (userModel != null)
 			{
@@ -64,6 +67,7 @@ namespace WebProject.Controllers
 				}
 
 				IdentityResult result = await userManager.UpdateAsync(userModel);
+
 				if (result.Succeeded)
 				{
 					ViewBag.Message = "Profile successfully updated.";
@@ -71,13 +75,23 @@ namespace WebProject.Controllers
 				}
 				else
 				{
-					ViewBag.ErrorMessage = "Sorry, something went wrong.";
+					ViewBag.ErrorMessage = "Sorry, profile could not be updated.";
+
+					userModel.UserName = oldUserN;
+					userModel.Name = oldName;
+					userModel.Description = oldDesc;
+
+					foreach (var error in result.Errors)
+					{
+						ModelState.AddModelError("", error.Description);
+					}
+
 					return View(userModel);
 				}
 			}
 			else
 			{
-				return RedirectToAction("Logout", "Account");
+				return RedirectToAction("Login", "Account");
 			}
 		}
 
@@ -87,7 +101,7 @@ namespace WebProject.Controllers
 
 			if (userModel == null)
 			{
-				return RedirectToAction("Logout", "Account");
+				return RedirectToAction("Login", "Account");
 			}
 
 			return View(userModel);
@@ -117,12 +131,14 @@ namespace WebProject.Controllers
 
 		public async Task<IActionResult> Security()
 		{
-			PasswordUser passwordUser = new PasswordUser();
-			passwordUser.User = await userManager.GetUserAsync(HttpContext.User);
+			PasswordUser passwordUser = new PasswordUser
+			{
+				User = await userManager.GetUserAsync(HttpContext.User)
+			};
 
 			if (passwordUser.User == null)
 			{
-				return RedirectToAction("Logout", "Account");
+				return RedirectToAction("Login", "Account");
 			}
 
 			if (TempData["ErrorMessage"] != null)
@@ -146,7 +162,7 @@ namespace WebProject.Controllers
 
 			if (passwordUser.User == null)
 			{
-				return RedirectToAction("Logout", "Account");
+				return RedirectToAction("Login", "Account");
 			}
 
 			PasswordVerificationResult Pswrdresult = passwordHasher.VerifyHashedPassword(passwordUser.User, passwordUser.User.PasswordHash, passwordUser.OldPassword);
@@ -183,7 +199,7 @@ namespace WebProject.Controllers
 
 			if (userModel == null)
 			{
-				return RedirectToAction("Logout", "Account");
+				return RedirectToAction("Login", "Account");
 			}
 
 			if (userModel.Email == newEmail)
@@ -202,7 +218,7 @@ namespace WebProject.Controllers
 				}
 				else
 				{
-					TempData["ErrorMessage"] = "Sorry something went worng.";
+					TempData["ErrorMessage"] = "Sorry, email is already taken.";
 				}
 			}
 

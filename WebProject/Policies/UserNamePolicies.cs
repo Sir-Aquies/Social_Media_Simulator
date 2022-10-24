@@ -7,8 +7,8 @@ namespace WebProject.Policies
 	{
 		public override async Task<IdentityResult> ValidateAsync(UserManager<UserModel> userManager, UserModel userModel)
 		{
-			IdentityResult result = await base.ValidateAsync(userManager, userModel);
-			List<IdentityError> errors = result.Succeeded ? new List<IdentityError>() : result.Errors.ToList();
+			//IdentityResult result = await base.ValidateAsync(userManager, userModel);
+			List<IdentityError> errors = new List<IdentityError>();
 
 			if (userModel.UserName.Length <= 5)
 			{

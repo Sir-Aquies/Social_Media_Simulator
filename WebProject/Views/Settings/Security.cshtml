@@ -49,10 +49,10 @@
 
 		<br style="margin: 0.5rem;"/>
 
-		<form method="post" action="ChangeEmail" id="myform">
+		<form method="post" id="myform" asp-action="ChangeEmail">
 			<div class="field-container input-settings">
 				<label>New email address</label>
-				<input name="Email" />
+				<input type="email" name="newEmail" />
 			</div>
 
 			<div class="settings-button">

@@ -31,8 +31,9 @@
 
 					<label>Description</label>
 					<textarea name="Description">@Model?.Description</textarea>
-
 					<span asp-validation-for="Description" class="text-danger"></span>
+
+					<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 				</div>
 
 				<div class="settings-pic-frame">
@@ -70,4 +71,4 @@
 	@{
 		await Html.RenderPartialAsync("_ValidationScriptsPartial");
 	}
-	}
+}

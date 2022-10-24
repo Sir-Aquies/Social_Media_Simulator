@@ -7,7 +7,7 @@ using WebProject.Policies;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddRazorPages();
+//builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<WebProjectContext>(options =>
@@ -22,12 +22,12 @@ builder.Services.AddIdentity<UserModel, IdentityRole>().AddEntityFrameworkStores
 
 //});
 
+builder.Services.AddTransient<IUserValidator<UserModel>, UserNamePolicies>();
+
 builder.Services.Configure<IdentityOptions>(opts =>
 {
 	opts.User.RequireUniqueEmail = true;
 });
-
-builder.Services.AddTransient<IUserValidator<UserModel>, UserNamePolicies>();
 
 var app = builder.Build();
 
@@ -61,6 +61,6 @@ app.MapControllerRoute(
 	name: "default",
 	pattern: "{controller=User}/{action=SearchUser}/{id?}");
 
-app.MapRazorPages();
+//app.MapRazorPages();
 
 app.Run();
