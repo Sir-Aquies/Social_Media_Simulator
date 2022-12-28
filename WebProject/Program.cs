@@ -1,5 +1,6 @@
 ﻿using WebProject.Data;
 using WebProject.Models;
+using WebProject.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WebProject.Policies;
@@ -29,6 +30,8 @@ builder.Services.Configure<IdentityOptions>(opts =>
 	opts.User.RequireUniqueEmail = true;
 });
 
+builder.Services.AddHttpClient();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -45,6 +48,13 @@ using (var scope = app.Services.CreateScope())
 
 	var context = services.GetRequiredService<WebProjectContext>();
 	context.Database.EnsureCreated();
+
+	var ClientFactory = services.GetRequiredService<IHttpClientFactory>();
+	var UserManager = services.GetRequiredService<UserManager<UserModel>>();
+
+	SocialMediaAlgorithm socialMedia = new(ClientFactory, UserManager);
+
+	await socialMedia.InitialSeed();
 }
 
 app.UseHttpsRedirection();
