@@ -61,6 +61,7 @@ namespace WebProject.Controllers
 				post.User = page;
 			}
 
+			//TODO - remove dynamics.
 			DynamicUser dynamic = new()
 			{
 				User = userModel,

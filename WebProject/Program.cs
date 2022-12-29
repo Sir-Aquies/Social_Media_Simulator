@@ -49,12 +49,12 @@ using (var scope = app.Services.CreateScope())
 	var context = services.GetRequiredService<WebProjectContext>();
 	context.Database.EnsureCreated();
 
-	var ClientFactory = services.GetRequiredService<IHttpClientFactory>();
-	var UserManager = services.GetRequiredService<UserManager<UserModel>>();
+	IServiceScopeFactory ServiceFactory = services.GetRequiredService<IServiceScopeFactory>();
+	IHttpClientFactory ClientFactory = services.GetRequiredService<IHttpClientFactory>();
+	UserManager<UserModel> UserManager = services.GetRequiredService<UserManager<UserModel>>();
 
-	SocialMediaAlgorithm socialMedia = new(ClientFactory, UserManager);
-
-	await socialMedia.InitialSeed();
+	SocialMediaAlgorithm socialMedia = new(ClientFactory, UserManager, ServiceFactory);
+	socialMedia.StartAsync(new CancellationToken());
 }
 
 app.UseHttpsRedirection();

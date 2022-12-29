@@ -13,7 +13,14 @@
 		<div class="post-info">
 			@if (post.User.ProfilePicture != null) 
 			{
-				<img src="data:image/png;base64,@post.User.ProfilePicture" alt="@post.User.UserName"/>
+				@if (Model.PageUser.ProfilePicture.StartsWith("https"))
+				{
+					<img src="@post.User.ProfilePicture" alt="@post.User.UserName" />
+				}
+				else
+				{
+					<img src="data:image/png;base64,@post.User.ProfilePicture" alt="@post.User.UserName" />
+				}
 			}
 			else {
 				<img alt="@post.User.UserName" />
@@ -95,7 +102,14 @@
 				<div class="post-commments-user">
 					@if (comment.User.ProfilePicture != null)
 					{
-						<img src="data:image/png;base64,@comment.User.ProfilePicture" alt="@comment.User.UserName" />
+						@if (Model.PageUser.ProfilePicture.StartsWith("https"))
+						{
+							<img src="@comment.User.ProfilePicture" alt="@comment.User.UserName" />
+						}
+						else
+						{
+							<img src="data:image/png;base64,@comment.User.ProfilePicture" alt="@comment.User.UserName" />
+						}
 					}
 					else 
 					{

@@ -14,7 +14,14 @@
 		<div class="user-info">
 			@if (Model.PageUser.ProfilePicture != null) 
 			{
-				<img src="data:image/png;base64,@Model.PageUser?.ProfilePicture" class="user-pic" />
+				@if (Model.PageUser.ProfilePicture.StartsWith("https"))
+				{
+					<img src="@Model.PageUser?.ProfilePicture" class="user-pic" />
+				}
+				else
+				{
+					<img src="data:image/png;base64,@Model.PageUser?.ProfilePicture" class="user-pic" />
+				}
 			}
 			else
 			{
