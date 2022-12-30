@@ -64,16 +64,31 @@
 		</div>
 
 		<div class="post-content">
-			<div>@post?.Content</div>
+			<div>@post.Content</div>
 
 			@if (post.Media != null && Model.User.ShowImages)
 			{
-				<img src="data:image/png;base64,@post.Media" alt="@post.User.UserName" />
+				@if (post.Media.StartsWith("https"))
+				{
+					<img src="@post.Media" alt="@post.User.UserName" />
+				}
+				else
+				{
+					<img src="data:image/png;base64,@post.Media" alt="@post.User.UserName" />
+				}
 			}
 			else if (post.Media != null && !Model.User.ShowImages)
 			{
 				<div class="flip-div" onclick="ShowPostImg(this)">Show Image</div>
-				<img id="" src="data:image/png;base64,@post.Media" class="ImgFinder" alt="@post.User.UserName" />
+
+				@if (post.Media.StartsWith("https"))
+				{
+					<img id="" src="@post.Media" class="ImgFinder" alt="@post.User.UserName" />
+				}
+				else
+				{
+					<img id="" src="data:image/png;base64,@post.Media" class="ImgFinder" alt="@post.User.UserName" />
+				}
 			}
 		</div>
 

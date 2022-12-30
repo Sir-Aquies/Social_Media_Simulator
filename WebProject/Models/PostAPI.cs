@@ -1,6 +1,15 @@
 ﻿#nullable disable
 namespace WebProject.Models
 {
+	public class DogAPI
+	{
+		public string message { get; set; }
+	}
+
+	public class Picsum
+	{
+		public string download_url { get; set; }
+	}
 	public class HipsterText
 	{
 		public string word { get; set; }

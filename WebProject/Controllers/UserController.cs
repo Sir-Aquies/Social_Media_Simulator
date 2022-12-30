@@ -54,6 +54,17 @@ namespace WebProject.Controllers
 		{
 			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
 
+			//foreach (PostModel post in _Models.Posts)
+			//{
+			//	foreach (UserModel likes in post.UsersLikes)
+			//	{
+			//		if (likes.Id == userModel.Id)
+			//		{
+			//			userModel.LikedPost.Add(post);
+			//		}
+			//	}
+			//}
+
 			userModel.LikedPost = await (from post in _Models.Posts where post.UsersLikes.Contains(userModel) select post).AsNoTracking().ToListAsync();
 			userModel.LikedComments = await (from com in _Models.Comments where com.UsersLikes.Contains(userModel) select com).AsNoTracking().ToListAsync();
 

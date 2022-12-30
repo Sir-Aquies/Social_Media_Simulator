@@ -55,6 +55,9 @@ using (var scope = app.Services.CreateScope())
 
 	SocialMediaAlgorithm socialMedia = new(ClientFactory, UserManager, ServiceFactory);
 	socialMedia.StartAsync(new CancellationToken());
+
+	RandomPost randomPost = new(ClientFactory, ServiceFactory);
+	randomPost.StartAsync(new CancellationToken());
 }
 
 app.UseHttpsRedirection();

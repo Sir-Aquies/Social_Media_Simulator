@@ -29,8 +29,11 @@ namespace WebProject.Controllers
 				return RedirectToActionPermanent("UserPage", "User", new { userModel.UserName });
 			}
 
-			LoginModel login = new LoginModel();
-			login.ReturnUrl = returnUrl;
+			LoginModel login = new()
+			{
+				ReturnUrl = returnUrl
+			};
+
 			return View(login);
 		}
 
