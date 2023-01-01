@@ -112,21 +112,38 @@
 .post-stats {
 	width: 100%;
 	display: flex;
+	padding: 0.5rem 0;
 	justify-content: left;
 	flex-wrap: wrap;
+	gap: 0.7rem;
 }
 
-.post-stats button {
+.post-stats > button {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
 	background-color: Transparent;
 	width: max-content;
 	padding: 0.3rem;
 	font-size: var(--SmallTextsize);
 	border: 0;
-	margin-right: 0.8rem;
 }
 
-.post-stats button span {
-	font-size: var(--SmallTextsize);
+.like-button {
+	width: 1.7rem;
+	height: 1.7rem;
+	stroke: var(--BorderColor);
+	stroke-width: 5px;
+}
+
+.like-button-bg {
+	fill: transparent;
+	fill-rule: evenodd;
+	clip-rule: evenodd;
+}
+
+.liked .like-button-bg {
+	fill: var(--BorderColor);
 }
 
 .post-comments {

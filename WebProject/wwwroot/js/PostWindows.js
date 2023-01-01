@@ -128,7 +128,8 @@ function RemoveEditPostTab() {
 }
 
 function LikePost(postId, button) {
-	likesAmount = button.children[0];
+	const likesAmount = button.children[0];
+	const likeSVG = button.children[1];
 
 	if (postId != undefined) {
 		$.post("/Post/LikePost", { PostId: postId }, function (data, status) {
@@ -136,11 +137,15 @@ function LikePost(postId, button) {
 				if (data === "+") {
 					let likes = parseInt(likesAmount.innerHTML);
 					likesAmount.innerHTML = ++likes;
+
+					likeSVG.className.baseVal = 'like-button liked';
 					button.style.fontWeight = "bold";
 				}
 				else if (data === "-") {
 					let likes = parseInt(likesAmount.innerHTML);
 					likesAmount.innerHTML = --likes;
+
+					likeSVG.className.baseVal = 'like-button';
 					button.style.fontWeight = "normal";
 				}
 
