@@ -146,6 +146,11 @@
 	fill: var(--BorderColor);
 }
 
+.comment-button {
+	width: 1.7rem;
+	height: 1.7rem;
+}
+
 .post-comments {
 	width: 100%;
 	margin: 0.5rem auto;

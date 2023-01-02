@@ -5,7 +5,8 @@
 .form-container {
 	width: 100%;
 	padding: 1.5rem;
-	border-radius: 0.7rem;
+	border-radius: 0.4rem;
+	max-width: 40rem;
 }
 
 .field-container {
@@ -15,12 +16,22 @@
 	margin-bottom: 1.5rem;
 }
 
-.field-container > input, textarea {
+.field-container > input {
 	width: 100%;
 	border: 1px solid var(--BorderColor);
 	background-color: transparent;
-	border-radius: 0.7rem;
-	color: var(--colortext);
+	border-radius: 0.4rem;
+	color: inherit;
+	padding: 0.4rem 0.5rem;
+	margin-bottom: 0.5rem;
+}
+
+.field-container > textarea {
+	width: 100%;
+	border: 1px solid var(--BorderColor);
+	background-color: transparent;
+	border-radius: 0.4rem;
+	color: inherit;
 	padding: 0.4rem 0.5rem;
 	margin-bottom: 0.5rem;
 }
@@ -33,8 +44,7 @@
 	width: 100%;
 	margin-right: auto;
 	margin-left: auto;
-	color: var(--colortext);
-	font-size: var(--textsize);
+	font-size: inherit;
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-around;
@@ -43,26 +53,25 @@
 .button-container > input {
 	background-color: transparent;
 	width: fit-content;
-	color: var(--colortext);
+	color: inherit;
 	padding: 0.6rem;
 	border: 1px solid var(--BorderColor);
-	border-radius: 0.5rem;
+	border-radius: 0.4rem;
 }
 
 .button-container a {
 	border: 1px solid var(--BorderColor);
-	border-radius: 0.5rem;
+	border-radius: 0.4rem;
 	width: fit-content;
 	padding: 0.6rem;
-	color: var(--colortext);
+	color: inherit;
 	text-decoration: none;
 }
 
-@media only screen and (min-width: 820px) {
+@media only screen and (min-width: 768px) {
 	.form-container {
 		margin-right: auto;
 		margin-left: auto;
-		width: 50%;
 		border: 1px solid var(--BorderColor);
 	}
 

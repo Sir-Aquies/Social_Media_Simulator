@@ -4,10 +4,7 @@ using WebProject.Models;
 using WebProject.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.Authorization;
-using System.Net.Http;
-using static System.Net.WebRequestMethods;
 
 namespace WebProject.Controllers
 {
@@ -35,8 +32,6 @@ namespace WebProject.Controllers
 		//When it comes to likes, make an algorithm that will select a random post and add users to the userlikes property (the same for comments) every second.
 		//With the likes algorithm then create a tendency page with the most likes and commented post.
 
-		//TODO - make the userinfo scrool with the page in userpage.
-
 		//TODO - finnish learning angular and add it to this project and make the respective improvements.
 		public async Task<IActionResult> SearchUser(string UserName)
 		{
@@ -49,68 +44,6 @@ namespace WebProject.Controllers
 
 			return RedirectToAction("UserPage", new { userModel.UserName });
 		}
-
-		//public async Task<IActionResult> UserPage(string UserName)
-		//{
-		//	UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
-
-		//	userModel.LikedPost = await (from post in _Models.Posts where post.UsersLikes.Contains(userModel) select post).AsNoTracking().ToListAsync();
-		//	userModel.LikedComments = await (from com in _Models.Comments where com.UsersLikes.Contains(userModel) select com).AsNoTracking().ToListAsync();
-
-		//	if (userModel == null)
-		//	{
-		//		return RedirectToAction("Login", "Account");
-		//	}
-
-		//	UserModel page = new();
-
-		//	if (!string.IsNullOrEmpty(UserName))
-		//	{
-		//		page = await userManager.FindByNameAsync(UserName);
-
-		//		if (page != null)
-		//		{
-		//			page.Posts = await _Models.Posts.Include(p => p.Comments).ThenInclude(c => c.User).Where(p => p.UserId == page.Id).AsNoTracking().ToListAsync();
-		//			foreach (var post in page.Posts)
-		//			{
-		//				post.User = page;
-		//			}
-		//		}
-		//		else
-		//		{
-		//			//TODO - set up a user not found view.
-		//			return NotFound();
-		//		}
-
-		//	}
-		//	else
-		//	{
-		//		page = userModel;
-		//		page.Posts = await _Models.Posts.Include(p => p.Comments).ThenInclude(c => c.User).Where(p => p.UserId == page.Id).AsNoTracking().ToListAsync();
-		//		foreach (var post in page.Posts)
-		//		{
-		//			post.User = page;
-		//		}
-		//	}
-
-		//	DynamicUser dynamic = new()
-		//	{
-		//		User = userModel,
-		//		PageUser = page
-		//	};
-
-		//	if (TempData["ErrorMessage"] != null)
-		//	{
-		//		ViewBag.ErrorMessage = TempData["ErrorMessage"].ToString();
-		//	}
-
-		//	if (TempData["Message"] != null)
-		//	{
-		//		ViewBag.Message = TempData["Message"].ToString();
-		//	}
-
-		//	return View(dynamic);
-		//}
 		
 		public async Task<IActionResult> UserPage(string UserName)
 		{
@@ -121,15 +54,15 @@ namespace WebProject.Controllers
 				return RedirectToAction("Login", "Account");
 			}
 
-			UserModel page = new();
+			UserModel pageUser = new();
 
 			if (!string.IsNullOrEmpty(UserName) && user.UserName != UserName)
 			{
-				page = await userManager.FindByNameAsync(UserName);
+				pageUser = await userManager.FindByNameAsync(UserName);
 
-				if (page != null)
+				if (pageUser != null)
 				{
-					page = await GetPosts(page);
+					pageUser = await GetPosts(pageUser);
 				}
 				else
 				{
@@ -140,12 +73,12 @@ namespace WebProject.Controllers
 			}
 			else
 			{
-				page = await GetPosts(user);
+				pageUser = await GetPosts(user);
 			}
 
 			user.LikedPost = new List<PostModel>();
 
-			foreach(PostModel p in page.Posts)
+			foreach(PostModel p in pageUser.Posts)
 			{
 				foreach (UserModel u in p.UsersLikes)
 				{
@@ -158,7 +91,7 @@ namespace WebProject.Controllers
 
 			user.LikedComments = new List<CommentModel>();
 
-			foreach (PostModel p in page.Posts)
+			foreach (PostModel p in pageUser.Posts)
 			{
 				foreach (CommentModel c in p.Comments)
 				{
@@ -175,7 +108,7 @@ namespace WebProject.Controllers
 			DynamicUser dynamic = new()
 			{
 				User = user,
-				PageUser = page
+				PageUser = pageUser
 			};
 
 			if (TempData["ErrorMessage"] != null)

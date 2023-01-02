@@ -20,7 +20,6 @@ namespace WebProject.Controllers
 			userManager = manager;
 		}
 
-		[HttpPost]
 		public IActionResult LookForCreatePost() => PartialView("CreatePost");
 
 		[HttpPost]
