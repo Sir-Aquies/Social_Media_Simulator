@@ -22,7 +22,6 @@ namespace WebProject.Controllers
 			_Logger = logger;
 		}
 
-		//TODO - delete bootstrap
 		//TODO - seed the database with APIs, one for users, another for post and comments.
 		//This social media project is good but lack the 'social' part, for that it needs algorithm that mimic a real one.
 		//Initially seed the databse with 25 users if the databse is empty.
@@ -62,7 +61,7 @@ namespace WebProject.Controllers
 
 				if (pageUser != null)
 				{
-					pageUser = await GetPosts(pageUser);
+					pageUser.Posts = await GetPosts(pageUser);
 				}
 				else
 				{
@@ -73,37 +72,14 @@ namespace WebProject.Controllers
 			}
 			else
 			{
-				pageUser = await GetPosts(user);
+				pageUser = user;
+				pageUser.Posts = await GetPosts(pageUser);
 			}
 
-			user.LikedPost = new List<PostModel>();
+			user.LikedPost = GetPostsLiked(pageUser.Posts, user.Id);
 
-			foreach(PostModel p in pageUser.Posts)
-			{
-				foreach (UserModel u in p.UsersLikes)
-				{
-					if (u.Id == user.Id)
-					{
-						user.LikedPost.Add(p);
-					}
-				}
-			}
+			user.LikedComments = GetCommentsLiked(pageUser.Posts, user.Id);
 
-			user.LikedComments = new List<CommentModel>();
-
-			foreach (PostModel p in pageUser.Posts)
-			{
-				foreach (CommentModel c in p.Comments)
-				{
-					foreach (UserModel u in c.UsersLikes)
-					{
-						if (u.Id == user.Id)
-						{
-							user.LikedComments.Add(c);
-						}
-					}
-				}
-			}
 
 			DynamicUser dynamic = new()
 			{
@@ -124,9 +100,48 @@ namespace WebProject.Controllers
 			return View(dynamic);
 		}
 
-		private async Task<UserModel> GetPosts(UserModel user)
+		private List<PostModel> GetPostsLiked(IList<PostModel> posts, string userId)
 		{
-			user.Posts = new List<PostModel>();
+			List<PostModel> postsLiked = new();
+
+			foreach (PostModel p in posts)
+			{
+				foreach (UserModel u in p.UsersLikes)
+				{
+					if (u.Id == userId)
+					{
+						postsLiked.Add(p);
+					}
+				}
+			}
+
+			return postsLiked;
+		}
+
+		private List<CommentModel> GetCommentsLiked(IList<PostModel> posts, string userId)
+		{
+			List<CommentModel> commentsLiked = new();
+
+			foreach (PostModel p in posts)
+			{
+				foreach (CommentModel c in p.Comments)
+				{
+					foreach (UserModel u in c.UsersLikes)
+					{
+						if (u.Id == userId)
+						{
+							commentsLiked.Add(c);
+						}
+					}
+				}
+			}
+
+			return commentsLiked;
+		}
+
+		public async Task<List<PostModel>> GetPosts(UserModel user)
+		{
+			List<PostModel> output = new();
 
 			foreach (PostModel p in _Models.Posts.AsNoTracking())
 			{
@@ -136,17 +151,17 @@ namespace WebProject.Controllers
 				{
 					post = await _Models.Posts.Include(p => p.UsersLikes).AsNoTracking().FirstOrDefaultAsync(p => p.Id == post.Id);
 					post.User = user;
-					post = await LoadComments(post);
-					user.Posts.Add(post);
+					post.Comments = await LoadComments(post);
+					output.Add(post);
 				}
 			}
 
-			return user;
+			return output;
 		}
 
-		private async Task<PostModel> LoadComments(PostModel post)
+		public async Task<List<CommentModel>> LoadComments(PostModel post)
 		{
-			post.Comments = new List<CommentModel>();
+			List<CommentModel> output = new();
 
 			foreach (CommentModel c in _Models.Comments.AsNoTracking())
 			{
@@ -156,12 +171,51 @@ namespace WebProject.Controllers
 				{
 					comment = await _Models.Comments.Include(c => c.User).Include(c => c.UsersLikes).FirstOrDefaultAsync(c => c.Id == comment.Id);
 					comment.Post = post;
-					post.Comments.Add(comment);
+					output.Add(comment);
 				}
 			}
 
-			return post;
+			return output;
 		}
+
+		//private async Task<UserModel> GetPosts(UserModel user)
+		//{
+		//	user.Posts = new List<PostModel>();
+
+		//	foreach (PostModel p in _Models.Posts.AsNoTracking())
+		//	{
+		//		PostModel post = p;
+
+		//		if (post.UserId == user.Id)
+		//		{
+		//			post = await _Models.Posts.Include(p => p.UsersLikes).AsNoTracking().FirstOrDefaultAsync(p => p.Id == post.Id);
+		//			post.User = user;
+		//			post = await LoadComments(post);
+		//			user.Posts.Add(post);
+		//		}
+		//	}
+
+		//	return user;
+		//}
+
+		//private async Task<PostModel> LoadComments(PostModel post)
+		//{
+		//	post.Comments = new List<CommentModel>();
+
+		//	foreach (CommentModel c in _Models.Comments.AsNoTracking())
+		//	{
+		//		CommentModel comment = c;
+
+		//		if (comment.PostId == post.Id)
+		//		{
+		//			comment = await _Models.Comments.Include(c => c.User).Include(c => c.UsersLikes).FirstOrDefaultAsync(c => c.Id == comment.Id);
+		//			comment.Post = post;
+		//			post.Comments.Add(comment);
+		//		}
+		//	}
+
+		//	return post;
+		//}
 
 		public async Task<IActionResult> AllUsers()
 		{

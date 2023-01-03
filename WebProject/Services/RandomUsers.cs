@@ -14,7 +14,7 @@ using System.Security.Policy;
 
 namespace WebProject.Services
 {
-	public class SocialMediaAlgorithm : BackgroundService
+	public class RandomUsers : BackgroundService
 	{
 		private readonly IHttpClientFactory _httpClientFactory;
 		private readonly UserManager<UserModel> _userManager;
@@ -22,8 +22,7 @@ namespace WebProject.Services
 
 		private readonly PeriodicTimer _userTimer = new(TimeSpan.FromSeconds(50));
 
-		//TODO - add svg logos to some buttons.
-		public SocialMediaAlgorithm(IHttpClientFactory httpClientFactory, UserManager<UserModel> manager, IServiceScopeFactory factory)
+		public RandomUsers(IHttpClientFactory httpClientFactory, UserManager<UserModel> manager, IServiceScopeFactory factory)
 		{
 			_httpClientFactory = httpClientFactory;
 			_userManager = manager;
@@ -39,33 +38,40 @@ namespace WebProject.Services
 				await CreateBotFactory();
 			}
 		}
-
+		//TODO - use another api for users.
+		//TODO - update to .net 7.
 		public async Task CreateBotFactory()
 		{
 			UserModel output = new();
 			HttpClient httpClient = _httpClientFactory.CreateClient();
 
-			using (HttpResponseMessage response = await httpClient.GetAsync("https://randomuser.me/api/"))
+			using HttpResponseMessage response = await httpClient.GetAsync("https://randomuser.me/api/");
+			response.EnsureSuccessStatusCode();
+			string apiResponse = await response.Content.ReadAsStringAsync();
+
+			Root root = JsonConvert.DeserializeObject<Root>(apiResponse);
+
+			output.UserName = root.results[0].login.username;
+			output.DateofBirth = root.results[0].dob.date;
+			output.Email = root.results[0].email;
+
+			output.Name = $"{root.results[0].name.first} {root.results[0].name.last}";
+			output.ProfilePicture = root.results[0].picture.large;
+			output.Description = $"Age: {root.results[0].dob.age} \nGender: {root.results[0].gender} \nCity: {root.results[0].location.country}, {root.results[0].location.city}";
+
+			using (var scope = _serviceScopeFactory.CreateScope())
 			{
-				response.EnsureSuccessStatusCode();
-				string apiResponse = await response.Content.ReadAsStringAsync();
+				UserManager<UserModel> userManager = scope.ServiceProvider.GetRequiredService<UserManager<UserModel>>();
 
-				Root root = JsonConvert.DeserializeObject<Root>(apiResponse);
-
-				output.UserName = root.results[0].login.username;
-				output.DateofBirth = root.results[0].dob.date;
-				output.Email = root.results[0].email;
-
-				output.Name = $"{root.results[0].name.first} {root.results[0].name.last}";
-				output.ProfilePicture = root.results[0].picture.large;
-				output.Description = $"Age: {root.results[0].dob.age} \nGender: {root.results[0].gender} \nCity: {root.results[0].location.country}, {root.results[0].location.city}";
-
-				using (var scope = _serviceScopeFactory.CreateScope())
+				foreach (UserModel user in userManager.Users.AsNoTracking())
 				{
-					var userManager = scope.ServiceProvider.GetRequiredService<UserManager<UserModel>>();
-
-					await userManager.CreateAsync(output, $"{root.results[0].login.password}.{root.results[0].login.salt}");
+					if (user.ProfilePicture == output.ProfilePicture || user.UserName == output.UserName)
+					{
+						return;
+					}
 				}
+
+				await userManager.CreateAsync(output, $"{root.results[0].login.password}.{root.results[0].login.salt}");
 			}
 		}
 

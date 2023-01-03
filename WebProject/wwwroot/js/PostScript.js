@@ -66,6 +66,7 @@ function DeleteComment(commentId, input) {
 
 function LikeComment(commentId, button) {
 	likesAmount = button.children[0];
+	const likeSVG = button.children[1];
 
 	if (commentId != undefined) {
 		$.post("/Post/LikeComment", { CommentId: commentId }, function (data, status) {
@@ -73,11 +74,15 @@ function LikeComment(commentId, button) {
 				if (data === "+") {
 					let likes = parseInt(likesAmount.innerHTML);
 					likesAmount.innerHTML = ++likes;
+
+					likeSVG.className.baseVal = 'like-button liked';
 					button.style.fontWeight = "bold";
 				}
 				else if (data === "-") {
 					let likes = parseInt(likesAmount.innerHTML);
 					likesAmount.innerHTML = --likes;
+
+					likeSVG.className.baseVal = 'like-button';
 					button.style.fontWeight = "normal";
 				}
 
