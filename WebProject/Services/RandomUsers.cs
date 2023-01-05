@@ -20,7 +20,7 @@ namespace WebProject.Services
 		private readonly UserManager<UserModel> _userManager;
 		private readonly IServiceScopeFactory _serviceScopeFactory;
 
-		private readonly PeriodicTimer _userTimer = new(TimeSpan.FromSeconds(50));
+		private readonly PeriodicTimer _userTimer = new(TimeSpan.FromSeconds(60));
 
 		public RandomUsers(IHttpClientFactory httpClientFactory, UserManager<UserModel> manager, IServiceScopeFactory factory)
 		{
@@ -35,12 +35,72 @@ namespace WebProject.Services
 
 			while (await _userTimer.WaitForNextTickAsync(stoppingToken) && !stoppingToken.IsCancellationRequested)
 			{
-				await CreateBotFactory();
+				await CreateRandomUser();
 			}
 		}
-		//TODO - use another api for users.
-		//TODO - update to .net 7.
-		public async Task CreateBotFactory()
+
+		private async Task CreateRandomUser()
+		{
+			Random rnd = new Random();
+
+			switch (rnd.Next(2))
+			{
+				case 0:
+					await CreateClassicUser();
+					break;
+				case 1:
+					await CreateNormalUser();
+					break;
+			}
+		}
+
+		private async Task CreateClassicUser()
+		{
+			UserModel output = new();
+			HttpClient httpClient = _httpClientFactory.CreateClient();
+
+			using HttpResponseMessage response = await httpClient.GetAsync("https://random-data-api.com/api/v2/users");
+			response.EnsureSuccessStatusCode();
+			string apiResponse = await response.Content.ReadAsStringAsync();
+
+			ClassicUser user = JsonConvert.DeserializeObject<ClassicUser>(apiResponse);
+
+			output.UserName = user.username;
+			output.DateofBirth = DateTime.Parse(user.date_of_birth);
+			output.Email = user.email;
+
+			output.Name = $"{user.first_name} {user.last_name}";
+			output.Description = $"{user.gender} \n{user.employment.title}, {user.employment.key_skill} \n{user.address.state}, {user.address.country}";
+
+			Random rnd = new();
+			
+			switch (rnd.Next(2))
+			{
+				case 0:
+					output.ProfilePicture = await GetWaifu();
+					break;
+				case 1:
+					output.ProfilePicture = await GetPicsum();
+					break;
+			}
+
+			using (var scope = _serviceScopeFactory.CreateScope())
+			{
+				UserManager<UserModel> userManager = scope.ServiceProvider.GetRequiredService<UserManager<UserModel>>();
+
+				foreach (UserModel u in userManager.Users.AsNoTracking())
+				{
+					if (u.UserName == output.UserName)
+					{
+						return;
+					}
+				}
+
+				await userManager.CreateAsync(output, $"{user.password}.{user.id}");
+			}
+		}
+
+		public async Task CreateNormalUser()
 		{
 			UserModel output = new();
 			HttpClient httpClient = _httpClientFactory.CreateClient();
@@ -73,6 +133,47 @@ namespace WebProject.Services
 
 				await userManager.CreateAsync(output, $"{root.results[0].login.password}.{root.results[0].login.salt}");
 			}
+		}
+
+		private async Task<string> GetPicsum()
+		{
+			string output = string.Empty;
+
+			HttpClient httpClient = _httpClientFactory.CreateClient();
+			Random index = new();
+			httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "application/json, text/html,application/xhtml+xml,application/xml");
+			httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:19.0) Gecko/20100101 Firefox/19.0");
+
+			string url = $"https://picsum.photos/v2/list?page={index.Next(994)}&limit=1";
+
+			HttpResponseMessage response = await httpClient.GetAsync(url);
+
+			response.EnsureSuccessStatusCode();
+			string apiResponse = await response.Content.ReadAsStringAsync();
+
+			Picsum picsum = JsonConvert.DeserializeObject<List<Picsum>>(apiResponse)[0];
+
+			output = picsum.download_url;
+
+			return output;
+		}
+
+		private async Task<string> GetWaifu()
+		{
+			string output = string.Empty;
+
+			HttpClient httpClient = _httpClientFactory.CreateClient();
+
+			HttpResponseMessage response = await httpClient.GetAsync("https://api.waifu.im/search");
+			response.EnsureSuccessStatusCode();
+
+			string apiResponse = await response.Content?.ReadAsStringAsync();
+
+			Waifu waifu = JsonConvert.DeserializeObject<Waifu>(apiResponse);
+
+			output = waifu.images[0].url;
+
+			return output;
 		}
 
 		public async Task InitialSeed()

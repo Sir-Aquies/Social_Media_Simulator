@@ -53,8 +53,8 @@ using (var scope = app.Services.CreateScope())
 	IHttpClientFactory ClientFactory = services.GetRequiredService<IHttpClientFactory>();
 	UserManager<UserModel> UserManager = services.GetRequiredService<UserManager<UserModel>>();
 
-	RandomUsers socialMedia = new(ClientFactory, UserManager, ServiceFactory);
-	socialMedia.StartAsync(new CancellationToken());
+	RandomUsers randomUsers = new(ClientFactory, UserManager, ServiceFactory);
+	randomUsers.StartAsync(new CancellationToken());
 
 	RandomPosts randomPost = new(ClientFactory, ServiceFactory);
 	randomPost.StartAsync(new CancellationToken());

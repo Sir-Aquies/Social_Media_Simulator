@@ -107,3 +107,7 @@ function Background() {
 	document.body.appendChild(tab);
 	return tab;
 }
+
+function AddPostToContainer() {
+	let content = "";
+}

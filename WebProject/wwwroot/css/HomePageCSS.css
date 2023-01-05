@@ -33,6 +33,7 @@ img.user-pic {
 	border: 1px solid var(--BorderColor);
 	border-radius: 50%;
 	display: block;
+	object-fit: cover;
 }
 
 .user-username {
