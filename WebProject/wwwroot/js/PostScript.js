@@ -5,14 +5,10 @@
 	if (postId !== undefined && userName) {
 		$.post("/Post/LookForCreateComment", { PostId: postId, Username: userName }, function (data, status) {
 			if (status === "success") {
-				const commentdiv = document.getElementById("CommentDiv");
 				const tab = Background();
 				tab.addEventListener("dblclick", () => { RemoveCreateCommentTab() });
+				tab.innerHTML = data;
 				document.body.style.overflow = "hidden";
-				commentdiv.style.display = "block";
-				tab.appendChild(commentdiv);
-
-				$('#CommentDiv').html(data);
 			}
 		});
 	}
@@ -33,16 +29,7 @@ function CreateComment(input) {
 }
 
 function RemoveCreateCommentTab() {
-	const commentdiv = document.getElementById("CommentDiv");
-	const tab = document.getElementById("BlackBackground");
-
-	commentdiv.style.display = "none";
-	document.body.appendChild(commentdiv);
-
-	if (tab) {
-		tab.remove();
-	}
-
+	document.getElementById("BlackBackground").remove();
 	document.body.style.overflow = "auto";
 }
 

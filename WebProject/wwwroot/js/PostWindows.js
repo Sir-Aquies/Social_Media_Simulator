@@ -1,14 +1,11 @@
 ﻿function CreatePostWindow() {
 	$.post("/Post/LookForCreatePost", function (data, status) {
 		if (status === "success") {
-			const postdiv = document.getElementById("PostDiv");
 			const tab = Background();
 			tab.addEventListener("dblclick", () => { RemoveTab() });
-			document.body.style.overflow = "hidden";
-			postdiv.style.display = "block";
-			tab.appendChild(postdiv);
+			tab.innerHTML = data;
 
-			$('#PostDiv').html(data);
+			document.body.style.overflow = "hidden";
 		}
 	});
 }
@@ -42,16 +39,7 @@ function CreatePost(input) {
 }
 
 function RemoveTab() {
-	const postdiv = document.getElementById("PostDiv");
-	const tab = document.getElementById("BlackBackground");
-
-	postdiv.style.display = "none";
-	document.body.appendChild(postdiv);
-
-	if (tab) {
-		tab.remove();
-	}
-
+	document.getElementById("BlackBackground").remove();
 	document.body.style.overflow = "auto";
 }
 
@@ -71,13 +59,10 @@ function EditPostWindow(postid, input) {
 	$.post("/Post/LookforPost", { PostId: postid }, function (data, status) {
 		if (status === "success") {
 			const tab = Background();
+			tab.addEventListener("dblclick", () => { RemoveEditPostTab() });
+			tab.innerHTML = data;
+			EditImage();
 			document.body.style.overflow = "hidden";
-			const partial = document.getElementById("EditPostDiv");
-			partial.style.display = "block";
-			tab.appendChild(partial);
-			tab.addEventListener("dblclick", () => { RemoveEditPostTab() })
-
-			$('#EditPostDiv').html(data);
 		}
 	});
 }
@@ -89,7 +74,7 @@ function EditPost(input) {
 	var deleteMedia = false;
 	var formData = new FormData();
 
-	const oldFrame = document.getElementById("ImageFrame");
+	const oldFrame = document.getElementById("preview-frame");
 
 	if (!oldFrame) {
 		deleteMedia = true;
@@ -119,11 +104,7 @@ function EditPost(input) {
 }
 
 function RemoveEditPostTab() {
-	const tab = document.getElementById("BlackBackground");
-	const partial = document.getElementById("EditPostDiv");
-	partial.style.display = "none";
-	document.body.appendChild(partial);
-	tab.remove();
+	document.getElementById("BlackBackground").remove();
 	document.body.style.overflow = "auto";
 }
 

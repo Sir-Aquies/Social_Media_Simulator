@@ -1,4 +1,5 @@
-﻿:root {
+﻿/* Default variables for color an text size, every other CSS file depends on them */
+:root {
     --BackgroundColor: #222831;
     --LayoutColor: #393E46;
     --ShadowColor: #393E46;
@@ -10,18 +11,8 @@
     --BigTextsize: 1.4rem;
 }
 
-/*:root {
-    --BackgroundColor: #121212;
-    --LayoutColor: rgb(15, 15, 15);
-    --ShadowColor: rgb(27, 27, 27);
-    --BorderColor: rgb(255, 255, 255);
-    --colortext: white;
-    --postBorder: rgb(128, 128, 128);
-    --SmallTextsize: 0.9rem;
-    --textsize: 1.1rem;
-    --BigTextsize: 1.4rem;
-}*/
-
+/* When Lightmode is triggered, the document gets the data-theme attribute equalt to "light" 
+and changes the values of the main variables*/
 [data-theme="light"] {
     --BackgroundColor: rgb(255, 255, 255);
     --LayoutColor: rgb(200,200,200);
@@ -36,8 +27,8 @@ body {
     font-size: var(--textsize) !important;
 }
 
-
 /*
+    Old color values.
     --BackgroundColor: #121212;
     --LayoutColor: #0f0f0f;
     --ShadowColor: #1b1b1b;

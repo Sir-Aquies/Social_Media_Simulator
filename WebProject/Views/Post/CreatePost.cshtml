@@ -1,16 +1,15 @@
-﻿<form>
-	<div id="ContentHolder" class="content-holder">
+﻿<div class="post-crud" ondblclick="event.stopPropagation()">
+	<div class="content-holder">
 		<textarea name="Content"></textarea>
 
 		<div class="button-holder">
 			<input type="button" value="Cancel" onclick="RemoveTab()" />
 			<input type="button" value="Image" onclick="document.getElementById('File').click()" />
-			<input type="file" id="File" name="Media" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" onchange="ImagePreview(this, document.getElementById('ImageHolder'), document.getElementById('ContentHolder'))" style="display: none;" />
+			<input type="file" id="File" name="Media" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" onchange="ImagePreview(this, document.getElementById('frame-holder'))" style="display: none;" />
 			<input type="button" value="Post" onclick="CreatePost(this)"/>
 		</div>
 	</div>
 
-	<div id="ImageHolder" class="image-holder">
-	</div>
-</form>
+	<div id="frame-holder" class="frame-holder"></div>
+</div>
 @Html.AntiForgeryToken()

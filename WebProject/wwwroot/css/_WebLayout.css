@@ -11,7 +11,7 @@ header {
 	position: sticky;
 	position: -webkit-sticky;
 	top: 0px;
-	z-index: 100;
+	z-index: 5;
 	margin-bottom: 0.5rem;
 }
 
@@ -32,8 +32,8 @@ header {
 
 img.user-info-mobile {
 	display: inline;
-	width: 6.5vh;
-	height: 6.5vh;
+	width: 6vh;
+	height: 6vh;
 	margin: 0.3rem;
 	cursor: pointer;
 	border: 1px solid var(--BorderColor);
@@ -132,11 +132,22 @@ img.user-info-mobile {
 	background-color: var(--LayoutColor);
 	height: 110vh;
 	transition: all 0.5s;
-	right: 100%;
+	left: -100%;
 }
 
-.display-tab.left {
-	transform: translate(100%, 0);
+.black-background {
+	position: fixed;
+	width: 100%;
+	height: 100vh;
+	top: 0;
+	left: 0;
+	background-color: rgba(0, 0, 0, 0.65);
+	z-index: 1;
+	display: none;
+}
+
+.move-left {
+	left: 0;
 }
 
 .settings-icon {

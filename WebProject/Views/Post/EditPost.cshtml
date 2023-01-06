@@ -1,27 +1,24 @@
 ﻿@model PostModel
 
-<form>
-		<div id="EditContentHolder" class="content-holder">
-			<textarea name="Content">@Model?.Content</textarea>
+<div class="post-crud" ondblclick="event.stopPropagation()">
+	<div class="content-holder">
+		<textarea name="Content">@Model?.Content</textarea>
 
-			<div class="button-holder">
-				<input type="button" value="Cancel" onclick="RemoveEditPostTab()" />
-				<input type="button" value="Image" onclick="document.getElementById('EditFile').click()" />
-				<input type="file" id="EditFile" name="Media" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" onchange="EditImagePreview(this, document.getElementById('EditImageHolder'))" style="display: none;" />
-				<input type="button" value="Edit" onclick="EditPost(this)"/>
-			</div>
+		<div class="button-holder">
+			<input type="button" value="Cancel" onclick="RemoveEditPostTab()" />
+			<input type="button" value="Image" onclick="document.getElementById('File').click()" />
+			<input type="file" id="File" name="Media" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" onchange="ImagePreview(this, document.getElementById('frame-holder'))" style="display: none;" />
+			<input type="button" value="Edit" onclick="EditPost(this)"/>
 		</div>
+	</div>
 
-		<div id="EditImageHolder" class="image-holder">
-			@if (Model.Media != null)
-			{
-				<img id="SRC" src="data:image/png;base64,@Model.Media" style="display:none;"/>
+	<div id="frame-holder" class="frame-holder">
+		@if (Model?.Media != null)
+		{
+			<img id="SRC" src="data:image/png;base64,@Model.Media" style="display:none;"/>
+		}
+	</div>
+</div>
 
-				<script>
-					EditImage(document.getElementById("SRC").src);
-				</script>
-			}
-		</div>
-</form>
 @Html.AntiForgeryToken()
 

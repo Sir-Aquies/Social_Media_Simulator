@@ -19,11 +19,13 @@
 			<h4>Change mode</h4>
 			<hr style="margin: 0.2rem 0 0.5rem;" />
 
-			<label for="LightMode">Light mode</label>
-			<input type="radio" id="LightMode" name="mode" value="Lightmode" onclick="ChangeMode()" />
-			<br />
-			<label for="DarkMode">Dark mode</label>
-			<input type="radio" id="DarkMode" name="mode" value="Darkmode" onclick="ChangeMode()" />
+			<label>Light mode
+				<input type="radio" id="LightMode" name="mode" value="Lightmode" onclick="ChangeMode(this.value)" />
+			</label><br />
+
+			<label>Dark mode
+				<input type="radio" id="DarkMode" name="mode" value="Darkmode" onclick="ChangeMode(this.value)" />
+			</label>
 
 			<div style="margin: 1.5rem;"></div>
 
@@ -71,7 +73,13 @@
 </div>
 
 <script src="~/lib/jquery/dist/jquery.js"></script>
-<script src="~/js/AppearanceJS.js" asp-append-version="true"></script>
+<script>
+	$(document).ready(function () {
+		$('#ShowImages').change(function () {
+			$.post("/Settings/ShowImagesToggle");
+		});
+	});
+</script>
 
 <script>
 if (savedTheme == "Darkmode") {

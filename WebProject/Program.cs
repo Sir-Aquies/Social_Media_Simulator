@@ -53,17 +53,17 @@ using (var scope = app.Services.CreateScope())
 	IHttpClientFactory ClientFactory = services.GetRequiredService<IHttpClientFactory>();
 	UserManager<UserModel> UserManager = services.GetRequiredService<UserManager<UserModel>>();
 
-	RandomUsers randomUsers = new(ClientFactory, UserManager, ServiceFactory);
-	randomUsers.StartAsync(new CancellationToken());
+	//RandomUsers randomUsers = new(ClientFactory, UserManager, ServiceFactory);
+	//randomUsers.StartAsync(new CancellationToken());
 
-	RandomPosts randomPost = new(ClientFactory, ServiceFactory);
-	randomPost.StartAsync(new CancellationToken());
+	//RandomPosts randomPost = new(ClientFactory, ServiceFactory);
+	//randomPost.StartAsync(new CancellationToken());
 
-	RandomLikes randomLikes = new(ServiceFactory);
-	randomLikes.StartAsync(new CancellationToken());
+	//RandomLikes randomLikes = new(ServiceFactory);
+	//randomLikes.StartAsync(new CancellationToken());
 
-	RandomComments randomComments = new(ServiceFactory, ClientFactory);
-	randomComments.StartAsync(new CancellationToken());
+	//RandomComments randomComments = new(ServiceFactory, ClientFactory);
+	//randomComments.StartAsync(new CancellationToken());
 }
 
 app.UseHttpsRedirection();

@@ -1,58 +1,78 @@
-﻿const mediaQuery = window.matchMedia('(max-width: 564px)');
-mediaQuery.addListener(handleTabletChange);
+﻿const mediaQuery = window.matchMedia('(max-width: 524px)');
+mediaQuery.addListener(HandleTabletChange);
 
-function handleTabletChange(e) {
+//HandleTabletChange makes the top bar resposive to mobile devices.
+function HandleTabletChange(e) {
+	//Exectes if the width of the screes is lower than 524px.
 	if (e.matches) {
+		//Undisplay TabList.
 		$("#TabList").css("display", "none");
-		
+
+		//Add an event to HeadList that displays TabList if its display is none.
 		$("#HeadList").click(function () {
 			if ($("#TabList").css("display") == "none") {
 				$("#TabList").css("display", "flex");
+
+				//Add an event to the document that when the user clicks anywhere else undisplays TabList.
 				$(document).mousedown(function () {
 					$("#TabList").css("display", "none");
-					$(document).unbind()
+					$(document).unbind();
 				});
 			} else {
+				//If TabList is already displayed, undisplay it and remove any events in the document.
 				$("#TabList").css("display", "none");
+				$(document).unbind();
 			}
 		});
 	} else {
+		//If the width of the screen is bigger, display Tablist and remove any events in document and HeadList.
 		$("#TabList").css("display", "flex");
 		$("#HeadList").unbind();
 		$(document).unbind();
 	}
-};
+}
 
-handleTabletChange(mediaQuery);
+//First check, because the event doesn't when it starts.
+HandleTabletChange(mediaQuery);
 
+const blackBg = document.createElement('div');
+blackBg.className = 'black-background';
+document.body.appendChild(blackBg);
+
+//This function toggles the display-tab element.
 function ToggleTab() {
-	const leftbox = document.getElementById("DisplayTab");
+	const displayTab = document.getElementById("display-tab");
+	//UserMobilePic is the element that when click calls this function.
 	const pic = document.getElementById("UserMobilePic");
 
-	if (leftbox.slide == "off") {
-		Show();
+	if (!displayTab.className.includes('move-left')) {
+		ShowTab();
 
-		document.addEventListener("mousedown", function () {
-			Hide();
+		//Add an event in the document so when the user clicks outside of the tab if hides it.
+		document.addEventListener("mousedown", () => {
+			HideTab();
 		});
 	}
 	else {
-		Hide();
+		HideTab();
 	}
 
-	function Show() {
-		$("#DisplayTab").addClass("left");
+	//Show display-tab to the left by adding move-left class.
+	//Move left has one declaration left: 0; which overides left: -100% in display-tab class. 
+	function ShowTab() {
+		blackBg.style.display = 'block';
+		displayTab.className = 'display-tab move-left';
 		pic.style.boxShadow = "0 0px 5px 3px rgba(0, 150, 255, 0.4)";
-		leftbox.slide = "on";
+		document.body.style.overflow = 'hidden';
 	}
 
-	function Hide() {
-		$("#DisplayTab").removeClass("left");
+	//Hide display-tab by removing move-left class.
+	function HideTab() {
+		blackBg.style.display = 'none';
+		displayTab.className = 'display-tab';
 		pic.style.boxShadow = "none";
-		leftbox.slide = "off";
+		document.body.style.overflow = 'auto';
 
 		document.addEventListener("mousedown", () => { })
 	}
-};
-
-ToggleTab();
+}
