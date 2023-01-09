@@ -3,17 +3,17 @@
 @if (Model.PageUser.Id == Model.User.Id)
 {
 	<div class="create-post-container">
-		<button type="button" class="create-post-button" onclick="CreatePostWindow()">Create New Post</button>
+		<button type="button" class="create-post-button" onclick="CreatePostTab()">Create New Post</button>
 	</div>
 }
 
 @foreach (PostModel post in Model.PageUser.Posts.Reverse())
 {
-	<div class="post-container">
+	<div class="post-container" id="@post.User.UserName@post.Id">
 		<div class="post-info">
 			@if (post.User.ProfilePicture != null) 
 			{
-				@if (Model.PageUser.ProfilePicture.StartsWith("https"))
+				@if (Model.User.ProfilePicture.StartsWith("https"))
 				{
 					<img src="@post.User.ProfilePicture" alt="@post.User.UserName" />
 				}
@@ -55,7 +55,7 @@
 					<div class="button">...</div>
 
 					<div onmousedown="event.stopPropagation()" onclick="event.stopPropagation();" class="post-form">
-						<input type="button" value="Edit" onclick="EditPostWindow(@post.Id, this);" />
+						<input type="button" value="Edit" onclick="EditPostTab(@post.Id, this);" />
 						<input type="button" value="Delete" onclick="DeletePost(@post.Id, this)"/>
 						@Html.AntiForgeryToken()
 					</div>

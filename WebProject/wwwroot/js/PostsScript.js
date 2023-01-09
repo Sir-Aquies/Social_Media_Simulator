@@ -1,0 +1,191 @@
+﻿//Get CreatePost.cshtml partial view (from LookForCreatePost) and display it in a background.
+function CreatePostTab() {
+	$.get("/Post/LookForCreatePost", function (data, status) {
+		if (status === "success") {
+			//Create a black background.
+			const background = Background();
+			//Add a double click remove event.
+			background.addEventListener("dblclick", () => { RemoveTab() });
+			//Insert the partial view.
+			background.innerHTML = data;
+
+			document.body.style.overflow = "hidden";
+		}
+	});
+}
+
+//Passes the content and media (if there is) to CreatePost action method who will create the post.
+function CreatePost(input) {
+	const content = input.parentElement.parentElement.children[0].value;
+	const [file] = input.parentElement.children[2].files;
+	//Get the token for request verification token.
+	const token = $('input[name="__RequestVerificationToken"]').val();
+	const formData = new FormData();
+
+	//If the user uploaded an image add it to the form.
+	if (file) {
+		formData.append("Media", file);
+	}
+
+	formData.append("Content", content);
+	formData.append("__RequestVerificationToken", token);
+
+	$.ajax(
+		{
+			type: "POST",
+			url: "/Post/CreatePost",
+			data: formData,
+			contentType: false,
+			processData: false,
+			success: function (data) {
+				//Remove the tab created in CreatePostTab. 
+				RemoveTab();
+				//Insert the data (the new created post) to the center-box.
+				AddPostToContainer(data);
+			}
+		}
+	);
+}
+
+//Get EditPost.cshtml partial view (from LookforPost) and display it in a background.
+function EditPostTab(postid, input) {
+	//Undisplay the post option button parent element.
+	input.parentElement.style.display = "none";
+
+	$.get("/Post/LookforPost", { PostId: postid }, function (data, status) {
+		if (status === "success") {
+			//Create a black background.
+			const background = Background();
+			//Add a double click remove event.
+			background.addEventListener("dblclick", () => { RemoveTab() });
+			//Insert the partial view.
+			background.innerHTML = data;
+			//Call function in the case the post had a media (picture) if it did not it will return.
+			EditImage();
+
+			document.body.style.overflow = "hidden";
+		}
+	});
+}
+
+//Passes the new content and new media (if there is) to EditPost action method who will edit the post.
+function EditPost(input) {
+	const content = input.parentElement.parentElement.children[0].value;
+	const [file] = input.parentElement.children[2].files;
+	//Get the token for request verification token.
+	const token = $('input[name="__RequestVerificationToken"]').val();
+	//Boolean who will say if the media was deleted.
+	let deleteMedia = false;
+	const formData = new FormData();
+
+	//Get the preview-frame element.
+	const oldFrame = document.getElementById("preview-frame");
+	//If preview-frame doesn't exist it means the user deleted the media.
+	if (!oldFrame) {
+		deleteMedia = true;
+	}
+
+	if (file) {
+		formData.append("Media", file);
+	}
+
+	formData.append("DeleteMedia", deleteMedia);
+	formData.append("Content", content);
+	formData.append("__RequestVerificationToken", token);
+
+	$.ajax(
+		{
+			type: "POST",
+			url: "/Post/EditPost",
+			data: formData,
+			contentType: false,
+			processData: false,
+			success: function (data) {
+				//Remove the tab created in EditPostTab.
+				RemoveTab();
+
+				//Insert the response (data) to the the center-box.
+				$("#UserPostContainer").html(data);
+			}
+		}
+	);
+}
+
+//DeletPost passes the id of the post to DeletePost action method who will delete the post and removes the post container from the DOM.
+function DeletePost(postId, input) {
+	//Undisplay the post option button parent element.
+	input.parentElement.style.display = "none";
+	//Get the token for request verification token.
+	const token = $('input[name="__RequestVerificationToken"]').val();
+
+	if (postId != undefined) {
+		$.post("/Post/DeletePost", { __RequestVerificationToken: token, PostId: postId }, function (data, status) {
+			//the data variable consist of a boolean return from the action method (true for deleted, false for error).
+			if (status === "success" && data) {
+				//Remove the post conatiner traversing throught the document tree (will change eventualy).
+				input.parentElement.parentElement.parentElement.parentElement.remove();
+			}
+		});
+	}
+}
+
+//Function that handles when a user likes or dislikes a post.
+function LikePost(postId, button) {
+	const likesAmount = button.children[0];
+	const likeSVG = button.children[1];
+
+	if (postId != undefined) {
+		$.post("/Post/LikePost", { PostId: postId }, function (data, status) {
+			if (status === "success") {
+				//the response (data) consist of a string, "+" for like, "-" for dislike and "0" for errors.
+				if (data === "+") {
+					//Increase the amount of likes.
+					let likes = parseInt(likesAmount.innerHTML);
+					likesAmount.innerHTML = ++likes;
+
+					//Add a class to the SVG so it looks liked.
+					likeSVG.className.baseVal = 'like-button liked';
+					button.style.fontWeight = "bold";
+				}
+				else if (data === "-") {
+					//Decrease the amount of likes.
+					let likes = parseInt(likesAmount.innerHTML);
+					likesAmount.innerHTML = --likes;
+
+					//Remove the liked class from the SVG so it looks unliked.
+					likeSVG.className.baseVal = 'like-button';
+					button.style.fontWeight = "normal";
+				}
+
+			}
+		});
+	}
+}
+
+//This function removes the background along with his tab and restore the overflow.
+//The tab can be from CreatePostTab, EditPostTab or CreateCommentTab.
+function RemoveTab() {
+	document.getElementById("BlackBackground").remove();
+	document.body.style.overflow = "auto";
+}
+
+//OptionButton displays and indisplays the options inside the option button from the posts.
+function OptionButton(post) {
+	const option = post.children[1];
+	option.style.display = "flex";
+
+	//Add an event to undisplays the options when user clicks outside of the it.
+	document.addEventListener("mousedown", function handler() {
+		option.style.display = "none";
+		this.removeEventListener("mousedown", handler);
+	});
+}
+
+//This creates and returns a semi transparent black brackground, any element appended will be centered.
+function Background() {
+	const tab = document.createElement("div");
+	tab.id = "BlackBackground";
+	tab.className = 'black-background';
+	document.body.appendChild(tab);
+	return tab;
+}

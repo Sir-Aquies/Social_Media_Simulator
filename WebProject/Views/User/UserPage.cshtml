@@ -1,7 +1,9 @@
 ﻿@model DynamicUser
 
 @{
+	#nullable disable
 	ViewData["Title"] = Model.PageUser.UserName ?? "User not Found";
+	ViewData["UserId"] = Model.User.Id;
 }
 
 <link rel="stylesheet" href="~/css/UserCSS.css" asp-append-version="true" />
@@ -39,7 +41,22 @@
 	</div>
 
 	<div class="center-box" id="UserPostContainer">
-		<partial name="UserPost" model="Model"></partial>
+
+		@if (Model.PageUser != null)
+		{
+			@if (Model.PageUser.Id == Model.User.Id)
+			{
+				<div class="create-post-container">
+					<button type="button" class="create-post-button" onclick="CreatePostTab()">Create New Post</button>
+				</div>
+			}
+
+			@foreach(PostModel post in Model.PageUser.Posts.Reverse())
+			{
+				<partial name="Post" model="post"></partial>
+			}
+		}
+
 	</div>
 
 	<div class="right-box">
@@ -47,6 +64,7 @@
 	</div>
 </div>
 
-<script src="~/js/PostWindows.js" asp-append-version="true"></script>
+<script src="~/js/AsyncCRUD.js" asp-append-version="true"></script>
+<script src="~/js/PostsScript.js" asp-append-version="true"></script>
+<script src="~/js/CommentsScript.js" asp-append-version="true"></script>
 <script src="~/js/ImagePrev.js" asp-append-version="true"></script>
-@*<script src="~/js/PostScript.js" asp-append-version="true"></script>*@

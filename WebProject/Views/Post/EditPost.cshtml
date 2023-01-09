@@ -5,7 +5,7 @@
 		<textarea name="Content">@Model?.Content</textarea>
 
 		<div class="button-holder">
-			<input type="button" value="Cancel" onclick="RemoveEditPostTab()" />
+			<input type="button" value="Cancel" onclick="RemoveTab()" />
 			<input type="button" value="Image" onclick="document.getElementById('File').click()" />
 			<input type="file" id="File" name="Media" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" onchange="ImagePreview(this, document.getElementById('frame-holder'))" style="display: none;" />
 			<input type="button" value="Edit" onclick="EditPost(this)"/>

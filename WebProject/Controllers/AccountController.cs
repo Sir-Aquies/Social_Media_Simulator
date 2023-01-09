@@ -2,22 +2,20 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using WebProject.Models;
-using WebProject.Data;
 using Microsoft.AspNetCore.Authorization;
-using System.Collections.Generic;
 
 namespace WebProject.Controllers
 {
 	[Authorize]
 	public class AccountController : Controller
 	{
-		private readonly UserManager<UserModel> userManager;
-		private readonly SignInManager<UserModel> signInManager;
+		private readonly UserManager<UserModel> _userManager;
+		private readonly SignInManager<UserModel> _signInManager;
 
-		public AccountController(UserManager<UserModel> manager, SignInManager<UserModel> sign)
+		public AccountController(UserManager<UserModel> userManager, SignInManager<UserModel> signInManager)
 		{
-			userManager = manager;
-			signInManager = sign;
+			_userManager = userManager;
+			_signInManager = signInManager;
 		}
 
 		[AllowAnonymous]
@@ -25,7 +23,7 @@ namespace WebProject.Controllers
 		{
 			if (User.Identity.IsAuthenticated)
 			{
-				UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
+				UserModel userModel = await _userManager.GetUserAsync(HttpContext.User);
 				return RedirectToActionPermanent("UserPage", "User", new { userModel.UserName });
 			}
 
@@ -44,12 +42,12 @@ namespace WebProject.Controllers
 		{
 			if (ModelState.IsValid)
 			{
-				UserModel user = await userManager.FindByNameAsync(login.UserName);
+				UserModel user = await _userManager.FindByNameAsync(login.UserName);
 
 				if (user != null)
 				{
-					await signInManager.SignOutAsync();
-					Microsoft.AspNetCore.Identity.SignInResult result = await signInManager.PasswordSignInAsync(user, login.Password, false, false);
+					await _signInManager.SignOutAsync();
+					Microsoft.AspNetCore.Identity.SignInResult result = await _signInManager.PasswordSignInAsync(user, login.Password, false, false);
 
 					if (result.Succeeded)
 					{
@@ -67,7 +65,7 @@ namespace WebProject.Controllers
 		{
 			if (User.Identity.IsAuthenticated)
 			{
-				UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
+				UserModel userModel = await _userManager.GetUserAsync(HttpContext.User);
 				return RedirectToActionPermanent("UserPage", "User", new { userModel.UserName });
 			}
 
@@ -88,7 +86,7 @@ namespace WebProject.Controllers
 					DateofBirth = create.DateofBirth,
 				};
 
-				IdentityResult result = await userManager.CreateAsync(user, create.Password);
+				IdentityResult result = await _userManager.CreateAsync(user, create.Password);
 
 				if (result.Succeeded)
 				{
@@ -113,7 +111,7 @@ namespace WebProject.Controllers
 
 		public async Task<IActionResult> Logout()
 		{
-			await signInManager.SignOutAsync();
+			await _signInManager.SignOutAsync();
 			return RedirectToAction("Login", "Account");
 		}
 	}

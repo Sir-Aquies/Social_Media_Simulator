@@ -5,6 +5,7 @@ using WebProject.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Hosting;
 
 namespace WebProject.Controllers
 {
@@ -40,27 +41,24 @@ namespace WebProject.Controllers
 				postModel.Media = Convert.ToBase64String(await GetBytes(Media));
 			}
 
+			PostModel output = new();
+
 			if (!string.IsNullOrEmpty(postModel.Content) || postModel.Media != null)
 			{
 				postModel.PostDate = DateTime.Now;
 				postModel.UserId = userModel.Id;
-				_Models.Posts.Add(postModel);
+				var entity = await _Models.Posts.AddAsync(postModel);
 				await _Models.SaveChangesAsync();
+
+				output = entity.Entity;
 			}
 
-			UserModel page = userModel;
-			page.Posts = await GetPosts(userModel);
+			output = await _Models.Posts.Include(p => p.UsersLikes).AsNoTracking().FirstOrDefaultAsync(p => p.Id == output.Id);
+			output.User = userModel;
+			output.Comments = await LoadComments(output);
+			ViewData["UserId"] = userModel.Id;
 
-			userModel.LikedPost = GetPostsLiked(page.Posts, userModel.Id);
-			userModel.LikedComments = GetCommentsLiked(page.Posts, userModel.Id);
-
-			DynamicUser dynamic = new()
-			{ 
-				User = userModel,
-				PageUser = page
-			};
-
-			return PartialView("UserPost", dynamic);
+			return PartialView("Post", output);
 		}
 
 		[HttpPost]
@@ -76,6 +74,7 @@ namespace WebProject.Controllers
 			}
 
 			PostModel postModel = new();
+			PostModel output = new();
 
 			if (PostIdBool)
 			{
@@ -109,8 +108,10 @@ namespace WebProject.Controllers
 					postModel.IsEdited = true;
 					postModel.EditedDate = DateTime.Now;
 
-					_Models.Posts.Update(postModel);
+					var entity = _Models.Posts.Update(postModel);
 					await _Models.SaveChangesAsync();
+
+					output = entity.Entity;
 
 					TempData["Message"] = "Post successfully edited.";
 				}
@@ -125,22 +126,92 @@ namespace WebProject.Controllers
 				TempData["ErrorMessage"] = "Access denied, post does not belong to current user.";
 			}
 
-			UserModel page = userModel;
-			page.Posts = await GetPosts(page);
+			output = await _Models.Posts.Include(p => p.UsersLikes).AsNoTracking().FirstOrDefaultAsync(p => p.Id == output.Id);
+			output.User = userModel;
+			output.Comments = await LoadComments(output);
+			ViewData["UserId"] = userModel.Id;
 
-			userModel.LikedPost = GetPostsLiked(page.Posts, userModel.Id);
-			userModel.LikedComments = GetCommentsLiked(page.Posts, userModel.Id);
-
-			DynamicUser dynamic = new()
-			{
-				User = userModel,
-				PageUser = page
-			};
-
-			return PartialView("UserPost", dynamic);
+			return PartialView("Post", output);
 		}
 
-		[HttpPost]
+		//[HttpPost]
+		//[ValidateAntiForgeryToken]
+		//public async Task<IActionResult> EditPost(string Content, IFormFile Media, bool DeleteMedia)
+		//{
+		//	int PostId = 0;
+		//	bool PostIdBool = false;
+
+		//	if (!string.IsNullOrEmpty(TempData["PostId"]?.ToString()))
+		//	{
+		//		PostIdBool = int.TryParse(TempData["PostId"]?.ToString(), out PostId);
+		//	}
+
+		//	PostModel postModel = new();
+
+		//	if (PostIdBool)
+		//	{
+		//		postModel = await _Models.Posts.FirstOrDefaultAsync(p => p.Id == PostId);
+		//	}
+		//	else
+		//	{
+		//		return NotFound();
+		//	}
+
+		//	UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
+
+		//	if (userModel.Id == postModel.UserId)
+		//	{
+		//		if (Media != null)
+		//		{
+		//			postModel.Media = Convert.ToBase64String(await GetBytes(Media));
+		//		}
+		//		else if (DeleteMedia)
+		//		{
+		//			postModel.Media = null;
+		//		}
+
+		//		if (!string.IsNullOrEmpty(Content) && Content != postModel.Content)
+		//		{
+		//			postModel.Content = Content;
+		//		}
+
+		//		if (!string.IsNullOrEmpty(postModel.Content) || postModel.Media != null)
+		//		{
+		//			postModel.IsEdited = true;
+		//			postModel.EditedDate = DateTime.Now;
+
+		//			_Models.Posts.Update(postModel);
+		//			await _Models.SaveChangesAsync();
+
+		//			TempData["Message"] = "Post successfully edited.";
+		//		}
+		//		else
+		//		{
+		//			TempData["ErrorMessage"] = "Post was not edited.";
+		//		}
+		//	}
+		//	else
+		//	{
+		//		//TODO - Make message show without reloading the page.
+		//		TempData["ErrorMessage"] = "Access denied, post does not belong to current user.";
+		//	}
+
+		//	UserModel page = userModel;
+		//	page.Posts = await GetPosts(page);
+
+		//	userModel.LikedPost = GetPostsLiked(page.Posts, userModel.Id);
+		//	userModel.LikedComments = GetCommentsLiked(page.Posts, userModel.Id);
+
+		//	DynamicUser dynamic = new()
+		//	{
+		//		User = userModel,
+		//		PageUser = page
+		//	};
+
+		//	return PartialView("UserPost", dynamic);
+		//}
+
+		[HttpGet]
 		public async Task<IActionResult> LookforPost(int PostId)
 		{
 			PostModel postModel = await _Models.Posts.AsNoTracking().FirstOrDefaultAsync(us => us.Id == PostId);
