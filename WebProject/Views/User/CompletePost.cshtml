@@ -1,0 +1,24 @@
+﻿@model DynamicUser
+
+@{
+	ViewData["Title"] = Model.PageUser.UserName ?? "User not Found";
+	ViewData["UserId"] = Model.User.Id;
+	PostModel post = Model.PageUser.Posts[0];
+}
+
+<link rel="stylesheet" href="~/css/UserCSS.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/HomePageCSS.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/PostContainer.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/PostForms.css" asp-append-version="true" />
+
+<section class="box-container">
+	<section class="center-box">
+		<partial name="Post" model="post"></partial>
+
+		@foreach (CommentModel comment in post.Comments)
+		{
+			<partial name="Comment" model="comment"></partial>
+		}
+	</section>
+</section>
+

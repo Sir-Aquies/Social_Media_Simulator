@@ -5,7 +5,7 @@
 }
 
 .post-container:last-of-type {
-	border-bottom: 1px solid var(--BorderColor);
+	/*border-bottom: 1px solid var(--BorderColor);*/
 }
 
 .post-info {
@@ -130,6 +130,10 @@
 	border: 0;
 }
 
+.post-stats > button:has(.liked) {
+	font-weight: bold;
+}
+
 .like-button {
 	width: 1.7rem;
 	height: 1.7rem;
@@ -154,10 +158,10 @@
 
 .post-comments {
 	width: 100%;
-	margin: 0.5rem auto;
+	margin: 0 auto;
 	padding: 0.8rem;
 	background-color: var(--ShadowColor);
-	border: 1px solid var(--BorderColor);
+	border-top: 1px solid var(--BorderColor);
 }
 
 .post-commments-user {
@@ -204,4 +208,8 @@
 	padding-top: 0.5rem;
 	font-size: var(--textsize);
 	border: 0;
+}
+
+.post-comments-stats > button:has(.liked) {
+	font-weight: bold;
 }

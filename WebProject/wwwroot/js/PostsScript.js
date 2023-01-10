@@ -40,7 +40,7 @@ function CreatePost(input) {
 			success: function (data) {
 				//Remove the tab created in CreatePostTab. 
 				RemoveTab();
-				//Insert the data (the new created post) to the center-box.
+				//Insert the data (the new created post) to UserPostContainer.
 				AddPostToContainer(data);
 			}
 		}
@@ -103,9 +103,8 @@ function EditPost(input) {
 			success: function (data) {
 				//Remove the tab created in EditPostTab.
 				RemoveTab();
-
-				//Insert the response (data) to the the center-box.
-				$("#UserPostContainer").html(data);
+				//Insert the response (data) to the the UserPostContainer.
+				UpdatePostFromContainer(data);
 			}
 		}
 	);
@@ -171,8 +170,16 @@ function RemoveTab() {
 
 //OptionButton displays and indisplays the options inside the option button from the posts.
 function OptionButton(post) {
+	//Get the post-form.
 	const option = post.children[1];
-	option.style.display = "flex";
+
+	//If the display is equal to none of undefined, display it.
+	if (option.style.display === 'none' || !option.style.display) {
+		option.style.display = 'flex';
+	}
+	else {
+		option.style.display = 'none';
+	}
 
 	//Add an event to undisplays the options when user clicks outside of the it.
 	document.addEventListener("mousedown", function handler() {

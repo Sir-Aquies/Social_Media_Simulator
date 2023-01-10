@@ -11,6 +11,7 @@ namespace WebProject.Models
 	{
 		/// <summary>
 		/// Post's unique identifier for C# code and SQl database { int } .
+		/// TODO - change the id for an alfanumeric value.
 		/// </summary>
 		public int Id { get; set; }
 		/// <summary>

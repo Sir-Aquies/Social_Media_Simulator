@@ -27,7 +27,7 @@
 	margin: 0.5rem 0;
 }
 
-img.user-pic {
+.user-pic {
 	width: 20vh;
 	height: 20vh;
 	border: 1px solid var(--BorderColor);
@@ -90,14 +90,18 @@ img.user-pic {
 	display: none !important;
 }
 
+.complete-post-button {
+	text-decoration: none;
+	text-align: center;
+	color: inherit;
+	width: 100%;
+	display: block;
+}
+
 @media only screen and (min-width: 768px) {
 	.left-box {
 		display: block;
 		width: 30%;
-	}
-
-	.post-info .post-option-button {
-		margin-right: 1.2rem;
 	}
 
 	.post-form {
@@ -115,7 +119,7 @@ img.user-pic {
 }
 
 @media only screen and (min-width: 1024px) {
-	div.left-box {
+	.left-box {
 		width: 25%;
 	}
 
@@ -126,11 +130,11 @@ img.user-pic {
 		max-height: 17rem;
 	}
 
-	div.center-box {
+	.center-box {
 		width: 50%;
 	}
 
-	div.right-box {
+	.right-box {
 		display: block;
 		margin-left: 0.5%;
 		width: 24.5%;

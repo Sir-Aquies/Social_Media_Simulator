@@ -82,6 +82,7 @@ namespace WebProject.Controllers
 			}
 			else
 			{
+				TempData["ErrorMessage"] = "Post not found.";
 				return NotFound();
 			}
 
@@ -133,83 +134,6 @@ namespace WebProject.Controllers
 
 			return PartialView("Post", output);
 		}
-
-		//[HttpPost]
-		//[ValidateAntiForgeryToken]
-		//public async Task<IActionResult> EditPost(string Content, IFormFile Media, bool DeleteMedia)
-		//{
-		//	int PostId = 0;
-		//	bool PostIdBool = false;
-
-		//	if (!string.IsNullOrEmpty(TempData["PostId"]?.ToString()))
-		//	{
-		//		PostIdBool = int.TryParse(TempData["PostId"]?.ToString(), out PostId);
-		//	}
-
-		//	PostModel postModel = new();
-
-		//	if (PostIdBool)
-		//	{
-		//		postModel = await _Models.Posts.FirstOrDefaultAsync(p => p.Id == PostId);
-		//	}
-		//	else
-		//	{
-		//		return NotFound();
-		//	}
-
-		//	UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
-
-		//	if (userModel.Id == postModel.UserId)
-		//	{
-		//		if (Media != null)
-		//		{
-		//			postModel.Media = Convert.ToBase64String(await GetBytes(Media));
-		//		}
-		//		else if (DeleteMedia)
-		//		{
-		//			postModel.Media = null;
-		//		}
-
-		//		if (!string.IsNullOrEmpty(Content) && Content != postModel.Content)
-		//		{
-		//			postModel.Content = Content;
-		//		}
-
-		//		if (!string.IsNullOrEmpty(postModel.Content) || postModel.Media != null)
-		//		{
-		//			postModel.IsEdited = true;
-		//			postModel.EditedDate = DateTime.Now;
-
-		//			_Models.Posts.Update(postModel);
-		//			await _Models.SaveChangesAsync();
-
-		//			TempData["Message"] = "Post successfully edited.";
-		//		}
-		//		else
-		//		{
-		//			TempData["ErrorMessage"] = "Post was not edited.";
-		//		}
-		//	}
-		//	else
-		//	{
-		//		//TODO - Make message show without reloading the page.
-		//		TempData["ErrorMessage"] = "Access denied, post does not belong to current user.";
-		//	}
-
-		//	UserModel page = userModel;
-		//	page.Posts = await GetPosts(page);
-
-		//	userModel.LikedPost = GetPostsLiked(page.Posts, userModel.Id);
-		//	userModel.LikedComments = GetCommentsLiked(page.Posts, userModel.Id);
-
-		//	DynamicUser dynamic = new()
-		//	{
-		//		User = userModel,
-		//		PageUser = page
-		//	};
-
-		//	return PartialView("UserPost", dynamic);
-		//}
 
 		[HttpGet]
 		public async Task<IActionResult> LookforPost(int PostId)

@@ -1,7 +1,6 @@
 ﻿@model DynamicUser
 
 @{
-	#nullable disable
 	ViewData["Title"] = Model.PageUser.UserName ?? "User not Found";
 	ViewData["UserId"] = Model.User.Id;
 }
@@ -11,19 +10,12 @@
 <link rel="stylesheet" href="~/css/PostContainer.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/PostForms.css" asp-append-version="true" />
 
-<div class="box-container">
-	<div class="left-box">
+<section class="box-container">
+	<section class="left-box">
 		<div class="user-info">
 			@if (Model.PageUser.ProfilePicture != null) 
 			{
-				@if (Model.PageUser.ProfilePicture.StartsWith("https"))
-				{
-					<img src="@Model.PageUser?.ProfilePicture" class="user-pic" />
-				}
-				else
-				{
-					<img src="data:image/png;base64,@Model.PageUser?.ProfilePicture" class="user-pic" />
-				}
+				<img class="user-pic" src="@(Model.PageUser.ProfilePicture.StartsWith("https") ? "" : "data:image/png;base64,")@Model.PageUser.ProfilePicture" alt="@Model.PageUser.UserName picture" />
 			}
 			else
 			{
@@ -38,10 +30,9 @@
 
 			<div class="user-dob">@Model.PageUser?.DateofBirth.ToShortDateString()</div>
 		</div>
-	</div>
+	</section>
 
-	<div class="center-box" id="UserPostContainer">
-
+	<section class="center-box" id="UserPostContainer">
 		@if (Model.PageUser != null)
 		{
 			@if (Model.PageUser.Id == Model.User.Id)
@@ -53,18 +44,40 @@
 
 			@foreach(PostModel post in Model.PageUser.Posts.Reverse())
 			{
-				<partial name="Post" model="post"></partial>
+				<article id="@post.User.UserName@post.Id" data-post-container>
+					<partial name="Post" model="post"></partial>
+					@for (int i = 0; i < post.Comments.Count; i++)
+					{
+						if (i < 2)
+						{
+							<partial name="Comment" model="post.Comments[i]"></partial>
+						}
+						else
+						{
+							<a class="complete-post-button" asp-controller="User" asp-action="CompletePost" asp-route-UserName="@Model.User.UserName" asp-route-PostId="@post.Id">View all the Comments</a>
+							break;
+						}
+					}
+				</article>
 			}
 		}
 
-	</div>
+	</section>
 
-	<div class="right-box">
+	<section class="right-box">
 		@*@await Component.InvokeAsync("AllUsers")*@
-	</div>
-</div>
+	</section>
+</section>
 
 <script src="~/js/AsyncCRUD.js" asp-append-version="true"></script>
 <script src="~/js/PostsScript.js" asp-append-version="true"></script>
 <script src="~/js/CommentsScript.js" asp-append-version="true"></script>
 <script src="~/js/ImagePrev.js" asp-append-version="true"></script>
+<script>
+	function ShowPostImg(element) {
+		const img = element.nextElementSibling;
+		img.id = "currentimg";
+		$(`#${img.id}`).slideToggle();
+		img.id = "";
+	};
+</script>
