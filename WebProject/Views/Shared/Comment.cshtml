@@ -1,43 +1,53 @@
 ﻿@model CommentModel
 
-<article class="post-comments">
-	<div class="post-commments-user">
-		@if (Model.User.ProfilePicture != null)
-		{
-			<img src="@(Model.User.ProfilePicture.StartsWith("https") ? "" : "data:image/png;base64,")@Model.User.ProfilePicture" alt="@Model.User.UserName" />
-		}
-		else
-		{
-			<img src="" alt="@Model.User.UserName" />
-		}
+<article class="post-comments" user-profile-left>
+	@if (Model.User.ProfilePicture != null)
+	{
+		<img onclick="location = '@Model.User.UserName'; event.stopPropagation()" class="user-profile-left" src="@(Model.User.ProfilePicture.StartsWith("https") ? "" : "data:image/png;base64,")@Model.User.ProfilePicture" alt="@Model.User.UserName" />
+	}
+	else
+	{
+		<img onclick="location = '@Model.User.UserName'; event.stopPropagation()" class="user-profile-left" src="" alt="@Model.User.UserName" />
+	}
+	<section>
+		<div class="post-commments-user">
+			@if (Model.User.ProfilePicture != null)
+			{
+				<img onclick="location = '@Model.User.UserName'; event.stopPropagation()" class="comment-user-pic" src="@(Model.User.ProfilePicture.StartsWith("https") ? "" : "data:image/png;base64,")@Model.User.ProfilePicture" alt="@Model.User.UserName" />
+			}
+			else
+			{
+				<img onclick="location = '@Model.User.UserName'; event.stopPropagation()" class="comment-user-pic" src="" alt="@Model.User.UserName" />
+			}
 
-		<a class="post-commments-username" asp-action="UserPage" asp-route-UserName="@Model.User.UserName">@Model.User.UserName</a>
+			<a class="post-commments-username" asp-action="UserPage" asp-route-UserName="@Model.User.UserName">@Model.User.UserName</a>
 
-		<span>@(Model.Date.ToString("MM/dd/yyyy") == DateTime.Today.ToString("MM/dd/yyyy") ? Model.Date.ToString("hh:mm tt") : Model.Date.ToString("MM/dd/yyyy"))</span>
+			<span>@(Model.Date.ToString("MM/dd/yyyy") == DateTime.Today.ToString("MM/dd/yyyy") ? Model.Date.ToString("hh:mm tt") : Model.Date.ToString("MM/dd/yyyy"))</span>
 
-		@if (ViewData["UserId"]?.ToString() == Model.User.Id)
-		{
-			<div class="post-option-button" onclick="OptionButton(this);" onmousedown="event.stopPropagation()">
-				<div class="button">...</div>
-				<div onmousedown="event.stopPropagation()" onclick="event.stopPropagation();" class="post-form">
-					@*<input type="button" value="Edit" onclick="EditCommentWindow(@Model.Id, this);" />*@
-					<input type="button" value="Delete" onclick="DeleteComment(@Model.Id, this)" />
+			@if (ViewData["UserId"]?.ToString() == Model.User.Id)
+			{
+				<div class="post-option-button" onclick="OptionButton(this);" onmousedown="event.stopPropagation()">
+					<div class="button">...</div>
+					<div onmousedown="event.stopPropagation()" onclick="event.stopPropagation();" class="post-form">
+						@*<input type="button" value="Edit" onclick="EditCommentWindow(@Model.Id, this);" />*@
+						<input type="button" value="Delete" onclick="DeleteComment(@Model.Id, this)" />
+					</div>
 				</div>
-			</div>
-		}
-	</div>
+			}
+		</div>
 
-	<div class="post-comments-content">@Model.Content</div>
+		<div class="post-comments-content">@Model.Content</div>
 
-	<div class="post-comments-stats">
-		<button type="button" onclick="LikeComment(@Model.Id, this)">
-			<span>@Model.Likes</span>
+		<div class="post-comments-stats">
+			<button type="button" onclick="LikeComment(@Model.Id, this)">
+				<span>@Model.Likes</span>
 
-			<svg version="1.1" class="like-button @(Model.UsersLikes.Any(c => c.Id == ViewData["UserId"]?.ToString()) ? "liked" : "")" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 122.88 106.16" xml:space="preserve">
+				<svg version="1.1" class="like-button @(Model.UsersLikes.Any(c => c.Id == ViewData["UserId"]?.ToString()) ? "liked" : "")" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 122.88 106.16" xml:space="preserve">
 					<g>
 						<path class="like-button-bg" d="M4.02,44.6h27.36c2.21,0,4.02,1.81,4.02,4.03v53.51c0,2.21-1.81,4.03-4.02,4.03H4.02 c-2.21,0-4.02-1.81-4.02-4.03V48.63C0,46.41,1.81,44.6,4.02,44.6L4.02,44.6z M63.06,4.46c2.12-10.75,19.72-0.85,20.88,16.48 c0.35,5.3-0.2,11.47-1.5,18.36l25.15,0c10.46,0.41,19.59,7.9,13.14,20.2c1.47,5.36,1.69,11.65-2.3,14.13 c0.5,8.46-1.84,13.7-6.22,17.84c-0.29,4.23-1.19,7.99-3.23,10.88c-3.38,4.77-6.12,3.63-11.44,3.63H55.07 c-6.73,0-10.4-1.85-14.8-7.37V51.31c12.66-3.42,19.39-20.74,22.79-32.11V4.46L63.06,4.46z" />
 					</g>
 				</svg>
-		</button>
-	</div>
+			</button>
+		</div>
+	</section>
 </article>

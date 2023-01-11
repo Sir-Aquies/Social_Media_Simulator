@@ -1,17 +1,17 @@
 ﻿@model PostModel
 
-<article class="post-container" id="@Model.Id">
+<article class="post-container" id="@Model.Id" >
 	<div class="post-info">
 		@if (Model.User.ProfilePicture != null)
 		{
-			<img src="@(Model.User.ProfilePicture.StartsWith("https") ? "" : "data:image/png;base64,")@Model.User.ProfilePicture" alt="@Model.User.UserName" />
+			<img onclick="location = '@Model.User.UserName'; event.stopPropagation()" src="@(Model.User.ProfilePicture.StartsWith("https") ? "" : "data:image/png;base64,")@Model.User.ProfilePicture" alt="@Model.User.UserName" />
 		}
 		else
 		{
-			<img alt="@Model.User.UserName" />
+			<img onclick="location = '@Model.User.UserName'; event.stopPropagation()" alt="@Model.User.UserName" />
 		}
 
-		<a class="post-info-username" asp-action="UserPage" asp-controller="User" asp-route-UserName="@Model.User.UserName">@Model.User.UserName</a>
+		<a onclick="event.stopPropagation()" class="post-info-username" asp-action="UserPage" asp-controller="User" asp-route-UserName="@Model.User.UserName">@Model.User.UserName</a>
 
 		<span>@(Model.PostDate.ToString("MM/dd/yyyy") == DateTime.Today.ToString("MM/dd/yyyy") ? Model.PostDate.ToString("hh:mm tt") : Model.PostDate.ToString("MM/dd/yyyy"))</span>
 
@@ -26,7 +26,7 @@
 
 		@if (ViewData["UserId"]?.ToString() == Model.User.Id)
 		{
-			<div class="post-option-button" onclick="OptionButton(this);" onmousedown="event.stopPropagation()">
+			<div class="post-option-button" onclick="OptionButton(this); event.stopPropagation()" onmousedown="event.stopPropagation()">
 				<div class="button">...</div>
 
 				<div onmousedown="event.stopPropagation()" onclick="event.stopPropagation();" class="post-form">
@@ -54,7 +54,7 @@
 	</div>
 
 	<div class="post-stats">
-		<button type="button" onclick="LikePost(@Model.Id, this)">
+		<button type="button" onclick="LikePost(@Model.Id, this); event.stopPropagation()">
 			<span>@Model.Likes</span>
 
 			<svg version="1.1" class="like-button @(Model.UsersLikes.Any(u => u.Id == ViewData["UserId"]?.ToString()) ? "liked" : "")" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 122.88 106.16" xml:space="preserve">
@@ -64,7 +64,7 @@
 			</svg>
 		</button>
 
-		<button type="button" onclick="CreateCommentTab(@Model.Id)">
+		<button type="button" onclick="CreateCommentTab(@Model.Id); event.stopPropagation()">
 			<span>@Model.Comments.Count()</span>
 
 			<svg class="comment-button" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 121.86 122.88">

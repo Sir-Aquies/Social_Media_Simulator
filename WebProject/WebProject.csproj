@@ -7,9 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="Views\Shared\_ValidationScriptsPartial.cshtml" />
     <None Include="wwwroot\css\_WebLayout.css" />
   </ItemGroup>
@@ -23,6 +20,10 @@
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Views\Shared\Components\" />
   </ItemGroup>
 
 </Project>

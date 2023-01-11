@@ -44,8 +44,11 @@
 
 			@foreach(PostModel post in Model.PageUser.Posts.Reverse())
 			{
-				<article id="@post.User.UserName@post.Id" data-post-container>
+				<article id="@post.User.UserName@post.Id" onclick="location = '@post.User.UserName/hop/@post.Id'" data-post-container>
 					<partial name="Post" model="post"></partial>
+					@{
+						post.Comments = post.Comments.OrderByDescending(c => c.Likes).ToList();
+					}
 					@for (int i = 0; i < post.Comments.Count; i++)
 					{
 						if (i < 2)
@@ -54,7 +57,7 @@
 						}
 						else
 						{
-							<a class="complete-post-button" asp-controller="User" asp-action="CompletePost" asp-route-UserName="@Model.User.UserName" asp-route-PostId="@post.Id">View all the Comments</a>
+							<a class="complete-post-button" href="/@post.User.UserName/hop/@post.Id">View all the Comments</a>
 							break;
 						}
 					}
@@ -63,9 +66,10 @@
 		}
 
 	</section>
-
+	
 	<section class="right-box">
 		@*@await Component.InvokeAsync("AllUsers")*@
+		@await Component.InvokeAsync("TendencyUsers", new { amount = 10 })
 	</section>
 </section>
 

@@ -1,0 +1,25 @@
+﻿@model List<UserModel>
+
+@foreach(UserModel user in Model){
+	<div class="list-user-container">
+		<div class="list-user-info">
+			@if (user.ProfilePicture != null)
+			{
+				@if (user.ProfilePicture.StartsWith("https"))
+				{
+					<img class="list-user-pic" src="@user?.ProfilePicture" />
+				}
+				else
+				{
+					<img class="list-user-pic" src="data:image/png;base64,@user?.ProfilePicture" />
+				}
+			}
+			<div class="list-name-container">
+				<a asp-action="UserPage" asp-route-UserName="@user?.UserName" class="list-user-username">@user?.UserName</a>
+				<div class="list-user-name">@user?.Name</div>
+			</div>
+		</div>
+		<div class="list-user-description">@user?.Description</div>
+	</div>
+}
+

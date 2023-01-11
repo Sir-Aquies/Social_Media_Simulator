@@ -8,7 +8,6 @@ using WebProject.Policies;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-//builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<WebProjectContext>(options =>
@@ -74,12 +73,15 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapControllerRoute(
+	name: "Posts",
+	pattern: "{Username}/hop/{PostId}",
+	defaults: new { controller = "User", action = "CompletePost" });
+
 app.MapControllerRoute(name: "Users", pattern: "{UserName}", defaults: new { controller = "User", action = "UserPage"});
 
 app.MapControllerRoute(
 	name: "default",
 	pattern: "{controller=User}/{action=SearchUser}/{id?}");
-
-//app.MapRazorPages();
 
 app.Run();

@@ -36,7 +36,7 @@ namespace WebProject.Controllers
 
 			return RedirectToAction("UserPage", new { userModel.UserName });
 		}
-		
+		//TODO - add a way to filter post (most/least likes, most/least commentsm, etc).
 		public async Task<IActionResult> UserPage(string UserName)
 		{
 			UserModel user = await userManager.GetUserAsync(HttpContext.User);
@@ -93,7 +93,7 @@ namespace WebProject.Controllers
 			return View(dynamic);
 		}
 
-		public async Task<IActionResult> CompletePost(string UserName, int PostId)
+		public async Task<IActionResult> CompletePost(string Username, int PostId)
 		{
 			UserModel user = await userManager.GetUserAsync(HttpContext.User);
 
@@ -104,9 +104,9 @@ namespace WebProject.Controllers
 
 			UserModel pageUser = new();
 
-			if (!string.IsNullOrEmpty(UserName) && user.UserName != UserName)
+			if (!string.IsNullOrEmpty(Username) && user.UserName != Username)
 			{
-				pageUser = await userManager.FindByNameAsync(UserName);
+				pageUser = await userManager.FindByNameAsync(Username);
 
 				if (pageUser != null)
 				{

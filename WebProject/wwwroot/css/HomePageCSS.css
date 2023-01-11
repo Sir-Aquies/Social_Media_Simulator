@@ -94,8 +94,8 @@
 	text-decoration: none;
 	text-align: center;
 	color: inherit;
-	width: 100%;
 	display: block;
+	padding: 0.3rem;
 }
 
 @media only screen and (min-width: 768px) {

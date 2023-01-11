@@ -1,4 +1,6 @@
-﻿@model DynamicUser
+﻿@using Microsoft.AspNetCore.Identity;
+@model DynamicUser
+@inject UserManager<UserModel> _userManager
 
 @{
 	ViewData["Title"] = Model.PageUser.UserName ?? "User not Found";
@@ -12,13 +14,43 @@
 <link rel="stylesheet" href="~/css/PostForms.css" asp-append-version="true" />
 
 <section class="box-container">
+	<section class="left-box">
+		<div class="user-info">
+			@if (Model.PageUser.ProfilePicture != null)
+			{
+				<img class="user-pic" src="@(Model.PageUser.ProfilePicture.StartsWith("https") ? "" : "data:image/png;base64,")@Model.PageUser.ProfilePicture" alt="@Model.PageUser.UserName picture" />
+			}
+			else
+			{
+				<img class="user-pic" src="" />
+			}
+
+			<div class="user-username">@Model.PageUser?.UserName</div>
+
+			<div class="user-name">@Model.PageUser?.Name</div>
+
+			<div class="user-description">@Model.PageUser?.Description</div>
+
+			<div class="user-dob">@Model.PageUser?.DateofBirth.ToShortDateString()</div>
+		</div>
+	</section>
+
 	<section class="center-box">
 		<partial name="Post" model="post"></partial>
 
-		@foreach (CommentModel comment in post.Comments)
+		@foreach (CommentModel comment in post.Comments.OrderByDescending(c => c.Likes))
 		{
 			<partial name="Comment" model="comment"></partial>
 		}
 	</section>
+
+	<section class="right-box">
+		@*@await Component.InvokeAsync("AllUsers")*@
+	</section>
 </section>
+
+<script src="~/js/AsyncCRUD.js" asp-append-version="true"></script>
+<script src="~/js/PostsScript.js" asp-append-version="true"></script>
+<script src="~/js/CommentsScript.js" asp-append-version="true"></script>
+<script src="~/js/ImagePrev.js" asp-append-version="true"></script>
 

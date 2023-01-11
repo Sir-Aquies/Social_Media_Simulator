@@ -42,7 +42,6 @@ namespace WebProject.Services
 			}
 		}
 
-		//TODO - create a Post page to show all comments.
 		private async Task CreateRandomComment()
 		{
 			List<CommentModel> comments = new();
