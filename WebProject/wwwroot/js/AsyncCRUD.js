@@ -11,27 +11,31 @@ function AddPostToContainer(postString) {
 
     //Create a container for the post.
     const article = document.createElement('article');
+    //TODO -  add metadata to the article and change name.
     article.appendChild(newPost);
 
     //Insert the container before the create post button.
     mainContainer.insertBefore(article, mainContainer.children[1]);
+
+    posts = [...document.getElementsByClassName('post-container')];
+    postContainers = [...document.querySelectorAll('[data-post-container]')];
 }
 
-function RemovePostFromContainer(postId) {
-    //Get the username from the url
-    const arr = window.location.href.split('/');
-    const userName = arr[arr.length - 1];
-
+function RemovePostFromContainer(postId, userName) {
     //Find the post container base on his id and post's username and remove it.
-    const post = postContainers.find(p => p.id == `${userName}${postId}`);
-    post.remove();
+    const postContainer = postContainers.find(p => p.id == `${userName}${postId}`);
+    postContainer.remove();
+
+    //Function only defined in CompletePost that redirects the user to his page.
+    RedirectToUserPage();
 }
 
 function UpdatePostFromContainer(postString) {
     //Convert the string post into an HTML element.
     const updatedPost = ConvertToDOM(postString);
+
     //Find the outdated post's container in postContainers.
-    const outdatedPostContainer = postContainers.find(p => p.id == updatedPost.id);
+    const outdatedPostContainer = postContainers.find(p => p.id == `${updatedPost.dataset.username}${updatedPost.id}`);
 
     //Get the outdated post an remove it.
     const outdatedPost = outdatedPostContainer.children[0];

@@ -127,7 +127,7 @@
 	gap: 0.5rem;
 	background-color: Transparent;
 	width: max-content;
-	padding: 0.5rem;
+	padding: 0.4rem;
 	font-size: var(--textsize);
 	border: 0;
 	border-radius: 0.4rem;
@@ -250,7 +250,7 @@
 	gap: 0.5rem;
 	align-content: center;
 	width: max-content;
-	padding: 0.5rem;
+	padding: 0.4rem;
 	font-size: var(--textsize);
 	border: 0;
 	border-radius: 0.4rem;

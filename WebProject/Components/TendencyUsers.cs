@@ -2,6 +2,12 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Diagnostics;
+using System.Net.NetworkInformation;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using WebProject.Data;
 using WebProject.Models;
 
@@ -18,60 +24,80 @@ namespace WebProject.Components
 			_Models = Models;
 		}
 
-		//Move this logic to a service.
+		//TODO - Move this logic to a service.
+		//I put a lot of Span looping because I know its faster when the collection that is being loop is not modify
+		//TODO - Find a way to measure the speed of the Invoke and compare it to the old one (https://github.com/Sir-Aquies/WebProject/commit/673cf71eb8f28959474fb686e2138f1db6faad31).
 		public async Task<IViewComponentResult> InvokeAsync(int amount)
 		{
-			List<UserModel> usersWithMostLikes = await GetPosts(await _userManager.Users.AsNoTracking().ToListAsync());
-			int length = usersWithMostLikes.Count;
+			//First, pass the list of users and post from the databse to GiveUsersThierPosts who will return a list of users with their post.
+			//Second, CountTotalLikes will return a list of key value pair that includes the user and the total amount of likes.
+			//Third, GetUsersFromKeyValuePair will order the return a list of users with the most likes.
+			return View("UsersList", GetUsersFromKeyValuePair(CountTotalLikes(GiveUsersThierPosts(await _userManager.Users.AsNoTracking().ToListAsync(), await _Models.Posts.AsNoTracking().ToListAsync())), amount));
+		}
 
-			Dictionary<UserModel, int> likesAndUser = new();
-
-			for (int i = 0; i < length; i++)
-			{
-				UserModel user = usersWithMostLikes[i];
-				int postLength = user.Posts.Count;
-				int totalLikes = 0;
-
-				for (int j = 0; j < postLength; j++)
-				{
-					totalLikes += user.Posts[j].Likes;
-				}
-
-				likesAndUser.Add(user, totalLikes);
-			}
-
-			usersWithMostLikes.Clear();
-			//likesAndUser = likesAndUser.OrderByDescending(u => u.Value).ToDictionary(keySelector: u => u.Key, k => k.Value);
-
+		//Get the first users from the already Ordered list of KeyValuePair
+		public List<UserModel> GetUsersFromKeyValuePair(IEnumerable<KeyValuePair<UserModel, int>> likesAndUsers, int amount)
+		{
+			List<UserModel> output = new();
 			int count = 0;
-
-			foreach (KeyValuePair<UserModel, int> userLikes in likesAndUser.OrderByDescending(u => u.Value)) 
+			//Order likesAndUsers from the users with most likes to the least and loop a span from the list.
+			foreach (KeyValuePair<UserModel, int> userLikes in CollectionsMarshal.AsSpan(likesAndUsers.OrderByDescending(u => u.Value).ToList()))
 			{
-				usersWithMostLikes.Add(userLikes.Key);
+				output.Add(userLikes.Key);
 				count++;
 
 				if (count == amount) break;
 			}
 
-			return View("UsersList", usersWithMostLikes);
+			return output;
 		}
 
-		public async Task<List<UserModel>> GetPosts(List<UserModel> users)
+		public List<KeyValuePair<UserModel, int>> CountTotalLikes(List<UserModel> users)
 		{
-			List<PostModel> posts = await _Models.Posts.AsNoTracking().ToListAsync();
+			List<KeyValuePair<UserModel, int>> output = new();
 
-			int length = posts.Count;
-			int userLength = users.Count;
-
-			for (int i = 0; i < length; i++)
+			//Get the span from the user list
+			Span<UserModel> spanUsers = CollectionsMarshal.AsSpan(users);
+			
+			for (int i = 0; i < spanUsers.Length; i++)
 			{
-				for (int j = 0; j < userLength; j++)
-				{
-					if (users[j].Posts == null) users[j].Posts = new List<PostModel>();
+				//Get the user from the span of users.
+				UserModel user = spanUsers[i];
+				int totalLikes = 0;
 
-					if (posts[i].UserId == users[j].Id)
+				//Get the span from the user's posts.
+				Span<PostModel> spanPosts = CollectionsMarshal.AsSpan(user.Posts.ToList());
+
+				for (int j = 0; j < spanPosts.Length; j++)
+				{
+					//Count the likes of every post.
+					totalLikes += spanPosts[j].Likes;
+				}
+
+				//Add the user and the total amount of likes to a key value pair list.
+				output.Add(new KeyValuePair<UserModel, int>(user, totalLikes));
+			}
+
+			return output;
+		}
+
+		public List<UserModel> GiveUsersThierPosts(List<UserModel> users, List<PostModel> posts)
+		{
+			//Get a span from the users and posts list.
+			Span<PostModel> spanPosts = CollectionsMarshal.AsSpan<PostModel>(posts);
+			Span<UserModel> spanUsers = CollectionsMarshal.AsSpan<UserModel>(users);
+
+			for (int i = 0; i < spanPosts.Length; i++)
+			{
+				for (int j = 0; j < spanUsers.Length; j++)
+				{
+					//If the user's posts property in null set it to a new list.
+					if (spanUsers[j].Posts == null) spanUsers[j].Posts = new List<PostModel>();
+
+					//If the userId of the post is the id of the user, add the post to the user's posts.
+					if (spanPosts[i].UserId == spanUsers[j].Id)
 					{
-						users[j].Posts.Add(posts[i]);
+						spanUsers[j].Posts.Add(spanPosts[i]);
 					}
 				}
 			}

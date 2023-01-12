@@ -81,6 +81,7 @@ function LikeComment(commentId, button) {
 					//Add a class to the SVG so it looks liked.
 					likeSVG.className.baseVal = 'like-button liked';
 					button.style.fontWeight = "bold";
+					button.title = "Dislike comment";
 				}
 				else if (data === "-") {
 					//decrease the amount of likes.
@@ -90,6 +91,7 @@ function LikeComment(commentId, button) {
 					//Remove the class from the SVG so it looks unliked
 					likeSVG.className.baseVal = 'like-button';
 					button.style.fontWeight = "normal";
+					button.title = "Like comment";
 				}
 
 			}

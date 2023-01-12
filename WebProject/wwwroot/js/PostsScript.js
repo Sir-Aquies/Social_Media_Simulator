@@ -111,7 +111,7 @@ function EditPost(input) {
 }
 
 //DeletPost passes the id of the post to DeletePost action method who will delete the post and removes the post container from the DOM.
-function DeletePost(postId, input) {
+function DeletePost(postId, userName, input) {
 	//Undisplay the post option button parent element.
 	input.parentElement.style.display = "none";
 	//Get the token for request verification token.
@@ -121,8 +121,8 @@ function DeletePost(postId, input) {
 		$.post("/Post/DeletePost", { __RequestVerificationToken: token, PostId: postId }, function (data, status) {
 			//the data variable consist of a boolean return from the action method (true for deleted, false for error).
 			if (status === "success" && data) {
-				//Remove the post conatiner traversing throught the document tree (will change eventualy).
-				input.parentElement.parentElement.parentElement.parentElement.remove();
+				//Remove the post container.
+				RemovePostFromContainer(postId, userName);
 			}
 		});
 	}
@@ -142,18 +142,20 @@ function LikePost(postId, button) {
 					let likes = parseInt(likesAmount.innerHTML);
 					likesAmount.innerHTML = ++likes;
 
-					//Add a class to the SVG so it looks liked.
+					//Add a class to the SVG so it looks liked and change title.
 					likeSVG.className.baseVal = 'like-button liked';
 					button.style.fontWeight = "bold";
+					button.title = "Dislike post";
 				}
 				else if (data === "-") {
 					//Decrease the amount of likes.
 					let likes = parseInt(likesAmount.innerHTML);
 					likesAmount.innerHTML = --likes;
 
-					//Remove the liked class from the SVG so it looks unliked.
+					//Remove the liked class from the SVG so it looks unliked and change title.
 					likeSVG.className.baseVal = 'like-button';
 					button.style.fontWeight = "normal";
+					button.title = "Like post";
 				}
 
 			}
