@@ -3,6 +3,7 @@ const mainContainer = document.getElementById('UserPostContainer');
 //Array that will contain all of the posts.
 const posts = [...document.getElementsByClassName('post-container')];
 
+//Array that will contain all of the posts containers.
 const postContainers = [...document.querySelectorAll('[data-post-container]')];
 
 function AddPostToContainer(postString) {
@@ -10,15 +11,24 @@ function AddPostToContainer(postString) {
     const newPost = ConvertToDOM(postString);
 
     //Create a container for the post.
-    const article = document.createElement('article');
-    //TODO -  add metadata to the article and change name.
-    article.appendChild(newPost);
+    const postContainer = document.createElement('article');
+    //Set the id, a combinatio of username and id.
+    postContainer.id = `${newPost.dataset.username}${newPost.id}`;
+    //Add the data attribute data-post-container.
+    postContainer.dataset.postContainer = '';
+
+    //Add the onclick event to redirect to CompletePost.
+    postContainer.onclick = () => {
+        location = `${newPost.dataset.username}/hop/${newPost.id}`;
+    }
+    postContainer.appendChild(newPost);
 
     //Insert the container before the create post button.
-    mainContainer.insertBefore(article, mainContainer.children[1]);
+    mainContainer.insertBefore(postContainer, mainContainer.children[1]);
 
-    posts = [...document.getElementsByClassName('post-container')];
-    postContainers = [...document.querySelectorAll('[data-post-container]')];
+    //Push the new post and his container to the arrays.
+    posts.push(newPost);
+    postContainers.push(postContainer);
 }
 
 function RemovePostFromContainer(postId, userName) {

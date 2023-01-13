@@ -6,6 +6,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Hosting;
+using System.Runtime.InteropServices;
+using System.Security.Permissions;
+using System.Diagnostics;
 
 namespace WebProject.Controllers
 {
@@ -36,9 +39,12 @@ namespace WebProject.Controllers
 
 			return RedirectToAction("UserPage", new { userModel.UserName });
 		}
+
 		//TODO - add a way to filter post (most/least likes, most/least commentsm, etc).
 		public async Task<IActionResult> UserPage(string UserName)
 		{
+			var startTimer = Stopwatch.GetTimestamp();
+
 			UserModel user = await userManager.GetUserAsync(HttpContext.User);
 
 			if (user == null)
@@ -70,9 +76,7 @@ namespace WebProject.Controllers
 			}
 
 			user.LikedPost = GetPostsLiked(pageUser.Posts, user.Id);
-
 			user.LikedComments = GetCommentsLiked(pageUser.Posts, user.Id);
-
 
 			DynamicUser dynamic = new()
 			{
@@ -93,7 +97,7 @@ namespace WebProject.Controllers
 			return View(dynamic);
 		}
 
-		public async Task<IActionResult> CompletePost(string Username, int PostId)
+		public async Task<IActionResult> CompletePost(string userName, int postId)
 		{
 			UserModel user = await userManager.GetUserAsync(HttpContext.User);
 
@@ -103,14 +107,14 @@ namespace WebProject.Controllers
 			}
 
 			UserModel pageUser = new();
-
-			if (!string.IsNullOrEmpty(Username) && user.UserName != Username)
+			if (!string.IsNullOrEmpty(userName) && user.UserName != userName)
 			{
-				pageUser = await userManager.FindByNameAsync(Username);
+				pageUser = await userManager.FindByNameAsync(userName);
 
 				if (pageUser != null)
 				{
-					PostModel post = await _Models.Posts.Include(p => p.UsersLikes).AsNoTracking().FirstOrDefaultAsync(p => p.Id == PostId);
+					PostModel post = await _Models.Posts.FromSqlRaw($"Select * from Posts where Id = {postId}").AsNoTracking().FirstOrDefaultAsync();
+					post.UsersLikes = await _Models.Users.FromSqlRaw($"Select * from AspNetUsers where Id in (Select UserId from PostLikes where PostId = {postId})").AsNoTracking().ToListAsync();
 					post.User = pageUser;
 					post.Comments = await LoadComments(post);
 					pageUser.Posts = new List<PostModel> { post };
@@ -125,14 +129,14 @@ namespace WebProject.Controllers
 			else
 			{
 				pageUser = user;
-				PostModel post = await _Models.Posts.Include(p => p.UsersLikes).AsNoTracking().FirstOrDefaultAsync(p => p.Id == PostId);
+				PostModel post = await _Models.Posts.FromSqlRaw($"Select * from Posts where Id = {postId}").AsNoTracking().FirstOrDefaultAsync();
+				post.UsersLikes = await _Models.Users.FromSqlRaw($"Select * from AspNetUsers where Id in (Select UserId from PostLikes where PostId = {postId})").AsNoTracking().ToListAsync();
 				post.User = pageUser;
 				post.Comments = await LoadComments(post);
 				pageUser.Posts = new List<PostModel> { post };
 			}
 
 			user.LikedPost = GetPostsLiked(pageUser.Posts, user.Id);
-
 			user.LikedComments = GetCommentsLiked(pageUser.Posts, user.Id);
 
 			DynamicUser dynamic = new()
@@ -146,7 +150,7 @@ namespace WebProject.Controllers
 
 		private List<PostModel> GetPostsLiked(IList<PostModel> posts, string userId)
 		{
-			List<PostModel> postsLiked = new();
+			List<PostModel> output = new();
 
 			foreach (PostModel p in posts)
 			{
@@ -154,17 +158,17 @@ namespace WebProject.Controllers
 				{
 					if (u.Id == userId)
 					{
-						postsLiked.Add(p);
+						output.Add(p);
 					}
 				}
 			}
 
-			return postsLiked;
+			return output;
 		}
 
 		private List<CommentModel> GetCommentsLiked(IList<PostModel> posts, string userId)
 		{
-			List<CommentModel> commentsLiked = new();
+			List<CommentModel> output = new();
 
 			foreach (PostModel p in posts)
 			{
@@ -174,26 +178,24 @@ namespace WebProject.Controllers
 					{
 						if (u.Id == userId)
 						{
-							commentsLiked.Add(c);
+							output.Add(c);
 						}
 					}
 				}
 			}
 
-			return commentsLiked;
+			return output;
 		}
-
+		
 		public async Task<List<PostModel>> GetPosts(UserModel user)
 		{
 			List<PostModel> output = new();
 
-			foreach (PostModel p in _Models.Posts.AsNoTracking())
+			foreach (PostModel post in _Models.Posts.AsNoTracking())
 			{
-				PostModel post = p;
-
 				if (post.UserId == user.Id)
 				{
-					post = await _Models.Posts.Include(p => p.UsersLikes).AsNoTracking().FirstOrDefaultAsync(p => p.Id == post.Id);
+					post.UsersLikes = await _Models.Users.FromSqlRaw($"Select * from AspNetUsers where Id in (Select UserId from PostLikes where PostId = { post.Id })").AsNoTracking().ToListAsync();
 					post.User = user;
 					post.Comments = await LoadComments(post);
 					output.Add(post);
@@ -207,13 +209,12 @@ namespace WebProject.Controllers
 		{
 			List<CommentModel> output = new();
 
-			foreach (CommentModel c in _Models.Comments.AsNoTracking())
+			foreach (CommentModel comment in _Models.Comments.AsNoTracking())
 			{
-				CommentModel comment = c;
-
 				if (comment.PostId == post.Id)
 				{
-					comment = await _Models.Comments.Include(c => c.User).Include(c => c.UsersLikes).FirstOrDefaultAsync(c => c.Id == comment.Id);
+					comment.UsersLikes = await _Models.Users.FromSqlRaw($"Select * from AspNetUsers where Id in (Select UserId from CommentLikes where CommentId = { comment.Id })").AsNoTracking().ToListAsync();
+					comment.User = await _Models.Users.FromSqlRaw($"Select * from AspNetUsers where Id = '{comment.UserId}'").AsNoTracking().FirstOrDefaultAsync();
 					comment.Post = post;
 					output.Add(comment);
 				}
