@@ -186,41 +186,33 @@ namespace WebProject.Controllers
 
 			return output;
 		}
-		
+
 		public async Task<List<PostModel>> GetPosts(UserModel user)
 		{
-			List<PostModel> output = new();
+			List<PostModel> posts = await _Models.Posts.FromSqlRaw($"Select * from Posts where UserId = '{user.Id}'").AsNoTracking().ToListAsync();
 
-			foreach (PostModel post in _Models.Posts.AsNoTracking())
+			foreach (PostModel post in posts)
 			{
-				if (post.UserId == user.Id)
-				{
-					post.UsersLikes = await _Models.Users.FromSqlRaw($"Select * from AspNetUsers where Id in (Select UserId from PostLikes where PostId = { post.Id })").AsNoTracking().ToListAsync();
-					post.User = user;
-					post.Comments = await LoadComments(post);
-					output.Add(post);
-				}
+				post.UsersLikes = await _Models.Users.FromSqlRaw($"Select * from AspNetUsers where Id in (Select UserId from PostLikes where PostId = {post.Id})").AsNoTracking().ToListAsync();
+				post.Comments = await LoadComments(post);
+				post.User = user;
 			}
 
-			return output;
+			return posts;
 		}
-
+		//TODO - show who like the post.
 		public async Task<List<CommentModel>> LoadComments(PostModel post)
 		{
-			List<CommentModel> output = new();
-
-			foreach (CommentModel comment in _Models.Comments.AsNoTracking())
+			List<CommentModel> comments = await _Models.Comments.FromSqlRaw($"Select * from Comments where PostId = {post.Id}").AsNoTracking().ToListAsync();
+			//TODO - load only the necessary
+			foreach (CommentModel comment in comments)
 			{
-				if (comment.PostId == post.Id)
-				{
-					comment.UsersLikes = await _Models.Users.FromSqlRaw($"Select * from AspNetUsers where Id in (Select UserId from CommentLikes where CommentId = { comment.Id })").AsNoTracking().ToListAsync();
-					comment.User = await _Models.Users.FromSqlRaw($"Select * from AspNetUsers where Id = '{comment.UserId}'").AsNoTracking().FirstOrDefaultAsync();
-					comment.Post = post;
-					output.Add(comment);
-				}
+				comment.UsersLikes = await _Models.Users.FromSqlRaw($"Select * from AspNetUsers where Id in (Select UserId from CommentLikes where CommentId = {comment.Id})").AsNoTracking().ToListAsync();
+				comment.User = await _Models.Users.FromSqlRaw($"Select * from AspNetUsers where Id = '{comment.UserId}'").AsNoTracking().FirstOrDefaultAsync();
+				comment.Post = post;
 			}
 
-			return output;
+			return comments;
 		}
 
 		public async Task<IActionResult> AllUsers()

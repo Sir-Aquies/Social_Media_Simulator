@@ -1,12 +1,7 @@
 ﻿//Passes the post id and the username to the LookForCreateComment action method and displays its response.
 function CreateCommentTab(postId) {
-	//Get the username of the current user page from the url.
-	//This is done so that the action method can return the posts with the new comment (will surely be useless in the future).
-	const arr = window.location.href.split('/');
-	const userName = arr[arr.length - 1];
-
-	if (postId !== undefined && userName) {
-		$.post("/Post/LookForCreateComment", { PostId: postId, Username: userName }, function (data, status) {
+	if (postId !== undefined) {
+		$.post("/Post/LookForCreateComment", { PostId: postId }, function (data, status) {
 			if (status === "success") {
 				//Create a black background.
 				const background = Background();
@@ -33,16 +28,15 @@ function CreateComment(input) {
 			if (status === "success") {
 				//Remove the background.
 				RemoveTab();
-				//Add the response to the center-box div.
-				//The response consist of the userPage's posts, the post's comments as well the new comment (for now).
-				$("#UserPostContainer").html(data);
+				//Add the commento to the respective post.
+				AddCommentToPost(data);
 			}
 		});
 	}
 }
 
 //DeletComment passes the id of the comment to DeleteComment action method and removes the comment in the DOM.
-function DeleteComment(commentId, input) {
+function DeleteComment(commentId, postId, userName, input) {
 	//Undisplay the post-form div parent.
 	input.parentElement.style.display = "none";
 	//Get the token for request verification token.
@@ -53,10 +47,10 @@ function DeleteComment(commentId, input) {
 			//the data variable consist of a boolean return from the action method (true for deleted, false for error).
 			if (status === "success" && data) {
 				//Decrease the amount of comments traveling from the document tree (will change in the future).
-				const commentAmount = input.parentElement.parentElement.parentElement.parentElement.parentElement.children[2].children[1].children[0];
-				commentAmount.innerHTML = parseInt(commentAmount.innerHTML) - 1;
+				//const commentAmount = input.parentElement.parentElement.parentElement.parentElement.parentElement.children[2].children[1].children[0];
+				//commentAmount.innerHTML = parseInt(commentAmount.innerHTML) - 1;
 				//Remove the comment container (post-comments).
-				input.parentElement.parentElement.parentElement.parentElement.remove();
+				RemoveCommentFromPost(postId, userName, commentId);
 			}
 		});
 	}

@@ -25,8 +25,7 @@ namespace WebProject.Components
 		}
 
 		//TODO - Move this logic to a service.
-		//I put a lot of Span looping because I know its faster when the collection that is being loop is not modify
-		//TODO - Find a way to measure the speed of the Invoke and compare it to the old one (https://github.com/Sir-Aquies/WebProject/commit/673cf71eb8f28959474fb686e2138f1db6faad31).
+		//TODO - Found a way to measure the speed an this way is faster, but by a milisecond so query the results.
 		public async Task<IViewComponentResult> InvokeAsync(int amount)
 		{
 			//First, pass the list of users and post from the databse to GiveUsersThierPosts who will return a list of users with their post.

@@ -55,14 +55,26 @@ function UpdatePostFromContainer(postString) {
     outdatedPostContainer.prepend(updatedPost);
 }
 
-function AddCommentToPost(commentString, postId) {
+function AddCommentToPost(commentString) {
     //Convert the string comment into an object element.
     const newComment = ConvertToDOM(commentString);
-    //Find the post where the comment belongs.
-    const postToAdd = posts.find(p => p.id == postId);
+    //Find the post container from where the comment belongs.
+    const postContainer = postContainers.find(p => p.id == `${newComment.dataset.username}${newComment.dataset.postid}`);
 
+    //Insert the new comment right after the post.
+    postContainer.insertBefore(newComment, postContainer.children[1]);
+}
 
+function RemoveCommentFromPost(postId, userName, commentId) {
+    //Find to post container.
+    const postContainer = postContainers.find(p => p.id == `${userName}${postId}`)
 
+    //Find the comment by the id and remove it.
+    for (let i = 0; i < postContainer.children.length; i++) {
+        if (parseInt(postContainer.children[i].id) === commentId) {
+            postContainer.children[i].remove();
+        }
+    }
 }
 
 //This function converts a string in to a DOM and returns the element.

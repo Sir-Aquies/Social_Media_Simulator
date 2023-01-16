@@ -219,10 +219,9 @@ namespace WebProject.Controllers
 		}
 
 		[HttpPost]
-		public IActionResult LookForCreateComment(int PostId, string UserName)
+		public IActionResult LookForCreateComment(int PostId)
 		{
 			TempData["PostId"] = PostId;
-			TempData["UserName"] = UserName;
 
 			return PartialView("CreateComment");
 		}
@@ -232,18 +231,18 @@ namespace WebProject.Controllers
 		public async Task<IActionResult> CreateComment(string Content)
 		{
 			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
-
-			string UserName = "";
+			
 			int PostId = 0;
 			bool PostIdBool = false;
 
-			if (!string.IsNullOrEmpty(TempData["PostId"]?.ToString()) && !string.IsNullOrEmpty(TempData["UserName"]?.ToString()))
+			if (!string.IsNullOrEmpty(TempData["PostId"]?.ToString()))
 			{
-				UserName = TempData["UserName"]?.ToString() ?? "empty";
 				PostIdBool = int.TryParse(TempData["PostId"]?.ToString(), out PostId);
 			}
 
-			if (!string.IsNullOrEmpty(Content) && PostIdBool && !string.IsNullOrEmpty(UserName))
+			CommentModel output = new();
+
+			if (!string.IsNullOrEmpty(Content) && PostIdBool)
 			{
 				CommentModel comment = new()
 				{
@@ -253,23 +252,17 @@ namespace WebProject.Controllers
 					Date = DateTime.Now,
 				};
 
-				_Models.Add(comment);
+				var entity = await _Models.AddAsync(comment);
 				await _Models.SaveChangesAsync();
+
+				output = entity.Entity;
 			}
 
-			UserModel page = await userManager.FindByNameAsync(UserName);
-			page.Posts = await GetPosts(page);
+			output = await _Models.Comments.Include(c => c.UsersLikes).AsNoTracking().FirstOrDefaultAsync(c => c.Id == output.Id);
+			output.User = userModel;
+			ViewData["UserId"] = userModel.Id;
 
-			userModel.LikedPost = GetPostsLiked(page.Posts, userModel.Id);
-			userModel.LikedComments = GetCommentsLiked(page.Posts, userModel.Id);
-
-			DynamicUser dynamic = new()
-			{
-				User = userModel,
-				PageUser = page
-			};
-
-			return PartialView("UserPost", dynamic);
+			return PartialView("Comment", output);
 		}
 
 		[HttpPost]

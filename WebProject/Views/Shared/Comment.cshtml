@@ -1,6 +1,6 @@
 ﻿@model CommentModel
 
-<article class="post-comments" user-profile-left onclick="event.stopPropagation()">
+<article class="post-comments" user-profile-left onclick="event.stopPropagation()" id="@Model.Id" data-username="@Model.User.UserName" data-postid="@Model.PostId">
 	@if (Model.User.ProfilePicture != null)
 	{
 		<img onclick="location = '@Model.User.UserName'; event.stopPropagation()" class="user-profile-left" src="@(Model.User.ProfilePicture.StartsWith("https") ? "" : "data:image/png;base64,")@Model.User.ProfilePicture" alt="@Model.User.UserName" />
@@ -30,7 +30,7 @@
 					<div class="button">...</div>
 					<div onmousedown="event.stopPropagation()" onclick="event.stopPropagation();" class="post-form">
 						@*<input type="button" value="Edit" onclick="EditCommentWindow(@Model.Id, this);" />*@
-						<input type="button" value="Delete" onclick="DeleteComment(@Model.Id, this)" />
+						<input type="button" value="Delete" onclick="DeleteComment(@Model.Id, @Model.PostId, '@Model.User.UserName', this)" />
 					</div>
 				</div>
 			}
