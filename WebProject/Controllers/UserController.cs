@@ -43,8 +43,6 @@ namespace WebProject.Controllers
 		//TODO - add a way to filter post (most/least likes, most/least commentsm, etc).
 		public async Task<IActionResult> UserPage(string UserName)
 		{
-			var startTimer = Stopwatch.GetTimestamp();
-
 			UserModel user = await userManager.GetUserAsync(HttpContext.User);
 
 			if (user == null)
@@ -114,7 +112,7 @@ namespace WebProject.Controllers
 				if (pageUser != null)
 				{
 					PostModel post = await _Models.Posts.FromSqlRaw($"Select * from Posts where Id = {postId}").AsNoTracking().FirstOrDefaultAsync();
-					post.UsersLikes = await _Models.Users.FromSqlRaw($"Select * from AspNetUsers where Id in (Select UserId from PostLikes where PostId = {postId})").AsNoTracking().ToListAsync();
+					post.UsersLikes = await GetPostLikesSelective(post.Id);
 					post.User = pageUser;
 					post.Comments = await LoadComments(post);
 					pageUser.Posts = new List<PostModel> { post };
@@ -130,7 +128,7 @@ namespace WebProject.Controllers
 			{
 				pageUser = user;
 				PostModel post = await _Models.Posts.FromSqlRaw($"Select * from Posts where Id = {postId}").AsNoTracking().FirstOrDefaultAsync();
-				post.UsersLikes = await _Models.Users.FromSqlRaw($"Select * from AspNetUsers where Id in (Select UserId from PostLikes where PostId = {postId})").AsNoTracking().ToListAsync();
+				post.UsersLikes = await GetPostLikesSelective(post.Id);
 				post.User = pageUser;
 				post.Comments = await LoadComments(post);
 				pageUser.Posts = new List<PostModel> { post };
@@ -186,33 +184,64 @@ namespace WebProject.Controllers
 
 			return output;
 		}
-
+		//TODO - Load only the first posts and as the user scroll down fetch more.
 		public async Task<List<PostModel>> GetPosts(UserModel user)
 		{
 			List<PostModel> posts = await _Models.Posts.FromSqlRaw($"Select * from Posts where UserId = '{user.Id}'").AsNoTracking().ToListAsync();
 
 			foreach (PostModel post in posts)
 			{
-				post.UsersLikes = await _Models.Users.FromSqlRaw($"Select * from AspNetUsers where Id in (Select UserId from PostLikes where PostId = {post.Id})").AsNoTracking().ToListAsync();
+				post.UsersLikes = await GetPostLikesSelective(post.Id);
 				post.Comments = await LoadComments(post);
 				post.User = user;
 			}
 
 			return posts;
 		}
+
 		//TODO - show who like the post.
 		public async Task<List<CommentModel>> LoadComments(PostModel post)
 		{
 			List<CommentModel> comments = await _Models.Comments.FromSqlRaw($"Select * from Comments where PostId = {post.Id}").AsNoTracking().ToListAsync();
-			//TODO - load only the necessary
+
 			foreach (CommentModel comment in comments)
 			{
-				comment.UsersLikes = await _Models.Users.FromSqlRaw($"Select * from AspNetUsers where Id in (Select UserId from CommentLikes where CommentId = {comment.Id})").AsNoTracking().ToListAsync();
-				comment.User = await _Models.Users.FromSqlRaw($"Select * from AspNetUsers where Id = '{comment.UserId}'").AsNoTracking().FirstOrDefaultAsync();
+				comment.UsersLikes = await GetCommentLikesSelective(comment.Id);
+				comment.User = await _Models.Users
+				.Select(u => new UserModel { Id = u.Id, UserName = u.UserName, ProfilePicture = u.ProfilePicture })
+				.Where(u => u.Id == comment.UserId).AsNoTracking().FirstOrDefaultAsync();
 				comment.Post = post;
 			}
 
 			return comments;
+		}
+
+		public async Task<List<UserModel>> GetPostLikesSelective(int postId)
+		{
+			List<UserModel> users = new();
+
+			string[] userLikes = await _Models.Database.SqlQueryRaw<string>($"Select UserId from PostLikes where PostId = { postId }").ToArrayAsync();
+
+			for (int i = 0; i < userLikes.Length; i++)
+			{
+				users.Add(new UserModel { Id = userLikes[i] });
+			}
+
+			return users;
+		}
+
+		public async Task<List<UserModel>> GetCommentLikesSelective(int commentId)
+		{
+			List<UserModel> users = new();
+
+			string[] userLikes =await _Models.Database.SqlQueryRaw<string>($"Select UserId from CommentLikes where CommentId = { commentId }").ToArrayAsync();
+
+			for (int i = 0; i < userLikes.Length; i++)
+			{
+				users.Add(new UserModel { Id = userLikes[i] });
+			}
+
+			return users;
 		}
 
 		public async Task<IActionResult> AllUsers()

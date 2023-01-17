@@ -1,6 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Identity;
 @model DynamicUser
-@inject UserManager<UserModel> _userManager
 
 @{
 	ViewData["Title"] = Model.PageUser.UserName ?? "User not Found";
@@ -36,7 +35,7 @@
 	</section>
 
 	<section class="center-box">
-		<article id="@post.User.UserName@post.Id" data-post-container>
+		<article id="@post.Id" data-post-container>
 			<partial name="Post" model="post"></partial>
 
 			@foreach (CommentModel comment in post.Comments.OrderByDescending(c => c.Likes))
@@ -48,6 +47,7 @@
 
 	<section class="right-box">
 		@*@await Component.InvokeAsync("AllUsers")*@
+		@await Component.InvokeAsync("TendencyUsers", new { amount = 10 })
 	</section>
 </section>
 

@@ -4,11 +4,8 @@ function CreatePostTab() {
 		if (status === "success") {
 			//Create a black background.
 			const background = Background();
-			//Add a double click remove event.
-			background.addEventListener("dblclick", () => { RemoveTab() });
 			//Insert the partial view.
 			background.innerHTML = data;
-
 			document.body.style.overflow = "hidden";
 		}
 	});
@@ -56,8 +53,7 @@ function EditPostTab(postid, input) {
 		if (status === "success") {
 			//Create a black background.
 			const background = Background();
-			//Add a double click remove event.
-			background.addEventListener("dblclick", () => { RemoveTab() });
+
 			//Insert the partial view.
 			background.innerHTML = data;
 			//Call function in the case the post had a media (picture) if it did not it will return.
@@ -111,7 +107,7 @@ function EditPost(input) {
 }
 
 //DeletPost passes the id of the post to DeletePost action method who will delete the post and removes the post container from the DOM.
-function DeletePost(postId, userName, input) {
+function DeletePost(postId, input) {
 	//Undisplay the post option button parent element.
 	input.parentElement.style.display = "none";
 	//Get the token for request verification token.
@@ -122,7 +118,7 @@ function DeletePost(postId, userName, input) {
 			//the data variable consist of a boolean return from the action method (true for deleted, false for error).
 			if (status === "success" && data) {
 				//Remove the post container.
-				RemovePostFromContainer(postId, userName);
+				RemovePostFromContainer(postId);
 			}
 		});
 	}
@@ -130,7 +126,9 @@ function DeletePost(postId, userName, input) {
 
 //Function that handles when a user likes or dislikes a post.
 function LikePost(postId, button) {
+	//Span element with the likes amount.
 	const likesAmount = button.children[0];
+	//SVG element
 	const likeSVG = button.children[1];
 
 	if (postId != undefined) {
@@ -157,7 +155,21 @@ function LikePost(postId, button) {
 					button.style.fontWeight = "normal";
 					button.title = "Like post";
 				}
+				//TODO - set the error response.
+			}
+		});
+	}
+}
 
+function LikesTab(postId) {
+	if (postId != undefined) {
+		$.get('/Post/PostLikesTab', { postId: postId }, (data, status) => {
+			if (status === 'success') {
+				const background = Background();
+
+				document.body.style.overflow = 'hidden';
+
+				background.innerHTML = data;
 			}
 		});
 	}
@@ -195,6 +207,9 @@ function Background() {
 	const tab = document.createElement("div");
 	tab.id = "BlackBackground";
 	tab.className = 'black-background';
+	//Add a double click remove event.
+	tab.addEventListener("dblclick", () => { RemoveTab() });
 	document.body.appendChild(tab);
+
 	return tab;
 }

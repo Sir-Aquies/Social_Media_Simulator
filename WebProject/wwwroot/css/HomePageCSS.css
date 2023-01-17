@@ -81,12 +81,12 @@
 	display: none;
 }
 
-.list-user-pic {
+.right-box .list-user-pic {
 	width: 3.5rem;
 	height: 3.5rem;
 }
 
-.list-user-description {
+.right-box .list-user-description {
 	display: none !important;
 }
 

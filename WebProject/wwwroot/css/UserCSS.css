@@ -4,6 +4,17 @@
 	flex-direction: column;
 }
 
+.users-list-tab {
+	display: flex;
+	height: fit-content;
+	max-height: 95%;
+	width: 100%;
+	max-width: 30rem;
+	flex-direction: column;
+	overflow: auto;
+	background-color: var(--BackgroundColor);
+}
+
 .list-user-container {
 	width: 100%;
 	padding: 0.8rem 0.4rem;
@@ -23,9 +34,21 @@
 	width: 7rem;
 	height: 7rem;
 	object-fit: cover;
+	cursor: pointer;
 	border: 1px solid var(--BorderColor);
 	margin-right: 1rem;
 	border-radius: 50%;
+}
+
+.users-list-tab .list-user-pic {
+	min-width: 4rem;
+	min-height: 4rem;
+	width: 4rem;
+	height: 4rem;
+}
+
+.users-list-tab .list-user-description {
+	display: none;
 }
 
 .list-name-container {

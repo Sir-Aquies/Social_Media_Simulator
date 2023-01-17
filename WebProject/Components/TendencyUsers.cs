@@ -31,7 +31,9 @@ namespace WebProject.Components
 			//First, pass the list of users and post from the databse to GiveUsersThierPosts who will return a list of users with their post.
 			//Second, CountTotalLikes will return a list of key value pair that includes the user and the total amount of likes.
 			//Third, GetUsersFromKeyValuePair will order the return a list of users with the most likes.
-			return View("UsersList", GetUsersFromKeyValuePair(CountTotalLikes(GiveUsersThierPosts(await _userManager.Users.AsNoTracking().ToListAsync(), await _Models.Posts.AsNoTracking().ToListAsync())), amount));
+			return View("UsersList", GetUsersFromKeyValuePair(CountTotalLikes(GiveUsersThierPosts(
+					await _userManager.Users.Select(u => new UserModel { Id = u.Id, UserName = u.UserName, ProfilePicture = u.ProfilePicture }).AsNoTracking().ToListAsync(), 
+					await _Models.Posts.Select(p => new PostModel { UserId = p.UserId, Likes = p.Likes }).AsNoTracking().ToListAsync())), amount));
 		}
 
 		//Get the first users from the already Ordered list of KeyValuePair

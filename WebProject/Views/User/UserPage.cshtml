@@ -44,7 +44,7 @@
 
 			@foreach(PostModel post in Model.PageUser.Posts.Reverse())
 			{
-				<article id="@post.User.UserName@post.Id" onclick="location = '@post.User.UserName/hop/@post.Id'" data-post-container>
+				<article id="@post.Id" onclick="location = '@post.User.UserName/hop/@post.Id'" data-post-container>
 					<partial name="Post" model="post"></partial>
 					@{
 						post.Comments = post.Comments.OrderByDescending(c => c.Likes).ToList();
@@ -68,7 +68,7 @@
 	</section>
 	
 	<section class="right-box">
-		@*@await Component.InvokeAsync("AllUsers")*@
+		<p>Users with most likes</p>
 		@await Component.InvokeAsync("TendencyUsers", new { amount = 10 })
 	</section>
 </section>

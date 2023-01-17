@@ -218,6 +218,30 @@ namespace WebProject.Controllers
 			}
 		}
 
+		public async Task<IActionResult> PostLikesTab(int postId)
+		{
+			List<UserModel> users = await _Models.Users.FromSqlRaw($"Select * from AspNetUsers where Id in (Select UserId from PostLikes where PostId = {postId})").AsNoTracking().ToListAsync();
+
+			if (users.Count == 0)
+			{
+				return NotFound();
+			}
+
+			return PartialView("UserTabList", users);
+		}
+
+		public async Task<IActionResult> CommentLikesTab(int commentId)
+		{
+			List<UserModel> users = await _Models.Users.FromSqlRaw($"Select * from AspNetUsers where Id in (Select UserId from CommentLikes where CommentId = {commentId})").AsNoTracking().ToListAsync();
+
+			if (users.Count == 0)
+			{
+				return NotFound();
+			}
+
+			return PartialView("UserTabList", users);
+		}
+
 		[HttpPost]
 		public IActionResult LookForCreateComment(int PostId)
 		{

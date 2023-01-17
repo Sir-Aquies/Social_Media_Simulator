@@ -5,8 +5,6 @@ function CreateCommentTab(postId) {
 			if (status === "success") {
 				//Create a black background.
 				const background = Background();
-				//Add a delete event.
-				background.addEventListener("dblclick", () => { RemoveTab() });
 				//Insert CreatePost.cshtml partial view to the background.
 				background.innerHTML = data;
 				//Hide the overflow of the document.
@@ -36,7 +34,7 @@ function CreateComment(input) {
 }
 
 //DeletComment passes the id of the comment to DeleteComment action method and removes the comment in the DOM.
-function DeleteComment(commentId, postId, userName, input) {
+function DeleteComment(commentId, postId, input) {
 	//Undisplay the post-form div parent.
 	input.parentElement.style.display = "none";
 	//Get the token for request verification token.
@@ -50,7 +48,7 @@ function DeleteComment(commentId, postId, userName, input) {
 				//const commentAmount = input.parentElement.parentElement.parentElement.parentElement.parentElement.children[2].children[1].children[0];
 				//commentAmount.innerHTML = parseInt(commentAmount.innerHTML) - 1;
 				//Remove the comment container (post-comments).
-				RemoveCommentFromPost(postId, userName, commentId);
+				RemoveCommentFromPost(postId, commentId);
 			}
 		});
 	}
@@ -88,6 +86,20 @@ function LikeComment(commentId, button) {
 					button.title = "Like comment";
 				}
 
+			}
+		});
+	}
+}
+
+function CommentLikesTab(commentId) {
+	if (commentId != undefined) {
+		$.get('/Post/CommentLikesTab', { commentId: commentId }, (data, status) => {
+			if (status === 'success') {
+				const background = Background();
+
+				document.body.style.overflow = 'hidden';
+
+				background.innerHTML = data;
 			}
 		});
 	}
