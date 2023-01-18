@@ -4,11 +4,11 @@
 	<div class="post-info">
 		@if (Model.User.ProfilePicture != null)
 		{
-			<img onclick="location = '@Model.User.UserName'; event.stopPropagation()" src="@(Model.User.ProfilePicture.StartsWith("https") ? "" : "data:image/png;base64,")@Model.User.ProfilePicture" alt="@Model.User.UserName" />
+			<img onclick="location = '/@Model.User.UserName'; event.stopPropagation()" src="@(Model.User.ProfilePicture.StartsWith("https") ? "" : "data:image/png;base64,")@Model.User.ProfilePicture" alt="@Model.User.UserName" />
 		}
 		else
 		{
-			<img onclick="location = '@Model.User.UserName'; event.stopPropagation()" alt="@Model.User.UserName" />
+			<img onclick="location = '/@Model.User.UserName'; event.stopPropagation()" alt="@Model.User.UserName" />
 		}
 
 		<a onclick="event.stopPropagation()" class="post-info-username" asp-action="UserPage" asp-controller="User" asp-route-UserName="@Model.User.UserName">@Model.User.UserName</a>

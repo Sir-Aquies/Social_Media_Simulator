@@ -6,14 +6,14 @@
 }
 
 <link rel="stylesheet" href="~/css/UserCSS.css" asp-append-version="true" />
-<link rel="stylesheet" href="~/css/HomePageCSS.css" asp-append-version="true"/>
+<link rel="stylesheet" href="~/css/HomePageCSS.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/PostContainer.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/PostForms.css" asp-append-version="true" />
 
 <section class="box-container">
 	<section class="left-box">
 		<div class="user-info">
-			@if (Model.PageUser.ProfilePicture != null) 
+			@if (Model.PageUser.ProfilePicture != null)
 			{
 				<img class="user-pic" src="@(Model.PageUser.ProfilePicture.StartsWith("https") ? "" : "data:image/png;base64,")@Model.PageUser.ProfilePicture" alt="@Model.PageUser.UserName picture" />
 			}
@@ -36,38 +36,12 @@
 		@if (Model.PageUser != null)
 		{
 			<partial name="PageUserNav"></partial>
-			@if (Model.PageUser.Id == Model.User.Id)
-			{
-				<div class="create-post-container">
-					<button type="button" class="create-post-button" onclick="CreatePostTab()">Create New Post</button>
-				</div>
-			}
 
-			@foreach(PostModel post in Model.PageUser.Posts.Reverse())
-			{
-				<article id="@post.Id" onclick="location = '@post.User.UserName/hop/@post.Id'" data-post-container>
-					<partial name="Post" model="post"></partial>
-					@{
-						post.Comments = post.Comments.OrderByDescending(c => c.Likes).ToList();
-					}
-					@for (int i = 0; i < post.Comments.Count; i++)
-					{
-						if (i < 2)
-						{
-							<partial name="Comment" model="post.Comments[i]"></partial>
-						}
-						else
-						{
-							<a class="complete-post-button" href="/@post.User.UserName/hop/@post.Id">View all the Comments</a>
-							break;
-						}
-					}
-				</article>
-			}
+			<partial name="PostList" model="Model.PageUser.LikedPost"></partial>
 		}
 
 	</section>
-	
+
 	<section class="right-box">
 		<p style="margin: 0; text-align: center;">Users with most likes</p>
 		@await Component.InvokeAsync("TendencyUsers", new { amount = 10 })
@@ -86,5 +60,5 @@
 		img.id = "";
 	}
 
-	document.getElementById('pageuser-posts').style.borderBottom = '2px solid var(--BorderColor)';
+	document.getElementById('pageuser-likes').style.borderBottom = '2px solid var(--BorderColor)';
 </script>

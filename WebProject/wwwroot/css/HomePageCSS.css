@@ -58,6 +58,20 @@
 	flex-direction: column;
 }
 
+.pageuser-navigation-bar {
+	border-top: 1px solid var(--BorderColor);
+	display: flex;
+	justify-content: space-around;
+	gap: 0.5rem;
+	padding: 0.5rem;
+	font-size: var(--BigTextsize);
+}
+
+.pageuser-navigation-bar a {
+	text-decoration: none;
+	color: inherit;
+}
+
 .create-post-container {
 	width: 100%;
 	padding: 1rem;

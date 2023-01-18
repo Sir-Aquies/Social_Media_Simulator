@@ -3,21 +3,21 @@
 <article class="post-comments" user-profile-left onclick="event.stopPropagation()" data-id="@Model.Id" data-username="@Model.User.UserName" data-postid="@Model.PostId">
 	@if (Model.User.ProfilePicture != null)
 	{
-		<img onclick="location = '@Model.User.UserName'; event.stopPropagation()" class="user-profile-left" src="@(Model.User.ProfilePicture.StartsWith("https") ? "" : "data:image/png;base64,")@Model.User.ProfilePicture" alt="@Model.User.UserName" />
+		<img onclick="location = '/@Model.User.UserName'; event.stopPropagation()" class="user-profile-left" src="@(Model.User.ProfilePicture.StartsWith("https") ? "" : "data:image/png;base64,")@Model.User.ProfilePicture" alt="@Model.User.UserName" />
 	}
 	else
 	{
-		<img onclick="location = '@Model.User.UserName'; event.stopPropagation()" class="user-profile-left" src="" alt="@Model.User.UserName" />
+		<img onclick="location = '/@Model.User.UserName'; event.stopPropagation()" class="user-profile-left" src="" alt="@Model.User.UserName" />
 	}
 	<section>
 		<div class="post-commments-user">
 			@if (Model.User.ProfilePicture != null)
 			{
-				<img onclick="location = '@Model.User.UserName'; event.stopPropagation()" class="comment-user-pic" src="@(Model.User.ProfilePicture.StartsWith("https") ? "" : "data:image/png;base64,")@Model.User.ProfilePicture" alt="@Model.User.UserName" />
+				<img onclick="location = '/@Model.User.UserName'; event.stopPropagation()" class="comment-user-pic" src="@(Model.User.ProfilePicture.StartsWith("https") ? "" : "data:image/png;base64,")@Model.User.ProfilePicture" alt="@Model.User.UserName" />
 			}
 			else
 			{
-				<img onclick="location = '@Model.User.UserName'; event.stopPropagation()" class="comment-user-pic" src="" alt="@Model.User.UserName" />
+				<img onclick="location = '/@Model.User.UserName'; event.stopPropagation()" class="comment-user-pic" src="" alt="@Model.User.UserName" />
 			}
 
 			<a class="post-commments-username" asp-action="UserPage" asp-route-UserName="@Model.User.UserName">@Model.User.UserName</a>

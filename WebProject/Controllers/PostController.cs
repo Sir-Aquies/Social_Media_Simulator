@@ -41,24 +41,19 @@ namespace WebProject.Controllers
 				postModel.Media = Convert.ToBase64String(await GetBytes(Media));
 			}
 
-			PostModel output = new();
-
 			if (!string.IsNullOrEmpty(postModel.Content) || postModel.Media != null)
 			{
 				postModel.PostDate = DateTime.Now;
 				postModel.UserId = userModel.Id;
-				var entity = await _Models.Posts.AddAsync(postModel);
+				await _Models.Posts.AddAsync(postModel);
 				await _Models.SaveChangesAsync();
-
-				output = entity.Entity;
 			}
 
-			output = await _Models.Posts.Include(p => p.UsersLikes).AsNoTracking().FirstOrDefaultAsync(p => p.Id == output.Id);
-			output.User = userModel;
-			output.Comments = await LoadComments(output);
+			postModel.UsersLikes = new List<UserModel>();
+			postModel.Comments = new List<CommentModel>();
 			ViewData["UserId"] = userModel.Id;
 
-			return PartialView("Post", output);
+			return PartialView("Post", postModel);
 		}
 
 		[HttpPost]
@@ -74,7 +69,6 @@ namespace WebProject.Controllers
 			}
 
 			PostModel postModel = new();
-			PostModel output = new();
 
 			if (PostIdBool)
 			{
@@ -109,10 +103,8 @@ namespace WebProject.Controllers
 					postModel.IsEdited = true;
 					postModel.EditedDate = DateTime.Now;
 
-					var entity = _Models.Posts.Update(postModel);
+					_Models.Posts.Update(postModel);
 					await _Models.SaveChangesAsync();
-
-					output = entity.Entity;
 
 					TempData["Message"] = "Post successfully edited.";
 				}
@@ -127,12 +119,11 @@ namespace WebProject.Controllers
 				TempData["ErrorMessage"] = "Access denied, post does not belong to current user.";
 			}
 
-			output = await _Models.Posts.Include(p => p.UsersLikes).AsNoTracking().FirstOrDefaultAsync(p => p.Id == output.Id);
-			output.User = userModel;
-			output.Comments = await LoadComments(output);
+			postModel.UsersLikes = await GetPostLikesSelective(postModel.Id);
+			postModel.Comments = await LoadComments(postModel);
 			ViewData["UserId"] = userModel.Id;
 
-			return PartialView("Post", output);
+			return PartialView("Post", postModel);
 		}
 
 		[HttpGet]
@@ -218,6 +209,7 @@ namespace WebProject.Controllers
 			}
 		}
 
+		[HttpGet]
 		public async Task<IActionResult> PostLikesTab(int postId)
 		{
 			List<UserModel> users = await _Models.Users.FromSqlRaw($"Select * from AspNetUsers where Id in (Select UserId from PostLikes where PostId = {postId})").AsNoTracking().ToListAsync();
@@ -230,6 +222,7 @@ namespace WebProject.Controllers
 			return PartialView("UserTabList", users);
 		}
 
+		[HttpGet]
 		public async Task<IActionResult> CommentLikesTab(int commentId)
 		{
 			List<UserModel> users = await _Models.Users.FromSqlRaw($"Select * from AspNetUsers where Id in (Select UserId from CommentLikes where CommentId = {commentId})").AsNoTracking().ToListAsync();
@@ -264,29 +257,23 @@ namespace WebProject.Controllers
 				PostIdBool = int.TryParse(TempData["PostId"]?.ToString(), out PostId);
 			}
 
-			CommentModel output = new();
+			CommentModel comment = new();
 
 			if (!string.IsNullOrEmpty(Content) && PostIdBool)
 			{
-				CommentModel comment = new()
-				{
-					Content = Content,
-					UserId = userModel.Id,
-					PostId = PostId,
-					Date = DateTime.Now,
-				};
+				comment.PostId = PostId;
+				comment.Date = DateTime.Now;
+				comment.UserId = userModel.Id;
+				comment.Content = Content;
 
-				var entity = await _Models.AddAsync(comment);
+				await _Models.AddAsync(comment);
 				await _Models.SaveChangesAsync();
-
-				output = entity.Entity;
 			}
 
-			output = await _Models.Comments.Include(c => c.UsersLikes).AsNoTracking().FirstOrDefaultAsync(c => c.Id == output.Id);
-			output.User = userModel;
+			comment.UsersLikes = new List<UserModel>();
 			ViewData["UserId"] = userModel.Id;
 
-			return PartialView("Comment", output);
+			return PartialView("Comment", comment);
 		}
 
 		[HttpPost]
@@ -295,8 +282,10 @@ namespace WebProject.Controllers
 		{
 			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
 
+
+
 			CommentModel comment = await _Models.Comments.Include(c => c.UsersLikes)
-					.Include(c => c.Post).ThenInclude(p => p.User).FirstOrDefaultAsync(c => c.Id == CommentId);
+					.Include(c => c.Post).FirstOrDefaultAsync(c => c.Id == CommentId);
 
 			if (userModel.Id != comment.UserId)
 			{
@@ -322,106 +311,76 @@ namespace WebProject.Controllers
 		{
 			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
 
-			if (userModel != null && CommentId != 0)
+			if (CommentId <= 0)
 			{
-				CommentModel comment = await _Models.Comments.Include(p => p.UsersLikes).FirstOrDefaultAsync(p => p.Id == CommentId);
-
-				if (comment.UsersLikes.Contains(userModel))
-				{
-					comment.Likes--;
-					comment.UsersLikes.Remove(userModel);
-					await _Models.SaveChangesAsync();
-					return "-";
-				}
-				else
-				{
-					comment.Likes++;
-					comment.UsersLikes.Add(userModel);
-					await _Models.SaveChangesAsync();
-					return "+";
-				}
-
+				return "0";
 			}
 
-			return "0";
+			if (userModel == null)
+			{
+				return "0";
+			}
+
+			CommentModel comment = await _Models.Comments.Include(p => p.UsersLikes).FirstOrDefaultAsync(p => p.Id == CommentId);
+
+			if (comment.UsersLikes.Contains(userModel))
+			{
+				comment.Likes--;
+				comment.UsersLikes.Remove(userModel);
+				await _Models.SaveChangesAsync();
+				return "-";
+			}
+			else
+			{
+				comment.Likes++;
+				comment.UsersLikes.Add(userModel);
+				await _Models.SaveChangesAsync();
+				return "+";
+			}
 		}
 
-		public List<PostModel> GetPostsLiked(IList<PostModel> posts, string userId)
+		public async Task<List<UserModel>> GetPostLikesSelective(int postId)
 		{
-			List<PostModel> postsLiked = new();
+			List<UserModel> users = new();
 
-			foreach (PostModel p in posts)
+			string[] userLikes = await _Models.Database.SqlQueryRaw<string>($"Select UserId from PostLikes where PostId = {postId}").AsNoTracking().ToArrayAsync();
+
+			for (int i = 0; i < userLikes.Length; i++)
 			{
-				foreach (UserModel u in p.UsersLikes)
-				{
-					if (u.Id == userId)
-					{
-						postsLiked.Add(p);
-					}
-				}
+				users.Add(new UserModel { Id = userLikes[i] });
 			}
 
-			return postsLiked;
-		}
-
-		public List<CommentModel> GetCommentsLiked(IList<PostModel> posts, string userId)
-		{
-			List<CommentModel> commentsLiked = new();
-
-			foreach (PostModel p in posts)
-			{
-				foreach (CommentModel c in p.Comments)
-				{
-					foreach (UserModel u in c.UsersLikes)
-					{
-						if (u.Id == userId)
-						{
-							commentsLiked.Add(c);
-						}
-					}
-				}
-			}
-
-			return commentsLiked;
-		}
-
-		public async Task<List<PostModel>> GetPosts(UserModel user)
-		{
-			List<PostModel> output = new();
-
-			foreach (PostModel p in _Models.Posts.AsNoTracking())
-			{
-				PostModel post = p;
-
-				if (post.UserId == user.Id)
-				{
-					post = await _Models.Posts.Include(p => p.UsersLikes).AsNoTracking().FirstOrDefaultAsync(p => p.Id == post.Id);
-					post.User = user;
-					post.Comments = await LoadComments(post);
-					output.Add(post);
-				}
-			}
-
-			return output;
+			return users;
 		}
 
 		public async Task<List<CommentModel>> LoadComments(PostModel post)
 		{
-			List<CommentModel> output = new();
+			List<CommentModel> comments = await _Models.Comments.FromSqlRaw($"Select * from Comments where PostId = {post.Id}").AsNoTracking().ToListAsync();
 
-			foreach (CommentModel c in _Models.Comments.AsNoTracking())
+			foreach (CommentModel comment in comments)
 			{
-				CommentModel comment = c;
-
-				if (comment.PostId == post.Id)
-				{
-					comment = await _Models.Comments.Include(c => c.User).Include(c => c.UsersLikes).FirstOrDefaultAsync(c => c.Id == comment.Id);
-					comment.Post = post;
-					output.Add(comment);
-				}
+				comment.UsersLikes = await GetCommentLikesSelective(comment.Id);
+				comment.User = await _Models.Users
+				.Select(u => new UserModel { Id = u.Id, UserName = u.UserName, ProfilePicture = u.ProfilePicture })
+				.Where(u => u.Id == comment.UserId).AsNoTracking().FirstOrDefaultAsync();
+				comment.Post = post;
 			}
 
-			return output;
+			return comments;
+		}
+
+		public async Task<List<UserModel>> GetCommentLikesSelective(int commentId)
+		{
+			List<UserModel> users = new();
+
+			string[] userLikes = await _Models.Database.SqlQueryRaw<string>($"Select UserId from CommentLikes where CommentId = {commentId}").AsNoTracking().ToArrayAsync();
+
+			for (int i = 0; i < userLikes.Length; i++)
+			{
+				users.Add(new UserModel { Id = userLikes[i] });
+			}
+
+			return users;
 		}
 
 		private async Task<byte[]> GetBytes(IFormFile formFile)

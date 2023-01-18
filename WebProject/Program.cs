@@ -74,11 +74,21 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
+	name: "Likes", 
+	pattern: "{userName}/Likes",
+	defaults: new { controller = "User", action = "LikedPosts" });
+
+app.MapControllerRoute(
+	name: "Comments",
+	pattern: "{userName}/Comments",
+	defaults: new { controller = "User", action = "CommentedPosts" });
+
+app.MapControllerRoute(
 	name: "Posts",
-	pattern: "{Username}/hop/{PostId}",
+	pattern: "{username}/hop/{PostId}",
 	defaults: new { controller = "User", action = "CompletePost" });
 
-app.MapControllerRoute(name: "Users", pattern: "{UserName}", defaults: new { controller = "User", action = "UserPage"});
+app.MapControllerRoute(name: "Users", pattern: "{userName}", defaults: new { controller = "User", action = "UserPage"});
 
 app.MapControllerRoute(
 	name: "default",
