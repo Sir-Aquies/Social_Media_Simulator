@@ -13,12 +13,12 @@ namespace WebProject.Controllers
 	public class PostController : Controller
 	{
 		private readonly WebProjectContext _Models;
-		private readonly UserManager<UserModel> userManager;
+		private readonly UserManager<UserModel> _userManager;
 
 		public PostController(WebProjectContext Models, UserManager<UserModel> manager)
 		{
 			_Models = Models;
-			userManager = manager;
+			_userManager = manager;
 		}
 
 		public IActionResult LookForCreatePost() => PartialView("CreatePost");
@@ -27,7 +27,7 @@ namespace WebProject.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> CreatePost(IFormFile Media, string Content)
 		{
-			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
+			UserModel userModel = await _userManager.GetUserAsync(HttpContext.User);
 
 			PostModel postModel = new();
 
@@ -80,7 +80,7 @@ namespace WebProject.Controllers
 				return NotFound();
 			}
 
-			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
+			UserModel userModel = await _userManager.GetUserAsync(HttpContext.User);
 
 			if (userModel.Id == postModel.UserId)
 			{
@@ -145,7 +145,7 @@ namespace WebProject.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<bool> DeletePost(int PostId)
 		{
-			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
+			UserModel userModel = await _userManager.GetUserAsync(HttpContext.User);
 			PostModel postModel = await _Models.Posts.Include(p => p.Comments).ThenInclude(c => c.UsersLikes).Include(p => p.UsersLikes).FirstOrDefaultAsync(us => us.Id == PostId);
 
 			if (userModel.Id != postModel.UserId)
@@ -174,9 +174,9 @@ namespace WebProject.Controllers
 		[HttpPost]
 		public async Task<string> LikePost(int PostId)
 		{
-			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
+			UserModel userModel = await _userManager.GetUserAsync(HttpContext.User);
 
-			if (PostId <= 0)
+			if (PostId < 1)
 			{
 				return "0";
 			}
@@ -186,25 +186,18 @@ namespace WebProject.Controllers
 				return "0";
 			}
 
-			PostModel post = await _Models.Posts.Include(p => p.UsersLikes).FirstOrDefaultAsync(p => p.Id == PostId);
-
-			if (post == null)
+			List<int> exists = await _Models.Database.SqlQueryRaw<int>("SELECT PostId FROM PostLikes WHERE PostId = {0} AND UserId = {1};", PostId, userModel.Id).ToListAsync();
+			
+			if (exists.Count == 1)
 			{
-				return "0";
-			}
-
-			if (post.UsersLikes.Contains(userModel))
-			{
-				post.Likes--;
-				post.UsersLikes.Remove(userModel);
-				await _Models.SaveChangesAsync();
+				await _Models.Database.ExecuteSqlRawAsync("UPDATE Posts SET Likes = Likes - 1 WHERE Id = {0};", PostId);
+				await _Models.Database.ExecuteSqlRawAsync("DELETE FROM PostLikes WHERE  PostId = {0} AND UserId = {1};", PostId, userModel.Id);
 				return "-";
 			}
 			else
 			{
-				post.Likes++;
-				post.UsersLikes.Add(userModel);
-				await _Models.SaveChangesAsync();
+				await _Models.Database.ExecuteSqlRawAsync("UPDATE Posts SET Likes = Likes + 1 WHERE Id = {0};", PostId);
+				await _Models.Database.ExecuteSqlRawAsync("INSERT INTO PostLikes (PostId, UserId) VALUES ({0}, {1});", PostId, userModel.Id);
 				return "+";
 			}
 		}
@@ -247,7 +240,7 @@ namespace WebProject.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> CreateComment(string Content)
 		{
-			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
+			UserModel userModel = await _userManager.GetUserAsync(HttpContext.User);
 			
 			int PostId = 0;
 			bool PostIdBool = false;
@@ -280,7 +273,7 @@ namespace WebProject.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<bool> DeleteComment(int CommentId)
 		{
-			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
+			UserModel userModel = await _userManager.GetUserAsync(HttpContext.User);
 
 
 
@@ -309,7 +302,7 @@ namespace WebProject.Controllers
 		[HttpPost]
 		public async Task<string> LikeComment(int CommentId)
 		{
-			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
+			UserModel userModel = await _userManager.GetUserAsync(HttpContext.User);
 
 			if (CommentId <= 0)
 			{

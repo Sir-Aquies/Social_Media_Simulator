@@ -8,10 +8,10 @@
 <link rel="stylesheet" href="~/css/UserCSS.css" asp-append-version="true"/>
 <link rel="stylesheet" href="~/css/HomePageCSS.css" asp-append-version="true"/>
 <link rel="stylesheet" href="~/css/PostContainer.css" asp-append-version="true"/>
-<link rel="stylesheet" href="~/css/PostForms.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/PostForms.css" asp-append-version="true"/>
 
 <style>
-	#pageuser-likes {
+	#pageuser-media {
 		border-bottom: 3px solid var(--BorderColor);
 	}
 </style>
@@ -26,9 +26,8 @@
 		{
 			<partial name="PageUserNav"></partial>
 
-			<partial name="PostList" model="Model.PageUser.LikedPost.Reverse().ToList()"></partial>
+			<partial name="PostList" model="Model.PageUser.Posts.Reverse().ToList()"></partial>
 		}
-
 	</section>
 
 	<section class="right-box">
@@ -41,6 +40,7 @@
 <script src="~/js/PostsScript.js" asp-append-version="true"></script>
 <script src="~/js/CommentsScript.js" asp-append-version="true"></script>
 <script src="~/js/ImagePrev.js" asp-append-version="true"></script>
+
 <script>
 	function ShowPostImg(element) {
 		const img = element.nextElementSibling;

@@ -4,6 +4,7 @@
 {
 	<article id="@post.Id" onclick="location = '/@post.User.UserName/hop/@post.Id'" data-post-container>
 		<partial name="Post" model="post"></partial>
+
 		@{
 			post.Comments = post.Comments.OrderByDescending(c => c.Likes).ToList();
 		}

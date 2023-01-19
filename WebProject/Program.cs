@@ -84,6 +84,11 @@ app.MapControllerRoute(
 	defaults: new { controller = "User", action = "CommentedPosts" });
 
 app.MapControllerRoute(
+	name: "Media",
+	pattern: "{userName}/Media",
+	defaults: new { controller = "User", action = "MediaPosts" });
+
+app.MapControllerRoute(
 	name: "Posts",
 	pattern: "{username}/hop/{PostId}",
 	defaults: new { controller = "User", action = "CompletePost" });

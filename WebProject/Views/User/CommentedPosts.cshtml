@@ -5,31 +5,20 @@
 	ViewData["UserId"] = Model.User.Id;
 }
 
-<link rel="stylesheet" href="~/css/UserCSS.css" asp-append-version="true" />
-<link rel="stylesheet" href="~/css/HomePageCSS.css" asp-append-version="true" />
-<link rel="stylesheet" href="~/css/PostContainer.css" asp-append-version="true" />
-<link rel="stylesheet" href="~/css/PostForms.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/UserCSS.css" asp-append-version="true"/>
+<link rel="stylesheet" href="~/css/HomePageCSS.css" asp-append-version="true"/>
+<link rel="stylesheet" href="~/css/PostContainer.css" asp-append-version="true"/>
+<link rel="stylesheet" href="~/css/PostForms.css" asp-append-version="true"/>
+
+<style>
+	#pageuser-comments{
+		border-bottom: 3px solid var(--BorderColor);
+	}
+</style>
 
 <section class="box-container">
 	<section class="left-box">
-		<div class="user-info">
-			@if (Model.PageUser.ProfilePicture != null)
-			{
-				<img class="user-pic" src="@(Model.PageUser.ProfilePicture.StartsWith("https") ? "" : "data:image/png;base64,")@Model.PageUser.ProfilePicture" alt="@Model.PageUser.UserName picture" />
-			}
-			else
-			{
-				<img class="user-pic" src="" />
-			}
-
-			<div class="user-username">@Model.PageUser?.UserName</div>
-
-			<div class="user-name">@Model.PageUser?.Name</div>
-
-			<div class="user-description">@Model.PageUser?.Description</div>
-
-			<div class="user-dob">@Model.PageUser?.DateofBirth.ToShortDateString()</div>
-		</div>
+		<partial name="ProfilePageUser"></partial>
 	</section>
 
 	<section class="center-box" id="UserPostContainer">
@@ -48,7 +37,6 @@
 					@for (int i = 0; i < post.Comments.Count; i++)
 					{
 						<partial name="Comment" model="post.Comments[i]"></partial>
-
 					}
 				</article>
 			}
@@ -74,6 +62,4 @@
 		$(`#${img.id}`).slideToggle();
 		img.id = "";
 	}
-
-	document.getElementById('pageuser-comments').style.borderBottom = '2px solid var(--BorderColor)';
 </script>

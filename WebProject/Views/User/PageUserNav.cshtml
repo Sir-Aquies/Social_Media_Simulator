@@ -1,5 +1,6 @@
 ﻿<nav class="pageuser-navigation-bar">
-	<a id="pageuser-posts" asp-action="UserPage" asp-route-Username="@Model.PageUser.UserName">Posts</a>
-	<a id="pageuser-likes" href="/@Model.PageUser.UserName/Likes">Liked posts</a>
-	<a id="pageuser-comments" href="/@Model.PageUser.UserName/Comments">Commented posts</a>
+	<a id="pageuser-posts" asp-controller="User" asp-action="UserPage" asp-route-Username="@Model.PageUser.UserName">Posts</a>
+	<a id="pageuser-media" href="/@Model.PageUser.UserName/Media">Media</a>
+	<a id="pageuser-likes" href="/@Model.PageUser.UserName/Likes">Likes</a>
+	<a id="pageuser-comments" href="/@Model.PageUser.UserName/Comments">Comments</a>
 </nav>

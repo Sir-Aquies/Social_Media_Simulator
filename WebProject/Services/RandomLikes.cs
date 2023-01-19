@@ -28,8 +28,8 @@ namespace WebProject.Services
 				await GiveRandomCommentLike(3);
 			}
 		}
+
 		//TODO - add followers.
-		//TODO - add a tab for liked post.
 		//TODO - add a trending page.
 		//TODO - add a responsive top bar.
 		private async Task GiveRandomPostLike(int count)
