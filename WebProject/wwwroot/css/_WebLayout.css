@@ -112,7 +112,7 @@ img.user-info-mobile {
 	display: inline;
 	border-radius: 50%;
 	cursor: pointer;
-	background-image: url(../button.png);
+	background-image: url(../Icons/button.png);
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: contain;

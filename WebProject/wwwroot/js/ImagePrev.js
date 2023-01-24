@@ -58,6 +58,8 @@ function EditImage() {
 	//Add the frame to frameHolder and display it.
 	const frameHolder = document.getElementById("frame-holder");
 	frameHolder.appendChild(frame);
+
+	oldImage.remove();
 }
 
 //Creates and returns the frame that will contain the image preview (file) and the delete button.

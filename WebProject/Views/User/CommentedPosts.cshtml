@@ -26,7 +26,8 @@
 		{
 			<partial name="PageUserNav"></partial>
 
-			@foreach (PostModel post in Model.PageUser.Posts.Reverse())
+			<partial name="PostList" model="Model.PageUser.Posts.Reverse().ToList()"></partial>
+			@*@foreach (PostModel post in Model.PageUser.Posts.Reverse())
 			{
 				<article id="@post.Id" onclick="location = '@post.User.UserName/hop/@post.Id'" data-post-container>
 					<partial name="Post" model="post"></partial>
@@ -39,7 +40,7 @@
 						<partial name="Comment" model="post.Comments[i]"></partial>
 					}
 				</article>
-			}
+			}*@
 		}
 
 	</section>

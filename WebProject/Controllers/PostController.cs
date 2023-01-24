@@ -76,47 +76,41 @@ namespace WebProject.Controllers
 			}
 			else
 			{
-				TempData["ErrorMessage"] = "Post not found.";
-				return NotFound();
+				return NotFound("Post not found.");
 			}
 
 			UserModel userModel = await _userManager.GetUserAsync(HttpContext.User);
 
-			if (userModel.Id == postModel.UserId)
+			if (userModel.Id != postModel.UserId)
 			{
-				if (Media != null)
-				{
-					postModel.Media = Convert.ToBase64String(await GetBytes(Media));
-				}
-				else if (DeleteMedia)
-				{
-					postModel.Media = null;
-				}
+				return Unauthorized("Access denied, post does not belong to current user.");
+			}
 
-				if (!string.IsNullOrEmpty(Content) && Content != postModel.Content)
-				{
-					postModel.Content = Content;
-				}
+			if (Media != null)
+			{
+				postModel.Media = Convert.ToBase64String(await GetBytes(Media));
+			}
+			else if (DeleteMedia)
+			{
+				postModel.Media = null;
+			}
 
-				if (!string.IsNullOrEmpty(postModel.Content) || postModel.Media != null)
-				{
-					postModel.IsEdited = true;
-					postModel.EditedDate = DateTime.Now;
+			if (Content != postModel.Content)
+			{
+				postModel.Content = Content;
+			}
 
-					_Models.Posts.Update(postModel);
-					await _Models.SaveChangesAsync();
+			if (!string.IsNullOrEmpty(postModel.Content) || postModel.Media != null)
+			{
+				postModel.IsEdited = true;
+				postModel.EditedDate = DateTime.Now;
 
-					TempData["Message"] = "Post successfully edited.";
-				}
-				else
-				{
-					TempData["ErrorMessage"] = "Post was not edited.";
-				}
+				_Models.Posts.Update(postModel);
+				await _Models.SaveChangesAsync();
 			}
 			else
 			{
-				//TODO - Make message show without reloading the page.
-				TempData["ErrorMessage"] = "Access denied, post does not belong to current user.";
+				return BadRequest("Error, post was not edited due to not having content");
 			}
 
 			postModel.UsersLikes = await GetPostLikesSelective(postModel.Id);
@@ -130,14 +124,15 @@ namespace WebProject.Controllers
 		public async Task<IActionResult> LookforPost(int PostId)
 		{
 			PostModel postModel = await _Models.Posts.AsNoTracking().FirstOrDefaultAsync(us => us.Id == PostId);
+			UserModel userModel = await _userManager.GetUserAsync(HttpContext.User);
 
-			TempData["PostId"] = PostId;
+			if (userModel != null && userModel.Id != postModel.UserId)
+				return Unauthorized("Access denied, post does not belong to current user.");
 
 			if (postModel == null)
-			{
-				return NotFound();
-			}
-
+				return NotFound("Post does not exist.");
+	
+			TempData["PostId"] = PostId;
 			return PartialView("EditPost", postModel);
 		}
 
@@ -148,27 +143,20 @@ namespace WebProject.Controllers
 			UserModel userModel = await _userManager.GetUserAsync(HttpContext.User);
 			PostModel postModel = await _Models.Posts.Include(p => p.Comments).ThenInclude(c => c.UsersLikes).Include(p => p.UsersLikes).FirstOrDefaultAsync(us => us.Id == PostId);
 
-			if (userModel.Id != postModel.UserId)
+			if (userModel.Id != postModel.UserId || postModel == null)
 			{
 				return false;
 			}
 
-			if (postModel != null)
+			postModel.UsersLikes.Clear();
+			foreach (CommentModel comment in postModel.Comments)
 			{
-				postModel.UsersLikes.Clear();
-				foreach (CommentModel comment in postModel.Comments)
-				{
-					comment.UsersLikes.Clear();
-				}
+				comment.UsersLikes.Clear();
+			}
 
-				_Models.Remove(postModel);
-				await _Models.SaveChangesAsync();
-				return true;
-			}
-			else
-			{
-				return false;
-			}
+			_Models.Remove(postModel);
+			await _Models.SaveChangesAsync();
+			return true;
 		}
 
 		[HttpPost]
@@ -186,26 +174,37 @@ namespace WebProject.Controllers
 				return "0";
 			}
 
-			List<int> exists = await _Models.Database.SqlQueryRaw<int>("SELECT PostId FROM PostLikes WHERE PostId = {0} AND UserId = {1};", PostId, userModel.Id).ToListAsync();
+			List<int> exists = await _Models.Database
+				.SqlQueryRaw<int>("SELECT PostId FROM PostLikes WHERE PostId = {0} AND UserId = {1};", PostId, userModel.Id).ToListAsync();
 			
 			if (exists.Count == 1)
 			{
-				await _Models.Database.ExecuteSqlRawAsync("UPDATE Posts SET Likes = Likes - 1 WHERE Id = {0};", PostId);
-				await _Models.Database.ExecuteSqlRawAsync("DELETE FROM PostLikes WHERE  PostId = {0} AND UserId = {1};", PostId, userModel.Id);
-				return "-";
+				int row = await _Models.Database.ExecuteSqlRawAsync("UPDATE Posts SET Likes = Likes - 1 WHERE Id = {0};", PostId);
+
+				if (row == 1) 
+					row += await _Models.Database
+						.ExecuteSqlRawAsync("DELETE FROM PostLikes WHERE PostId = {0} AND UserId = {1};", PostId, userModel.Id);
+
+				return row == 2 ? "-" : "0";
 			}
 			else
 			{
-				await _Models.Database.ExecuteSqlRawAsync("UPDATE Posts SET Likes = Likes + 1 WHERE Id = {0};", PostId);
-				await _Models.Database.ExecuteSqlRawAsync("INSERT INTO PostLikes (PostId, UserId) VALUES ({0}, {1});", PostId, userModel.Id);
-				return "+";
+				int row = await _Models.Database.ExecuteSqlRawAsync("UPDATE Posts SET Likes = Likes + 1 WHERE Id = {0};", PostId);
+
+				if (row == 1) 
+					row += await _Models.Database
+						.ExecuteSqlRawAsync("INSERT INTO PostLikes (PostId, UserId) VALUES ({0}, {1});", PostId, userModel.Id);
+
+				return row == 2 ? "+" : "0";
 			}
 		}
 
 		[HttpGet]
 		public async Task<IActionResult> PostLikesTab(int postId)
 		{
-			List<UserModel> users = await _Models.Users.FromSqlRaw($"Select * from AspNetUsers where Id in (Select UserId from PostLikes where PostId = {postId})").AsNoTracking().ToListAsync();
+			List<UserModel> users = await _Models.Users
+				.FromSqlRaw($"Select * from AspNetUsers where Id in (Select UserId from PostLikes where PostId = {postId})")
+				.AsNoTracking().ToListAsync();
 
 			if (users.Count == 0)
 			{
@@ -218,7 +217,9 @@ namespace WebProject.Controllers
 		[HttpGet]
 		public async Task<IActionResult> CommentLikesTab(int commentId)
 		{
-			List<UserModel> users = await _Models.Users.FromSqlRaw($"Select * from AspNetUsers where Id in (Select UserId from CommentLikes where CommentId = {commentId})").AsNoTracking().ToListAsync();
+			List<UserModel> users = await _Models.Users
+				.FromSqlRaw($"Select * from AspNetUsers where Id in (Select UserId from CommentLikes where CommentId = {commentId})")
+				.AsNoTracking().ToListAsync();
 
 			if (users.Count == 0)
 			{
@@ -275,8 +276,6 @@ namespace WebProject.Controllers
 		{
 			UserModel userModel = await _userManager.GetUserAsync(HttpContext.User);
 
-
-
 			CommentModel comment = await _Models.Comments.Include(c => c.UsersLikes)
 					.Include(c => c.Post).FirstOrDefaultAsync(c => c.Id == CommentId);
 
@@ -304,7 +303,7 @@ namespace WebProject.Controllers
 		{
 			UserModel userModel = await _userManager.GetUserAsync(HttpContext.User);
 
-			if (CommentId <= 0)
+			if (CommentId < 1)
 			{
 				return "0";
 			}
@@ -314,21 +313,30 @@ namespace WebProject.Controllers
 				return "0";
 			}
 
-			CommentModel comment = await _Models.Comments.Include(p => p.UsersLikes).FirstOrDefaultAsync(p => p.Id == CommentId);
+			List<int> exists = await _Models.Database
+				.SqlQueryRaw<int>("SELECT CommentId FROM CommentLikes WHERE CommentId = {0} AND UserId = {1};", CommentId, userModel.Id).ToListAsync();
 
-			if (comment.UsersLikes.Contains(userModel))
+
+			if (exists.Count == 1)
 			{
-				comment.Likes--;
-				comment.UsersLikes.Remove(userModel);
-				await _Models.SaveChangesAsync();
-				return "-";
+				int row = await _Models.Database.ExecuteSqlRawAsync("UPDATE Comments SET Likes = Likes - 1 WHERE Id = {0};", CommentId);
+
+				if (row == 1) 
+					row += await _Models.Database
+						.ExecuteSqlRawAsync("DELETE FROM CommentLikes WHERE CommentId = {0} AND UserId = {1};", CommentId, userModel.Id);
+	
+
+				return row == 2 ? "-" : "0";
 			}
 			else
 			{
-				comment.Likes++;
-				comment.UsersLikes.Add(userModel);
-				await _Models.SaveChangesAsync();
-				return "+";
+				int row = await _Models.Database.ExecuteSqlRawAsync("UPDATE Comments SET Likes = Likes + 1 WHERE Id = {0};", CommentId);
+
+				if (row == 1) 
+					row += await _Models.Database
+						.ExecuteSqlRawAsync("INSERT INTO CommentLikes (CommentId, UserId) VALUES ({0}, {1});", CommentId, userModel.Id);
+
+				return row == 2 ? "+" : "0";
 			}
 		}
 
@@ -375,6 +383,8 @@ namespace WebProject.Controllers
 
 			return users;
 		}
+
+		public IActionResult MessageTab(string message) => PartialView("MessageTab", message);
 
 		private async Task<byte[]> GetBytes(IFormFile formFile)
 		{

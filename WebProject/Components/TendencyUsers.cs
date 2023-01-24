@@ -25,7 +25,10 @@ namespace WebProject.Components
 		}
 
 		//TODO - Move this logic to a service.
-		//TODO - Found a way to measure the speed an this way is faster, but by a milisecond so query the results.
+		//TODO - Found a way to get the data from any of these queries.
+		// (SELECT TOP 10 u.UserName, SUM(p.Likes) AS Total FROM AspNetUsers AS u, POSTS AS p WHERE u.Id IN (SELECT UserId FROM AspNetUsers) AND p.UserId = u.Id GROUP BY u.UserName) ORDER BY Total DESC
+		// SELECT TOP 10 Users.UserName, SUM(Posts.Likes) AS Total FROM (AspNetUsers AS Users INNER JOIN Posts ON Posts.UserId = Users.Id) GROUP BY Users.UserName ORDER BY Total DESC
+		// SELECT TOP 10 Users.Id, Users.UserName, Users.ProfilePicture, SUM(Posts.Likes) AS Total FROM (AspNetUsers AS Users INNER JOIN Posts ON Posts.UserId = Users.Id) GROUP BY Users.Id, Users.UserName, Users.ProfilePicture ORDER BY Total DESC
 		public async Task<IViewComponentResult> InvokeAsync(int amount)
 		{
 			//First, pass the list of users and post from the databse to GiveUsersThierPosts who will return a list of users with their post.
@@ -57,16 +60,13 @@ namespace WebProject.Components
 		{
 			List<KeyValuePair<UserModel, int>> output = new();
 
-			//Get the span from the user list
 			Span<UserModel> spanUsers = CollectionsMarshal.AsSpan(users);
 			
 			for (int i = 0; i < spanUsers.Length; i++)
 			{
-				//Get the user from the span of users.
 				UserModel user = spanUsers[i];
 				int totalLikes = 0;
 
-				//Get the span from the user's posts.
 				Span<PostModel> spanPosts = CollectionsMarshal.AsSpan(user.Posts.ToList());
 
 				for (int j = 0; j < spanPosts.Length; j++)
@@ -84,7 +84,6 @@ namespace WebProject.Components
 
 		public List<UserModel> GiveUsersThierPosts(List<UserModel> users, List<PostModel> posts)
 		{
-			//Get a span from the users and posts list.
 			Span<PostModel> spanPosts = CollectionsMarshal.AsSpan<PostModel>(posts);
 			Span<UserModel> spanUsers = CollectionsMarshal.AsSpan<UserModel>(users);
 

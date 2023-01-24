@@ -1,5 +1,4 @@
-﻿@using Microsoft.AspNetCore.Identity;
-@model DynamicUser
+﻿@model DynamicUser
 
 @{
 	ViewData["Title"] = Model.PageUser.UserName ?? "User not Found";
@@ -14,24 +13,7 @@
 
 <section class="box-container" id="UserPostContainer">
 	<section class="left-box">
-		<div class="user-info">
-			@if (Model.PageUser.ProfilePicture != null)
-			{
-				<img class="user-pic" src="@(Model.PageUser.ProfilePicture.StartsWith("https") ? "" : "data:image/png;base64,")@Model.PageUser.ProfilePicture" alt="@Model.PageUser.UserName picture" />
-			}
-			else
-			{
-				<img class="user-pic" src="" />
-			}
-
-			<div class="user-username">@Model.PageUser?.UserName</div>
-
-			<div class="user-name">@Model.PageUser?.Name</div>
-
-			<div class="user-description">@Model.PageUser?.Description</div>
-
-			<div class="user-dob">@Model.PageUser?.DateofBirth.ToShortDateString()</div>
-		</div>
+		<partial name="ProfilePageUser"></partial>
 	</section>
 
 	<section class="center-box">
@@ -46,7 +28,6 @@
 	</section>
 
 	<section class="right-box">
-		@*@await Component.InvokeAsync("AllUsers")*@
 		@await Component.InvokeAsync("TendencyUsers", new { amount = 10 })
 	</section>
 </section>

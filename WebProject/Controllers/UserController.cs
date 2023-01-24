@@ -29,6 +29,7 @@ namespace WebProject.Controllers
 
 		//TODO - With the likes algorithm then create a tendency page with the most likes and commented post.
 		//TODO - finnish learning angular and add it to this project and make the respective improvements.
+		//TODO - Add a search user bar.
 		public async Task<IActionResult> SearchUser(string userName)
 		{
 			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
@@ -41,19 +42,23 @@ namespace WebProject.Controllers
 		{
 			UserModel user = await userManager.GetUserAsync(HttpContext.User);
 
-			if (user == null) return RedirectToAction("Login", "Account");
+			if (user == null) 
+				return RedirectToAction("Login", "Account");
 
 			UserModel pageUser = (!string.IsNullOrEmpty(user.UserName) && userName != user.UserName)
 									? await userManager.FindByNameAsync(userName) : user;
 
-			if (pageUser == null) return NotFound();
+			if (pageUser == null) 
+				return NotFound();
 
 			pageUser.Posts = await GetPosts(pageUser);
 
-			List<int> likes = await _Models.Database.SqlQueryRaw<int>("SELECT SUM(Likes) FROM Posts WHERE UserId = {0}", pageUser.Id).ToListAsync();
+			List<int> likes = await _Models.Database
+				.SqlQueryRaw<int>("SELECT SUM(Likes) FROM Posts WHERE UserId = {0}", pageUser.Id).ToListAsync();
 			TempData["TotalLikes"] = likes.First();
 
-			List<int> posts = await _Models.Database.SqlQueryRaw<int>("SELECT COUNT(Id) FROM Posts WHERE UserId = {0}", pageUser.Id).ToListAsync();
+			List<int> posts = await _Models.Database
+				.SqlQueryRaw<int>("SELECT COUNT(Id) FROM Posts WHERE UserId = {0}", pageUser.Id).ToListAsync();
 			TempData["TotalPosts"] = posts.First();
 
 			return View(new DynamicUser { User = user, PageUser = pageUser });
@@ -63,12 +68,14 @@ namespace WebProject.Controllers
 		{
 			UserModel user = await userManager.GetUserAsync(HttpContext.User);
 
-			if (user == null) return RedirectToAction("Login", "Account");
+			if (user == null) 
+				return RedirectToAction("Login", "Account");
 
 			UserModel pageUser = (!string.IsNullOrEmpty(user.UserName) && userName != user.UserName) 
 									? await userManager.FindByNameAsync(userName) : user;
 
-			if (pageUser == null) return NotFound();
+			if (pageUser == null) 
+				return NotFound();
 
 			pageUser.Posts = await GetPosts(pageUser, true);
 
@@ -85,13 +92,15 @@ namespace WebProject.Controllers
 		{
 			UserModel user = await userManager.GetUserAsync(HttpContext.User);
 
-			if (user == null) return RedirectToAction("Login", "Account");
+			if (user == null) 
+				return RedirectToAction("Login", "Account");
 
 			UserModel pageUser = (!string.IsNullOrEmpty(user.UserName) && userName != user.UserName)
 									? await userManager.FindByNameAsync(userName) : user;
 
 			//TODO - set up a user not found page.
-			if (pageUser == null) return NotFound();
+			if (pageUser == null) 
+				return NotFound();
 
 			PostModel post = await _Models.Posts.FromSqlRaw($"Select * from Posts where Id = {postId}").AsNoTracking().FirstOrDefaultAsync();
 			post.UsersLikes = await GetPostLikesSelective(post.Id);
@@ -113,12 +122,14 @@ namespace WebProject.Controllers
 		{
 			UserModel user = await userManager.GetUserAsync(HttpContext.User);
 
-			if (user == null) return RedirectToAction("Login", "Account");
+			if (user == null) 
+				return RedirectToAction("Login", "Account");
 
 			UserModel pageUser = (!string.IsNullOrEmpty(user.UserName) && userName != user.UserName)
 				? await userManager.FindByNameAsync(userName) : user; 
 
-			if (pageUser == null) return NotFound();
+			if (pageUser == null) 
+				return NotFound();
 
 			pageUser.LikedPost = await GetLikedPost(pageUser.Id);
 
@@ -135,12 +146,14 @@ namespace WebProject.Controllers
 		{
 			UserModel user = await userManager.GetUserAsync(HttpContext.User);
 
-			if (user == null) return RedirectToAction("Login", "Account");
+			if (user == null) 
+				return RedirectToAction("Login", "Account");
 
 			UserModel pageUser = (!string.IsNullOrEmpty(user.UserName) && userName != user.UserName)
 				? await userManager.FindByNameAsync(userName) : user;
 
-			if (pageUser == null) return NotFound();
+			if (pageUser == null) 
+				return NotFound();
 
 			pageUser.Posts = await _Models.Posts
 						.FromSqlRaw("Select * from Posts where Id in (Select PostId from Comments where UserId = {0})", pageUser.Id)
@@ -161,7 +174,8 @@ namespace WebProject.Controllers
 					post.User = await _Models.Users
 						.Select(u => new UserModel { Id = u.Id, UserName = u.UserName, ProfilePicture = u.ProfilePicture })
 						.Where(u => u.Id == post.UserId).AsNoTracking().FirstOrDefaultAsync();
-					post.Comments = new List<CommentModel>();
+
+					post.Comments ??= new List<CommentModel>();
 
 					if (comment.PostId == post.Id)
 					{

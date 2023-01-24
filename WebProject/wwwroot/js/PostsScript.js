@@ -2,7 +2,6 @@
 function CreatePostTab() {
 	$.get("/Post/LookForCreatePost", function (data, status) {
 		if (status === "success") {
-			//Create a black background.
 			const background = Background();
 			//Insert the partial view.
 			background.innerHTML = data;
@@ -48,7 +47,7 @@ function CreatePost(input) {
 function EditPostTab(postid, input) {
 	//Undisplay the post option button parent element.
 	input.parentElement.style.display = "none";
-
+	//TODO - change this to an ajax
 	$.get("/Post/LookforPost", { PostId: postid }, function (data, status) {
 		if (status === "success") {
 			//Create a black background.
@@ -56,11 +55,14 @@ function EditPostTab(postid, input) {
 
 			//Insert the partial view.
 			background.innerHTML = data;
+
 			//Call function in the case the post had a media (picture) if it did not it will return.
 			EditImage();
 
 			document.body.style.overflow = "hidden";
 		}
+	}).fail(function () {
+		Message("sorry");
 	});
 }
 
@@ -101,6 +103,11 @@ function EditPost(input) {
 				RemoveTab();
 				//Insert the response (data) to the the UserPostContainer.
 				UpdatePostFromContainer(data);
+				Message('Post successfully edited.');
+			},
+			error: function (details) {
+				RemoveTab();
+				Message(details.responseText);
 			}
 		}
 	);
@@ -155,7 +162,9 @@ function LikePost(postId, button) {
 					button.style.fontWeight = "normal";
 					button.title = "Like post";
 				}
-				//TODO - set the error response.
+				else if (data === "0") {
+					Message("Somethig went wrong");
+				}
 			}
 		});
 	}
@@ -202,12 +211,27 @@ function OptionButton(post) {
 	});
 }
 
+function Message(message) {
+	const messageContainer = document.createElement('aside');
+	messageContainer.className = 'alert-message';
+
+	messageContainer.innerHTML = message;
+
+	const deleteButton = document.createElement('button');
+	deleteButton.className = 'close-button';
+	deleteButton.onclick = function() {
+		this.parentElement.style.display = 'none';
+	}
+	messageContainer.appendChild(deleteButton);
+
+	document.getElementById('main-header').appendChild(messageContainer);
+}
+
 //This creates and returns a semi transparent black brackground, any element appended will be centered.
 function Background() {
 	const tab = document.createElement("div");
 	tab.id = "BlackBackground";
 	tab.className = 'black-background';
-	//Add a double click remove event.
 	tab.addEventListener("dblclick", () => { RemoveTab() });
 	document.body.appendChild(tab);
 
