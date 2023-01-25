@@ -58,6 +58,10 @@
 	flex-direction: column;
 }
 
+.center-box:has(.null-model) {
+	margin-top: 10rem;
+}
+
 .pageuser-navigation-bar {
 	border-top: 1px solid var(--BorderColor);
 	display: flex;
@@ -111,6 +115,27 @@
 	color: inherit;
 	display: block;
 	padding: 0.3rem;
+}
+
+.null-model {
+	text-align: center;
+	font-size: 2rem;
+	border: 1px solid var(--BorderColor);
+	padding: 0.7rem;
+}
+
+.null-model p {
+	margin: 0;
+}
+
+.question-mark-svg {
+	width: 12rem;
+	display: block;
+	margin: 0.5rem auto;
+}
+
+.question-mark-path {
+	fill: var(--BorderColor);
 }
 
 @media only screen and (min-width: 768px) {

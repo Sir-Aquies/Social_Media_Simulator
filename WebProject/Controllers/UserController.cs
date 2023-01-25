@@ -6,10 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Hosting;
-using System.Runtime.InteropServices;
-using System.Security.Permissions;
-using System.Diagnostics;
-using Microsoft.Identity.Client;
 
 namespace WebProject.Controllers
 {
@@ -48,10 +44,15 @@ namespace WebProject.Controllers
 			UserModel pageUser = (!string.IsNullOrEmpty(user.UserName) && userName != user.UserName)
 									? await userManager.FindByNameAsync(userName) : user;
 
-			if (pageUser == null) 
-				return NotFound();
+			if (pageUser == null)
+			{
+				ViewBag.unexistingUserName = userName;
+				return View(new DynamicUser { User = user, PageUser = pageUser });
+			}
 
-			pageUser.Posts = await GetPosts(pageUser);
+			int loadFirstPost = 10;
+			pageUser.Posts = await GetPostsNew(pageUser, 0, loadFirstPost);
+			ViewData["startFromPost"] = loadFirstPost.ToString();
 
 			List<int> likes = await _Models.Database
 				.SqlQueryRaw<int>("SELECT SUM(Likes) FROM Posts WHERE UserId = {0}", pageUser.Id).ToListAsync();
@@ -77,7 +78,11 @@ namespace WebProject.Controllers
 			if (pageUser == null) 
 				return NotFound();
 
-			pageUser.Posts = await GetPosts(pageUser, true);
+			//pageUser.Posts = await GetPosts(pageUser, true);
+
+			int loadFirstPost = 10;
+			pageUser.Posts = await GetPostsNew(pageUser, 0, loadFirstPost, true);
+			ViewData["startFromPost"] = loadFirstPost.ToString();
 
 			List<int> likes = await _Models.Database.SqlQueryRaw<int>("SELECT SUM(Likes) FROM Posts WHERE UserId = {0}", pageUser.Id).ToListAsync();
 			TempData["TotalLikes"] = likes.First();
@@ -98,14 +103,23 @@ namespace WebProject.Controllers
 			UserModel pageUser = (!string.IsNullOrEmpty(user.UserName) && userName != user.UserName)
 									? await userManager.FindByNameAsync(userName) : user;
 
-			//TODO - set up a user not found page.
 			if (pageUser == null) 
-				return NotFound();
+				return View("UserPage", new DynamicUser { User = user, PageUser = pageUser });
 
 			PostModel post = await _Models.Posts.FromSqlRaw($"Select * from Posts where Id = {postId}").AsNoTracking().FirstOrDefaultAsync();
-			post.UsersLikes = await GetPostLikesSelective(post.Id);
-			post.User = pageUser;
-			post.Comments = await LoadComments(post);
+
+			if (post.UserId != pageUser.Id)
+			{
+				post = null;
+			}
+
+			if (post != null)
+			{
+				post.UsersLikes = await GetPostLikesSelective(post.Id);
+				post.User = pageUser;
+				post.Comments = await LoadComments(post);
+			}
+
 			pageUser.Posts = new List<PostModel> { post };
 
 			List<int> likes = await _Models.Database.SqlQueryRaw<int>("SELECT SUM(Likes) FROM Posts WHERE UserId = {0}", pageUser.Id).ToListAsync();
@@ -199,7 +213,27 @@ namespace WebProject.Controllers
 		private async Task<List<PostModel>> GetLikedPost(string userId)
 		{
 			List<PostModel> posts = await _Models.Posts
-				.FromSqlRaw("Select * from Posts Where Id in (Select PostId from PostLikes where UserId = {0})", userId)
+				.FromSqlRaw("SELECT * FROM Posts WHERE Id IN (Select PostId from PostLikes where UserId = {0})", userId)
+				.AsNoTracking().ToListAsync();
+
+			foreach (PostModel post in posts)
+			{
+				post.UsersLikes = await GetPostLikesSelective(post.Id);
+				post.User = await _Models.Users
+				.Select(u => new UserModel { Id = u.Id, UserName = u.UserName, ProfilePicture = u.ProfilePicture })
+				.Where(u => u.Id == post.UserId).AsNoTracking().FirstOrDefaultAsync();
+				post.Comments = await LoadComments(post);
+			}
+
+			return posts;
+		}
+		
+		public async Task<List<PostModel>> GetLikedPostNew(string userId, int from, int to)
+		{
+			List<PostModel> posts = await _Models.Posts
+				.FromSqlRaw("SELECT * FROM Posts WHERE Id IN " +
+				"(Select PostId from PostLikes where UserId = {0}) " +
+				"ORDER BY PostDate DESC OFFSET {1} ROWS FETCH NEXT {2} ROWS ONLY", userId, from, to)
 				.AsNoTracking().ToListAsync();
 
 			foreach (PostModel post in posts)
@@ -214,10 +248,9 @@ namespace WebProject.Controllers
 			return posts;
 		}
 
-		//TODO - Load only the first posts and as the user scroll down fetch more.
 		private async Task<List<PostModel>> GetPosts(UserModel user, bool onlyMedia = false)
 		{
-			string sql = onlyMedia ? "SELECT * FROM Posts WHERE UserId = {0} AND Media IS NOT NULL;" : "Select * from Posts where UserId = {0}";
+			string sql = onlyMedia ? "SELECT * FROM Posts WHERE UserId = {0} AND Media IS NOT NULL;" : "SELECT * FROM Posts WHERE UserId = {0}";
 			List<PostModel> posts = await _Models.Posts.FromSqlRaw(sql, user.Id).AsNoTracking().ToListAsync();
 
 			foreach (PostModel post in posts)
@@ -228,6 +261,44 @@ namespace WebProject.Controllers
 			}
 
 			return posts;
+		}
+
+		private async Task<List<PostModel>> GetPostsNew(UserModel user, int from, int to, bool onlyMedia = false)
+		{
+			string sql = onlyMedia ? "SELECT * FROM Posts WHERE UserId = {0} AND Media IS NOT NULL ORDER BY PostDate DESC OFFSET {1} ROWS FETCH NEXT {2} ROWS ONLY;"
+				: "Select * from Posts where UserId = {0} ORDER BY PostDate DESC OFFSET {1} ROWS FETCH NEXT {2} ROWS ONLY;";
+			List<PostModel> posts = await _Models.Posts.FromSqlRaw(sql, user.Id, from, to).AsNoTracking().ToListAsync();
+
+			foreach (PostModel post in posts)
+			{
+				post.UsersLikes = await GetPostLikesSelective(post.Id);
+				post.Comments = await LoadComments(post);
+				post.User = user;
+			}
+
+			return posts;
+		}
+
+		public async Task<IActionResult> KeepLoadingPosts(string userId, int from, int to, bool onlyMedia = false)
+		{
+			UserModel user = await userManager.FindByIdAsync(userId);
+
+			if (user == null) 
+				return NotFound("User not found.");
+
+			List<PostModel> posts = await GetPostsNew(user, from, to, onlyMedia);
+
+			if (posts == null)
+				return NotFound("Posts not found.");
+
+			if (posts.Count == 0)
+			{
+				return NoContent();
+			}
+
+			ViewData["commentsAmount"] = 3;
+
+			return PartialView("PostList", posts);
 		}
 
 		private async Task<List<CommentModel>> LoadComments(PostModel post)
@@ -280,15 +351,5 @@ namespace WebProject.Controllers
 
 			return View(userModel);
 		}
-
-		//if (TempData["ErrorMessage"] != null)
-		//{
-		//	ViewBag.ErrorMessage = TempData["ErrorMessage"].ToString();
-		//}
-
-		//if (TempData["Message"] != null)
-		//{
-		//	ViewBag.Message = TempData["Message"].ToString();
-		//}
 	}
 }

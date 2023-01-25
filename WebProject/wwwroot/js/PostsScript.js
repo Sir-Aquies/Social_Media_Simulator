@@ -44,26 +44,37 @@ function CreatePost(input) {
 }
 
 //Get EditPost.cshtml partial view (from LookforPost) and display it in a background.
-function EditPostTab(postid, input) {
+function EditPostTab(postId, input) {
 	//Undisplay the post option button parent element.
 	input.parentElement.style.display = "none";
-	//TODO - change this to an ajax
-	$.get("/Post/LookforPost", { PostId: postid }, function (data, status) {
-		if (status === "success") {
-			//Create a black background.
-			const background = Background();
 
-			//Insert the partial view.
-			background.innerHTML = data;
+	if (!postId)
+		return;
 
-			//Call function in the case the post had a media (picture) if it did not it will return.
-			EditImage();
+	$.ajax(
+		{
+			type: "GET",
+			url: "/Post/LookforPost",
+			data: { PostId: postId },
+			success: function (data, status) {
+				if (status === 'success') {
+					//Create a black background.
+					const background = Background();
 
-			document.body.style.overflow = "hidden";
+					//Insert the partial view.
+					background.innerHTML = data;
+
+					//Call function in the case the post had a media (picture) if it did not it will return.
+					EditImage();
+
+					document.body.style.overflow = "hidden";
+				}
+			},
+			error: function (details) {
+				Message(details.responseText);
+			}
 		}
-	}).fail(function () {
-		Message("sorry");
-	});
+	);
 }
 
 //Passes the new content and new media (if there is) to EditPost action method who will edit the post.
@@ -182,6 +193,76 @@ function LikesTab(postId) {
 			}
 		});
 	}
+}
+
+function KeepLoadingPosts(userId, from, to) {
+	if (userId === undefined || from === undefined || to === undefined)
+		return;
+
+	$.ajax(
+		{
+			type: "GET",
+			url: "/User/KeepLoadingPosts",
+			data: {userId, from, to},
+			success: function (data) {
+				if (data) {
+					AddRangePost(data);
+					loadingPosts = false;
+				}
+			},
+			error: function (details) {
+				Message(details.responseText);
+			}
+		}
+	);
+}
+
+function LoadMorePostsMedia(userId, from, to) {
+	if (userId === undefined || from === undefined || to === undefined)
+		return;
+
+	onlyMedia = true;
+
+	$.ajax(
+		{
+			type: "GET",
+			url: "/User/KeepLoadingPosts",
+			data: { userId, from, to, onlyMedia },
+			success: function (data) {
+				if (data) {
+					AddRangePost(data);
+					loadingPosts = false;
+				}
+			},
+			error: function (details) {
+				Message(details.responseText);
+			}
+		}
+	);
+}
+
+function LoadMorePostsLikes(userId, from, to) {
+	if (userId === undefined || from === undefined || to === undefined)
+		return;
+
+	onlyMedia = true;
+
+	$.ajax(
+		{
+			type: "GET",
+			url: "/User/KeepLoadingPosts",
+			data: { userId, from, to, onlyMedia },
+			success: function (data) {
+				if (data) {
+					AddRangePost(data);
+					loadingPosts = false;
+				}
+			},
+			error: function (details) {
+				Message(details.responseText);
+			}
+		}
+	);
 }
 
 //This function removes the background along with his tab and restore the overflow.

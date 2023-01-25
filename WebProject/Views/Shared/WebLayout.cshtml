@@ -21,36 +21,18 @@
 					<!-- Image that when click display the display-tab with the user info -->
 					@if (Model is UserModel)
 					{
-						@if (Model.ProfilePicture.StartsWith("https"))
-						{
-							<img src="@Model.ProfilePicture" id="UserMobilePic" class="user-info-mobile" onclick="ToggleTab()" onmousedown="event.stopPropagation();" />
-						}
-						else
-						{
-							<img src="data:image/png;base64,@Model.ProfilePicture" id="UserMobilePic" class="user-info-mobile" onclick="ToggleTab()" onmousedown="event.stopPropagation();" />
-						}
+						<img src="@(Model.ProfilePicture.StartsWith("https") ? "" : "data:image/png;base64,")@Model.ProfilePicture"
+						 id="UserMobilePic" class="user-info-mobile" onclick="ToggleTab()" onmousedown="event.stopPropagation();" />
 					}
 					else if (Model is PasswordUser)
 					{
-						@if (Model.User.ProfilePicture.StartsWith("https"))
-						{
-							<img src="@Model.User.ProfilePicture" id="UserMobilePic" class="user-info-mobile" onclick="ToggleTab()" onmousedown="event.stopPropagation();" />
-						}
-						else
-						{
-							<img src="data:image/png;base64,@Model.User.ProfilePicture" id="UserMobilePic" class="user-info-mobile" onclick="ToggleTab()" onmousedown="event.stopPropagation();" />
-						}
+						<img src="@(Model.User.ProfilePicture.StartsWith("https") ? "" : "data:image/png;base64,")@Model.User.ProfilePicture" 
+						id="UserMobilePic" class="user-info-mobile" onclick="ToggleTab()" onmousedown="event.stopPropagation();" />
 					}
-					else if (Model is DynamicUser)
+					else if (Model is DynamicUser && Model.PageUser != null)
 					{
-						@if (Model.PageUser.ProfilePicture.StartsWith("https"))
-						{
-							<img src="@Model.PageUser.ProfilePicture" id="UserMobilePic" class="user-info-mobile" onclick="ToggleTab()" onmousedown="event.stopPropagation();" />
-						}
-						else
-						{
-							<img src="data:image/png;base64,@Model.PageUser.ProfilePicture" id="UserMobilePic" class="user-info-mobile" onclick="ToggleTab()" onmousedown="event.stopPropagation();" />
-						}
+						<img src="@(Model.PageUser.ProfilePicture.StartsWith("https") ? "" : "data:image/png;base64,")@Model.PageUser.ProfilePicture" 
+						id="UserMobilePic" class="user-info-mobile" onclick="ToggleTab()" onmousedown="event.stopPropagation();" />
 					}
 				</div>
 
@@ -62,7 +44,7 @@
 					</div>
 					
 					<div class="tab-list" id="TabList" onclick="event.stopPropagation();">
-						@if (Model is DynamicUser || Model is PasswordUser)
+						@if (Model is DynamicUser || Model is PasswordUser && Model.PageUser != null)
 						{
 							<a asp-area="" asp-controller="User" asp-action="UserPage" asp-route-UserName="@Model.User.UserName">Home</a>
 						}
@@ -99,18 +81,9 @@
 		{
 			<partial name="UserDisplayTab" model="Model.User"></partial>
 		}
-		else if (Model is DynamicUser)
+		else if (Model is DynamicUser && Model.PageUser != null)
 		{
-			<partial name="UserDisplayTab" model="Model.PageUser"></partial>
-		}
-
-		@if (!string.IsNullOrEmpty(ViewBag.Message))
-		{
-			<div class="alert-message" id="MessageSuccess">@ViewBag.Message <div class="close-button" onclick="this.parentElement.style.display='none';"></div></div>
-		}
-		else if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
-		{
-			<div class="alert-message" id="MessageSuccess">@ViewBag.ErrorMessage <div class="close-button" onclick="this.parentElement.style.display='none';"></div></div>
+			<partial name="UserDisplayTab" model="Model?.PageUser"></partial>
 		}
 	</header>
 

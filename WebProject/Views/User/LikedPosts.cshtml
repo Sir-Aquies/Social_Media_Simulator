@@ -27,7 +27,7 @@
 		{
 			<partial name="PageUserNav"></partial>
 
-			<partial name="PostList" model="Model.PageUser.LikedPost.Reverse().ToList()"></partial>
+			<partial name="PostList" model="Model.PageUser.LikedPost"></partial>
 		}
 
 	</section>
@@ -43,6 +43,8 @@
 <script src="~/js/CommentsScript.js" asp-append-version="true"></script>
 <script src="~/js/ImagePrev.js" asp-append-version="true"></script>
 <script>
+	SetScrollEvent("@Model.PageUser?.Id", @ViewData["startFromPost"], LoadMorePostsLikes);
+
 	function ShowPostImg(element) {
 		const img = element.nextElementSibling;
 		img.id = "currentimg";

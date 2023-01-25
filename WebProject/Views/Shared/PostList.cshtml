@@ -30,18 +30,5 @@
 				<partial name="Comment" model="post.Comments[i]"></partial>
 			}
 		}
-
-		@*@for (int i = 0; i < post.Comments.Count; i++)
-		{
-			if (i < 2)
-			{
-				<partial name="Comment" model="post.Comments[i]"></partial>
-			}
-			else
-			{
-				<a class="complete-post-button" href="/@post.User.UserName/hop/@post.Id">View all the Comments</a>
-				break;
-			}
-		}*@
 	</article>
 }

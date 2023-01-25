@@ -27,7 +27,7 @@
 		{
 			<partial name="PageUserNav"></partial>
 
-			<partial name="PostList" model="Model.PageUser.Posts.Reverse().ToList()"></partial>
+			<partial name="PostList" model="Model.PageUser.Posts"></partial>
 		}
 	</section>
 
@@ -43,6 +43,8 @@
 <script src="~/js/ImagePrev.js" asp-append-version="true"></script>
 
 <script>
+	SetScrollEvent("@Model.PageUser?.Id", @ViewData["startFromPost"], LoadMorePostsMedia);
+
 	function ShowPostImg(element) {
 		const img = element.nextElementSibling;
 		img.id = "currentimg";

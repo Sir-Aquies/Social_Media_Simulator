@@ -6,6 +6,23 @@ const posts = [...document.getElementsByClassName('post-container')];
 //Array that will contain all of the posts containers.
 const containers = [...document.querySelectorAll('[data-post-container]')];
 
+let loadingPosts = false;
+
+function SetScrollEvent(userId, startFromPost, PostLoader) {
+    let from = parseInt(startFromPost);
+    let increase = 5;
+    let to = from + increase;
+
+    window.addEventListener('scroll', function () {
+        if (this.window.scrollY > (mainContainer.clientHeight * (70 / 100)) && !loadingPosts) {
+            loadingPosts = true;
+            PostLoader(userId, from, to);
+            from = to;
+            to += increase;
+        }
+    });
+}
+
 function AddPostToContainer(postString) {
     //Convert the string post into an object element.
     const newPost = ConvertToDOM(postString);
@@ -31,6 +48,14 @@ function AddPostToContainer(postString) {
     //Push the new post and his container to the arrays.
     posts.push(newPost);
     containers.push(postContainer);
+}
+
+function AddRangePost(postsString) {
+    const posts = new DOMParser().parseFromString(postsString, 'text/html').all[2].children;
+
+    for (let i = 0; i < posts.length; i++) {
+        mainContainer.appendChild(posts[i]);
+    }
 }
 
 function RemovePostFromContainer(postId) {

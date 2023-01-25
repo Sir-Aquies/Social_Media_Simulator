@@ -124,14 +124,15 @@ namespace WebProject.Controllers
 		public async Task<IActionResult> LookforPost(int PostId)
 		{
 			PostModel postModel = await _Models.Posts.AsNoTracking().FirstOrDefaultAsync(us => us.Id == PostId);
+
+			if (postModel == null)
+				return NotFound("Post does not exist.");
+
 			UserModel userModel = await _userManager.GetUserAsync(HttpContext.User);
 
 			if (userModel != null && userModel.Id != postModel.UserId)
 				return Unauthorized("Access denied, post does not belong to current user.");
 
-			if (postModel == null)
-				return NotFound("Post does not exist.");
-	
 			TempData["PostId"] = PostId;
 			return PartialView("EditPost", postModel);
 		}

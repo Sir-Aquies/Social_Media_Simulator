@@ -1,21 +1,26 @@
-﻿<div class="user-info">
-	@if (Model.PageUser.ProfilePicture != null) 
-	{
-		<img class="user-pic" src="@(Model.PageUser.ProfilePicture.StartsWith("https") ? "" : "data:image/png;base64,")@Model.PageUser.ProfilePicture" alt="@Model.PageUser.UserName picture" />
-	}
-	else
-	{
-		<img class="user-pic" src="" />
-	}
-	
-	<div class="user-username">@Model.PageUser?.UserName</div>
+﻿@if (Model.PageUser != null)
+{
+	<div class="user-info">
+		@if (Model.PageUser.ProfilePicture != null)
+		{
+			<img class="user-pic" 
+			src="@(Model.PageUser.ProfilePicture.StartsWith("https") ? "" : "data:image/png;base64,")@Model.PageUser.ProfilePicture" 
+			alt="@Model.PageUser.UserName picture" />
+		}
+		else
+		{
+			<img class="user-pic" src="" />
+		}
 
-	<div class="user-name">@Model.PageUser?.Name</div>
+		<div class="user-username">@Model.PageUser?.UserName</div>
 
-	<div class="user-description">@Model.PageUser?.Description</div>
+		<div class="user-name">@Model.PageUser?.Name</div>
 
-	<div class="user-dob">@Model.PageUser?.DateofBirth.ToShortDateString()</div>
+		<div class="user-description">@Model.PageUser?.Description</div>
 
-	<div>Total likes: @TempData["TotalLikes"]</div>
-	<div>Total Posts: @TempData["TotalPosts"]</div>
-</div>
+		<div class="user-dob">@Model.PageUser?.DateofBirth.ToShortDateString()</div>
+
+		<div>Total likes: @TempData["TotalLikes"]</div>
+		<div>Total Posts: @TempData["TotalPosts"]</div>
+	</div>
+}
