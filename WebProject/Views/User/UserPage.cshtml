@@ -69,7 +69,7 @@
 <script src="~/js/ImagePrev.js" asp-append-version="true"></script>
 
 <script>
-	SetScrollEvent("@Model.PageUser?.Id", @ViewData["startFromPost"], KeepLoadingPosts);
+	SetScrollEvent("@Model.PageUser?.Id", @ViewData["startFromPost"], LoadMorePosts);
 	
 	function ShowPostImg(element) {
 		const img = element.nextElementSibling;

@@ -195,15 +195,15 @@ function LikesTab(postId) {
 	}
 }
 
-function KeepLoadingPosts(userId, from, to) {
-	if (userId === undefined || from === undefined || to === undefined)
+function LoadMorePosts(userId, from, amount) {
+	if (userId === undefined || from === undefined || amount === undefined)
 		return;
 
 	$.ajax(
 		{
 			type: "GET",
-			url: "/User/KeepLoadingPosts",
-			data: {userId, from, to},
+			url: "/User/LoadMorePosts",
+			data: { userId, from, amount },
 			success: function (data) {
 				if (data) {
 					AddRangePost(data);
@@ -217,8 +217,8 @@ function KeepLoadingPosts(userId, from, to) {
 	);
 }
 
-function LoadMorePostsMedia(userId, from, to) {
-	if (userId === undefined || from === undefined || to === undefined)
+function LoadMorePostsMedia(userId, from, amount) {
+	if (userId === undefined || from === undefined || amount === undefined)
 		return;
 
 	onlyMedia = true;
@@ -226,8 +226,8 @@ function LoadMorePostsMedia(userId, from, to) {
 	$.ajax(
 		{
 			type: "GET",
-			url: "/User/KeepLoadingPosts",
-			data: { userId, from, to, onlyMedia },
+			url: "/User/LoadMorePosts",
+			data: { userId, from, amount, onlyMedia },
 			success: function (data) {
 				if (data) {
 					AddRangePost(data);
@@ -241,17 +241,37 @@ function LoadMorePostsMedia(userId, from, to) {
 	);
 }
 
-function LoadMorePostsLikes(userId, from, to) {
-	if (userId === undefined || from === undefined || to === undefined)
+function LoadMorePostsLikes(userId, from, amount) {
+	if (userId === undefined || from === undefined || amount === undefined)
 		return;
-
-	onlyMedia = true;
 
 	$.ajax(
 		{
 			type: "GET",
-			url: "/User/KeepLoadingPosts",
-			data: { userId, from, to, onlyMedia },
+			url: "/User/LoadMorePostsLikes",
+			data: { userId, from, amount },
+			success: function (data) {
+				if (data) {
+					AddRangePost(data);
+					loadingPosts = false;
+				}
+			},
+			error: function (details) {
+				Message(details.responseText);
+			}
+		}
+	);
+}
+
+function LoadMorePostsComments(userId, from, amount) {
+	if (userId === undefined || from === undefined || amount === undefined)
+		return;
+
+	$.ajax(
+		{
+			type: "GET",
+			url: "/User/LoadMorePostsComments",
+			data: { userId, from, amount },
 			success: function (data) {
 				if (data) {
 					AddRangePost(data);

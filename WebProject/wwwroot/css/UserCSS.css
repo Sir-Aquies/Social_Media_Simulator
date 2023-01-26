@@ -1,4 +1,15 @@
-﻿.users-table {
+﻿.search-bar-box {
+	padding: 0.5rem;
+	margin-bottom: 1rem;
+}
+
+.search-user-bar {
+	width: 100%;
+	font-size: var(--BigTextsize);
+	color: inherit;
+}
+
+.users-table {
 	display: flex;
 	width: 100%;
 	flex-direction: column;

@@ -10,15 +10,13 @@ let loadingPosts = false;
 
 function SetScrollEvent(userId, startFromPost, PostLoader) {
     let from = parseInt(startFromPost);
-    let increase = 5;
-    let to = from + increase;
+    let amount = 5;
 
     window.addEventListener('scroll', function () {
         if (this.window.scrollY > (mainContainer.clientHeight * (70 / 100)) && !loadingPosts) {
             loadingPosts = true;
-            PostLoader(userId, from, to);
-            from = to;
-            to += increase;
+            PostLoader(userId, from, amount);
+            from += amount;
         }
     });
 }
@@ -51,10 +49,10 @@ function AddPostToContainer(postString) {
 }
 
 function AddRangePost(postsString) {
-    const posts = new DOMParser().parseFromString(postsString, 'text/html').all[2].children;
-
-    for (let i = 0; i < posts.length; i++) {
-        mainContainer.appendChild(posts[i]);
+    const newPosts = new DOMParser().parseFromString(postsString, 'text/html').all[2].children;
+    let length = newPosts.length;
+    for (let i = 0; i < length; i++) {
+        mainContainer.append(newPosts[0]);
     }
 }
 

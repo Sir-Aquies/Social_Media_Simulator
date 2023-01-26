@@ -6,7 +6,7 @@
 			<div class="list-user-info">
 				@if (user.ProfilePicture != null)
 				{
-					<img class="list-user-pic" onclick="location = '@user.UserName'; event.stopPropagation()" 
+					<img class="list-user-pic" onclick="location = '/@user.UserName'; event.stopPropagation()" 
 					src="@(user.ProfilePicture.StartsWith("https") ? "" : "data:image/png;base64,")@user.ProfilePicture" alt="@user.UserName" />
 				}
 				<div class="list-name-container">
