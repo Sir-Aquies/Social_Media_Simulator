@@ -12,6 +12,7 @@
 
 	ViewData["UserId"] = Model.User.Id;
 	ViewData["commentsAmount"] = "3";
+	ViewBag.blur = Model.User.ShowImages ? "1" : "0";
 }
 
 <link rel="stylesheet" href="~/css/UserCSS.css" asp-append-version="true"/>
@@ -58,8 +59,7 @@
 	</section>
 	
 	<section class="right-box">
-		<p style="margin: 0; text-align: center;">Users with most likes</p>
-		@await Component.InvokeAsync("TendencyUsers", new { amount = 10 })
+		<partial name="Right-Box"></partial>
 	</section>
 </section>
 
@@ -67,6 +67,7 @@
 <script src="~/js/PostsScript.js" asp-append-version="true"></script>
 <script src="~/js/CommentsScript.js" asp-append-version="true"></script>
 <script src="~/js/ImagePrev.js" asp-append-version="true"></script>
+<script src="~/js/Tendency.js" asp-append-version="true"></script>
 
 <script>
 	SetScrollEvent("@Model.PageUser?.Id", @ViewData["startFromPost"], LoadMorePosts);

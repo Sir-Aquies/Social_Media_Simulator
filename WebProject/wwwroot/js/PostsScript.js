@@ -285,6 +285,21 @@ function LoadMorePostsComments(userId, from, amount) {
 	);
 }
 
+function UnblurImage(cover) {
+	const imageContainer = cover.parentElement;
+	const image = imageContainer.children[0];
+	const button = cover.children[0];
+
+	if (image.style.filter === 'blur(0px)') {
+		image.style.filter = 'blur(1rem)';
+		button.style.display = 'block';
+	}
+	else {
+		image.style.filter = 'blur(0px)';
+		button.style.display = 'none';
+	}
+}
+
 //This function removes the background along with his tab and restore the overflow.
 //The tab can be from CreatePostTab, EditPostTab or CreateCommentTab.
 function RemoveTab() {

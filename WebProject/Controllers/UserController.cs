@@ -5,8 +5,7 @@ using WebProject.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Hosting;
-using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
+using WebProject.Services;
 
 namespace WebProject.Controllers
 {
@@ -15,34 +14,38 @@ namespace WebProject.Controllers
 	{
 		private readonly WebProjectContext _Models;
 		private readonly ILogger<UserController> _Logger;
-		private readonly UserManager<UserModel> userManager;
+		private readonly UserManager<UserModel> _UserManager;
 
-		public UserController(WebProjectContext Models, UserManager<UserModel> manager, ILogger<UserController> logger)
+		private readonly ITendency _Tendency;
+
+		public UserController(WebProjectContext Models, UserManager<UserModel> userManager, ILogger<UserController> logger, ITendency tendency)
 		{
 			_Models = Models;
-			userManager = manager;
+			_UserManager = userManager;
 			_Logger = logger;
+			_Tendency = tendency;
 		}
 
-		//TODO - With the likes algorithm then create a tendency page with the most likes and commented post.
-		//TODO - Add a search user bar.
+		//TODO - With the likes algorithm then create a tendency page with the most likes and commented post
+
 		public async Task<IActionResult> SearchUser(string userName)
 		{
-			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
+			UserModel userModel = await _UserManager.GetUserAsync(HttpContext.User);
 
 			return !string.IsNullOrEmpty(userName) ? RedirectToAction("UserPage", new { userName }) : RedirectToAction("UserPage", new { userModel.UserName });
 		}
 
+		//TODO - search bar for posts maybe?.
 		//TODO - add a way to filter post (most/least likes, most/least commentsm, etc).
 		public async Task<IActionResult> UserPage(string userName)
 		{
-			UserModel user = await userManager.GetUserAsync(HttpContext.User);
+			UserModel user = await _UserManager.GetUserAsync(HttpContext.User);
 
 			if (user == null) 
 				return RedirectToAction("Login", "Account");
 
 			UserModel pageUser = (!string.IsNullOrEmpty(user.UserName) && userName != user.UserName)
-									? await userManager.FindByNameAsync(userName) : user;
+									? await _UserManager.FindByNameAsync(userName) : user;
 
 			if (pageUser == null)
 			{
@@ -67,13 +70,13 @@ namespace WebProject.Controllers
 
 		public async Task<IActionResult> MediaPosts(string userName)
 		{
-			UserModel user = await userManager.GetUserAsync(HttpContext.User);
+			UserModel user = await _UserManager.GetUserAsync(HttpContext.User);
 
 			if (user == null) 
 				return RedirectToAction("Login", "Account");
 
 			UserModel pageUser = (!string.IsNullOrEmpty(user.UserName) && userName != user.UserName) 
-									? await userManager.FindByNameAsync(userName) : user;
+									? await _UserManager.FindByNameAsync(userName) : user;
 
 			if (pageUser == null) 
 				return NotFound();
@@ -93,13 +96,13 @@ namespace WebProject.Controllers
 
 		public async Task<IActionResult> CompletePost(string userName, int postId)
 		{
-			UserModel user = await userManager.GetUserAsync(HttpContext.User);
+			UserModel user = await _UserManager.GetUserAsync(HttpContext.User);
 
 			if (user == null) 
 				return RedirectToAction("Login", "Account");
 
 			UserModel pageUser = (!string.IsNullOrEmpty(user.UserName) && userName != user.UserName)
-									? await userManager.FindByNameAsync(userName) : user;
+									? await _UserManager.FindByNameAsync(userName) : user;
 
 			if (pageUser == null) 
 				return View("UserPage", new DynamicUser { User = user, PageUser = pageUser });
@@ -132,13 +135,13 @@ namespace WebProject.Controllers
 		//TODO - think where to put the liked comments.
 		public async Task<IActionResult> LikedPosts(string userName)
 		{
-			UserModel user = await userManager.GetUserAsync(HttpContext.User);
+			UserModel user = await _UserManager.GetUserAsync(HttpContext.User);
 
 			if (user == null) 
 				return RedirectToAction("Login", "Account");
 
 			UserModel pageUser = (!string.IsNullOrEmpty(user.UserName) && userName != user.UserName)
-				? await userManager.FindByNameAsync(userName) : user; 
+				? await _UserManager.FindByNameAsync(userName) : user; 
 
 			if (pageUser == null) 
 				return NotFound();
@@ -158,13 +161,13 @@ namespace WebProject.Controllers
 
 		public async Task<IActionResult> CommentedPosts(string userName)
 		{
-			UserModel user = await userManager.GetUserAsync(HttpContext.User);
+			UserModel user = await _UserManager.GetUserAsync(HttpContext.User);
 
 			if (user == null) 
 				return RedirectToAction("Login", "Account");
 
 			UserModel pageUser = (!string.IsNullOrEmpty(user.UserName) && userName != user.UserName)
-				? await userManager.FindByNameAsync(userName) : user;
+				? await _UserManager.FindByNameAsync(userName) : user;
 
 			if (pageUser == null) 
 				return NotFound();
@@ -179,15 +182,12 @@ namespace WebProject.Controllers
 			List<int> posts = await _Models.Database.SqlQueryRaw<int>("SELECT COUNT(Id) FROM Posts WHERE UserId = {0}", pageUser.Id).ToListAsync();
 			TempData["TotalPosts"] = posts.First();
 
-
 			return View(new DynamicUser { User = user, PageUser = pageUser });
 		}
 
-		//TODO - some posts may be duplicated when a users comments a post in long interval of times.
 		private async Task<List<PostModel>> GetCommentedPosts(UserModel user, int from, int amount)
 		{
 			List<PostModel> posts = new();
-
 			List<CommentModel> comments = await _Models.Comments
 				.FromSqlRaw("SELECT * FROM Comments WHERE UserId = {0} " +
 				"ORDER BY Date DESC OFFSET {1} ROWS FETCH NEXT {2} ROWS ONLY;", user.Id, from, amount)
@@ -198,29 +198,39 @@ namespace WebProject.Controllers
 				comment.UsersLikes = await GetCommentLikesSelective(comment.Id);
 				comment.User = user;
 
-				bool added = false;
-				foreach (PostModel p in posts)
+				PostModel post = await _Models.Posts
+						.FromSqlRaw("SELECT * FROM Posts WHERE Id = {0}", comment.PostId)
+						.AsNoTracking().FirstOrDefaultAsync();
+
+				List<CommentModel> samePostComments = await _Models.Comments
+					.FromSqlRaw("SELECT * FROM Comments WHERE PostId = {0} AND UserId = {1} AND Date < {2}", post.Id, user.Id, comment.Date)
+					.AsNoTracking().ToListAsync();
+
+				List<CommentModel> alreadyAddedComments = await _Models.Comments
+					.FromSqlRaw("SELECT * FROM Comments WHERE PostId = {0} AND UserId = {1} AND Date > {2}", post.Id, user.Id, comment.Date)
+					.AsNoTracking().ToListAsync();
+
+				if (alreadyAddedComments.Count > 0) 
+					continue;
+
+				foreach (CommentModel c in samePostComments)
 				{
-					if (p.Id == comment.PostId)
-					{
-						p.Comments.Add(comment);
-						added = true;
-						break;
-					}
+					c.UsersLikes = await GetCommentLikesSelective(c.Id);
+					c.User = user;
+					comments.Remove(c);
 				}
 
-				if (!added)
-				{
-					PostModel post = await _Models.Posts.FromSqlRaw("SELECT * FROM Posts WHERE Id = {0}", comment.PostId).AsNoTracking().FirstOrDefaultAsync();
-					post.UsersLikes = await GetPostLikesSelective(post.Id);
+				post.Comments = samePostComments;
 
-					post.User = await _Models.Users
-							.Select(u => new UserModel { Id = u.Id, UserName = u.UserName, ProfilePicture = u.ProfilePicture })
-							.Where(u => u.Id == post.UserId).AsNoTracking().FirstOrDefaultAsync();
+				post.Comments.Add(comment);
 
-					post.Comments = new List<CommentModel>() { comment };
-					posts.Add(post);
-				}
+				post.UsersLikes = await GetPostLikesSelective(post.Id);
+
+				post.User = await _Models.Users
+						.Select(u => new UserModel { Id = u.Id, UserName = u.UserName, ProfilePicture = u.ProfilePicture })
+						.Where(u => u.Id == post.UserId).AsNoTracking().FirstOrDefaultAsync();
+
+				posts.Add(post);
 			}
 
 			return posts;
@@ -228,7 +238,8 @@ namespace WebProject.Controllers
 
 		public async Task<IActionResult> LoadMorePostsComments(string userId, int from, int amount)
 		{
-			UserModel user = await userManager.FindByIdAsync(userId);
+			UserModel user = await _UserManager.FindByIdAsync(userId);
+			UserModel logedUser = await _UserManager.GetUserAsync(HttpContext.User);
 
 			List<PostModel>  posts = await GetCommentedPosts(user, from, amount);
 
@@ -241,7 +252,8 @@ namespace WebProject.Controllers
 			}
 
 			ViewData["commentsAmount"] = 3;
-			ViewData["UserId"] = user.Id;
+			ViewData["UserId"] = logedUser.Id;
+			ViewBag.blur = logedUser.ShowImages ? "1" : "0";
 
 			return PartialView("PostList", posts);
 		}
@@ -271,6 +283,7 @@ namespace WebProject.Controllers
 		public async Task<IActionResult> LoadMorePostsLikes(string userId, int from, int amount)
 		{
 			List<PostModel> posts = await GetLikedPost(userId, from, amount);
+			UserModel logedUser = await _UserManager.GetUserAsync(HttpContext.User);
 
 			if (posts == null)
 				return NotFound("Posts not found.");
@@ -281,7 +294,8 @@ namespace WebProject.Controllers
 			}
 
 			ViewData["commentsAmount"] = 3;
-			ViewData["UserId"] = userId;
+			ViewData["UserId"] = logedUser.Id;
+			ViewBag.blur = logedUser.ShowImages ? "1" : "0";
 
 			return PartialView("PostList", posts);
 		}
@@ -304,7 +318,8 @@ namespace WebProject.Controllers
 
 		public async Task<IActionResult> LoadMorePosts(string userId, int from, int amount, bool onlyMedia = false)
 		{
-			UserModel user = await userManager.FindByIdAsync(userId);
+			UserModel user = await _UserManager.FindByIdAsync(userId);
+			UserModel logedUser = await _UserManager.GetUserAsync(HttpContext.User);
 
 			if (user == null) 
 				return NotFound("User not found.");
@@ -320,7 +335,8 @@ namespace WebProject.Controllers
 			}
 
 			ViewData["commentsAmount"] = 3;
-			ViewData["UserId"] = user.Id;
+			ViewData["UserId"] = logedUser.Id;
+			ViewBag.blur = logedUser.ShowImages ? "1" : "0";
 
 			return PartialView("PostList", posts);
 		}
@@ -348,7 +364,7 @@ namespace WebProject.Controllers
 			List<UserModel> users = new();
 
 			string[] userLikes = await _Models.Database
-				.SqlQueryRaw<string>("Select UserId from PostLikes where PostId = {0}", postId)
+				.SqlQueryRaw<string>("SELECT UserId FROM PostLikes WHERE PostId = {0}", postId)
 				.AsNoTracking().ToArrayAsync();
 
 			for (int i = 0; i < userLikes.Length; i++)
@@ -377,7 +393,7 @@ namespace WebProject.Controllers
 
 		public async Task<IActionResult> AllUsers()
 		{
-			UserModel userModel = await userManager.GetUserAsync(HttpContext.User);
+			UserModel userModel = await _UserManager.GetUserAsync(HttpContext.User);
 
 			return View(userModel);
 		}
@@ -387,14 +403,29 @@ namespace WebProject.Controllers
 			List<UserModel> users = await _Models.Users
 				.FromSqlRaw("SELECT * FROM AspNetUsers WHERE UserName LIKE {0};", userName + "%").AsNoTracking().ToListAsync();
 
-			return PartialView("~/Views/User/Components/AllUsers/UsersList.cshtml", users);
+			return PartialView("UsersList", users);
 		}
 
 		public async Task<IActionResult> GetRandomUsersView(int amount)
 		{
-			List<UserModel> users = await _Models.Users.FromSqlRaw("SELECT TOP 10 * FROM AspNetUsers ORDER BY NEWID();").AsNoTracking().ToListAsync();
+			string sql = String.Format("SELECT TOP {0} * FROM AspNetUsers ORDER BY NEWID();", amount);
 
-			return PartialView("~/Views/User/Components/AllUsers/UsersList.cshtml", users);
+			List<UserModel> users = await _Models.Users.FromSqlRaw(sql).AsNoTracking().ToListAsync();
+
+			return PartialView("UsersList", users);
+		}
+
+		public IActionResult UsersWithMostLikesView()
+		{
+			List<UserModel> users = _Tendency.UsersWithMostLikes;
+
+			return PartialView("UsersList", users);
+		}
+		public IActionResult UsersWithMostPostsView()
+		{
+			List<UserModel> users = _Tendency.UsersWithMostPost;
+
+			return PartialView("UsersList", users);
 		}
 	}
 }

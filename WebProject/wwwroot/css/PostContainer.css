@@ -84,7 +84,7 @@
 	height: fit-content;
 }
 
-.post-content div {
+.post-content .content-text {
 	overflow-x: hidden;
 	overflow-y: auto;
 	width: 100%;
@@ -108,8 +108,24 @@
 	margin: 0.5rem auto;
 }
 
-.post-content img.ImgFinder {
-	display: none;
+.blur-content-image {
+	filter: blur(0.7rem);
+}
+
+.unblur-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.unblur-button button {
+	color: inherit;
+	font-size: inherit;
 }
 
 .post-stats {

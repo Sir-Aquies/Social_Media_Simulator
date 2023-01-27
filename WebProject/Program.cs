@@ -7,6 +7,8 @@ using WebProject.Policies;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddSingleton<ITendency, Tendency>();
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
@@ -16,11 +18,6 @@ builder.Services.AddDbContext<WebProjectContext>(options =>
 	throw new InvalidOperationException("Connection string 'WebProjectContext' not found.")));
 
 builder.Services.AddIdentity<UserModel, IdentityRole>().AddEntityFrameworkStores<WebProjectContext>().AddDefaultTokenProviders();
-
-//builder.Services.ConfigureApplicationCookie(options =>
-//{
-
-//});
 
 builder.Services.AddTransient<IUserValidator<UserModel>, UserNamePolicies>();
 
@@ -51,6 +48,9 @@ using (var scope = app.Services.CreateScope())
 	IServiceScopeFactory ServiceFactory = services.GetRequiredService<IServiceScopeFactory>();
 	IHttpClientFactory ClientFactory = services.GetRequiredService<IHttpClientFactory>();
 	UserManager<UserModel> UserManager = services.GetRequiredService<UserManager<UserModel>>();
+
+	ITendency tendency = services.GetRequiredService<ITendency>();
+	await tendency.UpdateStats(context);
 
 	//RandomUsers randomUsers = new(ClientFactory, UserManager, ServiceFactory);
 	//randomUsers.StartAsync(new CancellationToken());

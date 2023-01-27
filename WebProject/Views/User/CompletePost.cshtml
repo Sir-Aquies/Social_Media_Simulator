@@ -3,6 +3,7 @@
 @{
 	ViewData["Title"] = Model.PageUser.UserName ?? "User not Found";
 	ViewData["UserId"] = Model.User.Id;
+	ViewBag.blur = Model.User.ShowImages ? "1" : "0";
 
 	PostModel post = Model.PageUser.Posts[0];
 }
@@ -43,7 +44,7 @@
 	</section>
 
 	<section class="right-box">
-		@await Component.InvokeAsync("TendencyUsers", new { amount = 10 })
+		<partial name="Right-Box"></partial>
 	</section>
 </section>
 

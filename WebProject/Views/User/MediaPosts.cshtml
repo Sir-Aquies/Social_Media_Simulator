@@ -4,6 +4,7 @@
 	ViewData["Title"] = Model.PageUser.UserName ?? "User not Found";
 	ViewData["UserId"] = Model.User.Id;
 	ViewData["commentsAmount"] = "3";
+	ViewBag.blur = Model.User.ShowImages ? "1" : "0";
 }
 
 <link rel="stylesheet" href="~/css/UserCSS.css" asp-append-version="true"/>
@@ -32,8 +33,7 @@
 	</section>
 
 	<section class="right-box">
-		<p style="margin: 0; text-align: center;">Users with most likes</p>
-		@await Component.InvokeAsync("TendencyUsers", new { amount = 10 })
+		<partial name="Right-Box"></partial>
 	</section>
 </section>
 

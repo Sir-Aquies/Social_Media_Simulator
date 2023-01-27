@@ -39,18 +39,26 @@
 	</div>
 
 	<div class="post-content">
-		<div>@Model.Content</div>
+		<div class="content-text">@Model.Content</div>
 
-		@if (Model.Media != null && Model.User.ShowImages)
+		@if (Model.Media != null)
 		{
-			<img src="@(Model.Media.StartsWith("https") ? "" : "data:image/png;base64,")@Model.Media" alt="@Model.User.UserName" />
-		}
-		else if (Model.Media != null && !Model.User.ShowImages)
-		{
-			<div class="flip-div" onclick="ShowPostImg(this)">Show Image</div>
+			@if (ViewBag.blur == "1")
+			{
+				<div style="position: relative; margin-top: 2rem;" onclick="event.stopPropagation()">
+					<img src="@(Model.Media.StartsWith("https") ? "" : "data:image/png;base64,")@Model.Media" class="blur-content-image" alt="@Model.User.UserName" />
 
-			<img src="@(Model.Media.StartsWith("https") ? "" : "data:image/png;base64,")@Model.Media" class="ImgFinder" alt="@Model.User.UserName" />
+					<div class="unblur-button" onclick="UnblurImage(this); event.stopPropagation()">
+						<button>Click to unblur</button>
+					</div>
+				</div>				
+			}
+			else if (ViewBag.blur == "0")
+			{
+				<img src="@(Model.Media.StartsWith("https") ? "" : "data:image/png;base64,")@Model.Media" alt="@Model.User.UserName" />
+			}
 		}
+		
 	</div>
 
 	<div class="post-stats">

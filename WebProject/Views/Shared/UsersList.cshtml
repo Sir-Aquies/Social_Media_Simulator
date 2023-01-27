@@ -10,7 +10,8 @@
 			}
 			else
 			{
-				<img class="list-user-pic" src="" />
+				<img class="list-user-pic" src="" 
+				onclick="location = '/@user.UserName'; event.stopPropagation()" />
 			}
 			<div class="list-name-container">
 				<a asp-action="UserPage" asp-controller="User" asp-route-UserName="@user?.UserName" class="list-user-username">@user?.UserName</a>

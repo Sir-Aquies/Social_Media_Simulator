@@ -30,7 +30,6 @@ namespace WebProject.Services
 		}
 
 		//TODO - add followers.
-		//TODO - add a trending page.
 		//TODO - add a responsive top bar.
 		private async Task GiveRandomPostLike(int count)
 		{
