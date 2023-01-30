@@ -183,27 +183,31 @@ function LikePost(postId, button) {
 
 function LikesTab(postId) {
 	if (postId != undefined) {
-		$.get('/Post/PostLikesTab', { postId: postId }, (data, status) => {
+		$.get('/Post/PostLikesTab', { postId }, (data, status) => {
 			if (status === 'success') {
 				const background = Background();
 
 				document.body.style.overflow = 'hidden';
 
-				background.innerHTML = data;
+				const tabContainer = document.createElement('div');
+				tabContainer.className = 'users-list-tab';
+				tabContainer.innerHTML = data;
+
+				background.appendChild(tabContainer);
 			}
 		});
 	}
 }
 
-function LoadMorePosts(userId, from, amount) {
-	if (userId === undefined || from === undefined || amount === undefined)
+function LoadMorePosts(userId, startFromRow, amountOfRows) {
+	if (userId === undefined || startFromRow === undefined || amountOfRows === undefined)
 		return;
 
 	$.ajax(
 		{
 			type: "GET",
 			url: "/User/LoadMorePosts",
-			data: { userId, from, amount },
+			data: { userId, startFromRow, amountOfRows },
 			success: function (data) {
 				if (data) {
 					AddRangePost(data);
@@ -217,8 +221,8 @@ function LoadMorePosts(userId, from, amount) {
 	);
 }
 
-function LoadMorePostsMedia(userId, from, amount) {
-	if (userId === undefined || from === undefined || amount === undefined)
+function LoadMorePostsMedia(userId, startFromRow, amountOfRows) {
+	if (userId === undefined || startFromRow === undefined || amountOfRows === undefined)
 		return;
 
 	onlyMedia = true;
@@ -227,7 +231,7 @@ function LoadMorePostsMedia(userId, from, amount) {
 		{
 			type: "GET",
 			url: "/User/LoadMorePosts",
-			data: { userId, from, amount, onlyMedia },
+			data: { userId, startFromRow, amountOfRows, onlyMedia },
 			success: function (data) {
 				if (data) {
 					AddRangePost(data);
@@ -241,15 +245,15 @@ function LoadMorePostsMedia(userId, from, amount) {
 	);
 }
 
-function LoadMorePostsLikes(userId, from, amount) {
-	if (userId === undefined || from === undefined || amount === undefined)
+function LoadMorePostsLikes(userId, startFromRow, amountOfRows) {
+	if (userId === undefined || startFromRow === undefined || amountOfRows === undefined)
 		return;
 
 	$.ajax(
 		{
 			type: "GET",
 			url: "/User/LoadMorePostsLikes",
-			data: { userId, from, amount },
+			data: { userId, startFromRow, amountOfRows },
 			success: function (data) {
 				if (data) {
 					AddRangePost(data);
@@ -263,15 +267,15 @@ function LoadMorePostsLikes(userId, from, amount) {
 	);
 }
 
-function LoadMorePostsComments(userId, from, amount) {
-	if (userId === undefined || from === undefined || amount === undefined)
+function LoadMorePostsComments(userId, startFromRow, amountOfRows) {
+	if (userId === undefined || startFromRow === undefined || amountOfRows === undefined)
 		return;
 
 	$.ajax(
 		{
 			type: "GET",
 			url: "/User/LoadMorePostsComments",
-			data: { userId, from, amount },
+			data: { userId, startFromRow, amountOfRows },
 			success: function (data) {
 				if (data) {
 					AddRangePost(data);
@@ -293,10 +297,12 @@ function UnblurImage(cover) {
 	if (image.style.filter === 'blur(0px)') {
 		image.style.filter = 'blur(1rem)';
 		button.style.display = 'block';
+		cover.style.backgroundColor = 'rgba(0, 0, 0, 0.6)';
 	}
 	else {
 		image.style.filter = 'blur(0px)';
 		button.style.display = 'none';
+		cover.style.backgroundColor = 'transparent';
 	}
 }
 

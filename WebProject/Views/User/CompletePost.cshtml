@@ -2,7 +2,7 @@
 
 @{
 	ViewData["Title"] = Model.PageUser.UserName ?? "User not Found";
-	ViewData["UserId"] = Model.User.Id;
+	ViewData["LoggedUserId"] = Model.User.Id;
 	ViewBag.blur = Model.User.ShowImages ? "1" : "0";
 
 	PostModel post = Model.PageUser.Posts[0];
@@ -52,6 +52,7 @@
 <script src="~/js/PostsScript.js" asp-append-version="true"></script>
 <script src="~/js/CommentsScript.js" asp-append-version="true"></script>
 <script src="~/js/ImagePrev.js" asp-append-version="true"></script>
+<script src="~/js/Tendency.js" asp-append-version="true"></script>
 
 <script>
 	function RedirectToUserPage() {

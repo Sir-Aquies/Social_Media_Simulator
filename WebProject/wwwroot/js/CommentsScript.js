@@ -99,7 +99,11 @@ function CommentLikesTab(commentId) {
 
 				document.body.style.overflow = 'hidden';
 
-				background.innerHTML = data;
+				const tabContainer = document.createElement('div');
+				tabContainer.className = 'users-list-tab';
+				tabContainer.innerHTML = data;
+
+				background.appendChild(tabContainer);
 			}
 		});
 	}

@@ -40,15 +40,15 @@ function PutUsersInTheList(usersString) {
 	}
 }
 
-function ReloadUsers(amount) {
-	if (!amount)
+function ReloadUsers(amountOfUsers) {
+	if (!amountOfUsers)
 		return;
 
 	$.ajax(
 		{
 			type: "GET",
 			url: "/User/GetRandomUsersView",
-			data: { amount },
+			data: { amountOfUsers },
 			success: function (data) {
 				PutUsersInTheList(data);
 			},

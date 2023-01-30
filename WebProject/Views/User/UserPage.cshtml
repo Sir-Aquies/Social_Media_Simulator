@@ -10,7 +10,7 @@
 		ViewData["Title"] = "User not found";
 	}
 
-	ViewData["UserId"] = Model.User.Id;
+	ViewData["LoggedUserId"] = Model.User.Id;
 	ViewData["commentsAmount"] = "3";
 	ViewBag.blur = Model.User.ShowImages ? "1" : "0";
 }
@@ -71,11 +71,4 @@
 
 <script>
 	SetScrollEvent("@Model.PageUser?.Id", @ViewData["startFromPost"], LoadMorePosts);
-	
-	function ShowPostImg(element) {
-		const img = element.nextElementSibling;
-		img.id = "currentimg";
-		$(`#${img.id}`).slideToggle();
-		img.id = "";
-	}
 </script>

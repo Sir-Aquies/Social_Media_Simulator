@@ -8,15 +8,15 @@ const containers = [...document.querySelectorAll('[data-post-container]')];
 
 let loadingPosts = false;
 
-function SetScrollEvent(userId, startFromPost, PostLoader) {
-    let from = parseInt(startFromPost);
-    let amount = 5;
+function SetScrollEvent(userId, startFrom, PostLoader) {
+    let startFromRow = parseInt(startFrom);
+    let amountOfRows = 5;
 
     window.addEventListener('scroll', function () {
         if (this.window.scrollY > (mainContainer.clientHeight * (70 / 100)) && !loadingPosts) {
             loadingPosts = true;
-            PostLoader(userId, from, amount);
-            from += amount;
+            PostLoader(userId, startFromRow, amountOfRows);
+            startFromRow += amountOfRows;
         }
     });
 }
