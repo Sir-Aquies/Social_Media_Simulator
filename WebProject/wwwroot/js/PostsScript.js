@@ -10,6 +10,36 @@ function CreatePostTab() {
 	});
 }
 
+function ShowCompletePost(postId) {
+	if (!postId)
+		return
+
+	$.ajax(
+		{
+			type: "GET",
+			url: "/Post/ViewPost",
+			data: { postId },
+			success: function (data) {
+
+				const tab = document.createElement("div");
+				tab.id = 'view-black-background';
+				tab.className = 'view-post-black-background';
+				tab.addEventListener("dblclick", () => {
+					tab.remove();
+					document.body.style.overflow = "auto";
+				});
+				document.body.appendChild(tab);
+
+				tab.innerHTML = data;
+				document.body.style.overflow = "hidden";
+			},
+			error: function (details) {
+				Message(details.responseText);
+			}
+		}
+	);
+}
+
 //Passes the content and media (if there is) to CreatePost action method who will create the post.
 function CreatePost(input) {
 	const content = input.parentElement.parentElement.children[0].value;
@@ -38,6 +68,9 @@ function CreatePost(input) {
 				RemoveTab();
 				//Insert the data (the new created post) to UserPostContainer.
 				AddPostToContainer(data);
+			},
+			error: function (details) {
+				Message(details.responseText);
 			}
 		}
 	);
@@ -310,7 +343,12 @@ function UnblurImage(cover) {
 //The tab can be from CreatePostTab, EditPostTab or CreateCommentTab.
 function RemoveTab() {
 	document.getElementById("BlackBackground").remove();
-	document.body.style.overflow = "auto";
+
+	const viewPostBG = document.getElementById('view-black-background');
+
+	if (!viewPostBG) {
+		document.body.style.overflow = "auto";
+	}
 }
 
 //OptionButton displays and indisplays the options inside the option button from the posts.

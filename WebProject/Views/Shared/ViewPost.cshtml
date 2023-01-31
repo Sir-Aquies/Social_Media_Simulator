@@ -1,0 +1,12 @@
+﻿@model PostModel
+
+<article class="view-post-container">
+	<article id="view-post-@Model.Id" data-post-container>
+		<partial name="Post" model="Model"></partial>
+
+		@foreach (CommentModel comment in Model.Comments.OrderByDescending(c => c.Likes))
+		{
+			<partial name="Comment" model="comment"></partial>
+		}
+	</article>
+</article>

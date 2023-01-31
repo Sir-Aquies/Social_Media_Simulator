@@ -94,6 +94,12 @@ function AddCommentToPost(commentString) {
     const commentSpan = document.getElementById(`Comments-${newComment.dataset.postid}`);
     let commentAmount = parseInt(commentSpan.innerHTML);
     commentSpan.innerHTML = `${++commentAmount}`;
+
+    const viewPost = document.getElementById(`view-post-${newComment.dataset.postid}`);
+
+    if (viewPostBG) {
+        viewPostBG.insertBefore(newComment, viewPostBG.children[1]);
+    }
 }
 
 function RemoveCommentFromPost(postId, commentId) {

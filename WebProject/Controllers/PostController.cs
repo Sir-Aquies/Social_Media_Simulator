@@ -5,6 +5,7 @@ using WebProject.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.VisualBasic;
 
 namespace WebProject.Controllers
 {
@@ -20,6 +21,22 @@ namespace WebProject.Controllers
 			_UserManager = manager;
 		}
 
+		public async Task<IActionResult> ViewPost(int postId)
+		{
+			PostModel post = await _Models.Posts.FromSqlRaw("SELECT * FROM Posts WHERE Id = {0}", postId).AsNoTracking().FirstOrDefaultAsync();
+
+			if (post == null) 
+				return NotFound("Error, post was not found.");
+
+			post.UsersLikes = await GetPostLikesSelective(postId);
+			post.Comments = await LoadComments(post);
+			post.User = await _Models.Users
+				.Select(u => new UserModel { Id = u.Id, UserName = u.UserName, ProfilePicture = u.ProfilePicture })
+				.Where(u => u.Id == post.UserId).AsNoTracking().FirstOrDefaultAsync();
+
+			return PartialView("ViewPost", post);
+		}
+
 		public IActionResult LookForCreatePost() => PartialView("CreatePost");
 
 		[HttpPost]
@@ -27,6 +44,9 @@ namespace WebProject.Controllers
 		public async Task<IActionResult> CreatePost(IFormFile Media, string Content)
 		{
 			UserModel loggedUser = await _UserManager.GetUserAsync(HttpContext.User);
+
+			if (loggedUser == null)
+				return Unauthorized("User is null");
 
 			PostModel newPost = new();
 
@@ -46,6 +66,10 @@ namespace WebProject.Controllers
 				newPost.UserId = loggedUser.Id;
 				_Models.Posts.Add(newPost);
 				await _Models.SaveChangesAsync();
+			}
+			else
+			{
+				return BadRequest("Post could not be created");
 			}
 
 			//Initiate lists so they are not null.

@@ -13,7 +13,7 @@
 				}
 			},
 			error: function (details) {
-
+				Message(details.responseText);
 			}
 		}
 	);
@@ -34,13 +34,13 @@ function LoadUsersWithMostPosts() {
 				}
 			},
 			error: function (details) {
-
+				Message(details.responseText);
 			}
 		}
 	);
 }
 
-window.onload = function () {
+window.addEventListener('load', function () {
 	LoadUsersWithMostLikes();
 	LoadUsersWithMostPosts()
-}
+})

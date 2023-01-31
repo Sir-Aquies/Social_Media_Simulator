@@ -44,10 +44,6 @@ function DeleteComment(commentId, postId, input) {
 		$.post("/Post/DeleteComment", { __RequestVerificationToken: token, CommentId: commentId }, function (data, status) {
 			//the data variable consist of a boolean return from the action method (true for deleted, false for error).
 			if (status === "success" && data) {
-				//Decrease the amount of comments traveling from the document tree (will change in the future).
-				//const commentAmount = input.parentElement.parentElement.parentElement.parentElement.parentElement.children[2].children[1].children[0];
-				//commentAmount.innerHTML = parseInt(commentAmount.innerHTML) - 1;
-				//Remove the comment container (post-comments).
 				RemoveCommentFromPost(postId, commentId);
 			}
 		});

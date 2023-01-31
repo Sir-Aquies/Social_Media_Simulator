@@ -19,9 +19,9 @@ namespace WebProject.Controllers
 
 		private readonly int inicialAmountPostsToLoad = 10;
 
-		public UserController(WebProjectContext Models, UserManager<UserModel> userManager, ILogger<UserController> logger, ITendency tendency)
+		public UserController(WebProjectContext models, UserManager<UserModel> userManager, ILogger<UserController> logger, ITendency tendency)
 		{
-			_Models = Models;
+			_Models = models;
 			_UserManager = userManager;
 			_Logger = logger;
 			_Tendency = tendency;
@@ -37,8 +37,6 @@ namespace WebProject.Controllers
 			return !string.IsNullOrEmpty(userName) ? RedirectToAction("UserPage", new { userName }) : RedirectToAction("UserPage", new { loggedUser.UserName });
 		}
 
-		//TODO - search bar for posts maybe?.
-		//TODO - add a way to filter post (most/least likes, most/least commentsm, etc).
 		//TODO - delete DynamicUser.
 		//"Home page" that shows all the posts of a user (pageUser).
 		public async Task<IActionResult> UserPage(string userName)
@@ -427,9 +425,9 @@ namespace WebProject.Controllers
 
 		public async Task<IActionResult> AllUsers()
 		{
-			UserModel userModel = await _UserManager.GetUserAsync(HttpContext.User);
+			UserModel loggedUser = await _UserManager.GetUserAsync(HttpContext.User);
 
-			return View(userModel);
+			return View(loggedUser);
 		}
 
 		public async Task<IActionResult> LookUsersByUserName(string userName)

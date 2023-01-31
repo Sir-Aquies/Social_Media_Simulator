@@ -2,7 +2,7 @@
 
 @foreach (PostModel post in Model)
 {
-	<article id="@post.Id" onclick="location = '/@post.User.UserName/hop/@post.Id'" data-post-container>
+	<article id="@post.Id" onclick="ShowCompletePost(@post.Id)" data-post-container>
 		<partial name="Post" model="post"></partial>
 
 		@{
@@ -31,4 +31,6 @@
 			}
 		}
 	</article>
+
+	@*onclick="location = '/@post.User.UserName/hop/@post.Id'"*@
 }

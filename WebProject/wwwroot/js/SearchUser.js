@@ -59,7 +59,6 @@ function ReloadUsers(amountOfUsers) {
 	);
 }
 
-
 window.onload = function () {
 	ReloadUsers(10);
 };
