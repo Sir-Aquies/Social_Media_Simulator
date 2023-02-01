@@ -6,7 +6,7 @@ function CreateCommentTab(postId) {
 				//Create a black background.
 				const background = Background();
 				//Insert CreatePost.cshtml partial view to the background.
-				background.innerHTML = data;
+				background.insertAdjacentHTML('beforeend', data);
 				//Hide the overflow of the document.
 				document.body.style.overflow = "hidden";
 			}
@@ -51,37 +51,18 @@ function DeleteComment(commentId, postId, input) {
 }
 
 //This function gets call when a user likes or dislikes a comment.
-function LikeComment(commentId, button) {
-	//span element that conatins the amount of likes.
-	const likesAmount = button.children[0];
-	//SVG element contain in the like button.
-	const likeSVG = button.children[1];
+function LikeComment(commentId) {
 
 	if (commentId != undefined) {
 		$.post("/Post/LikeComment", { CommentId: commentId }, function (data, status) {
 			if (status === "success") {
 				//the response (data) consist of a string, "+" for like, "-" for dislike and "0" for errors.
-				if (data === "+") {
-					//Increase the amount of likes.
-					let likes = parseInt(likesAmount.innerHTML);
-					likesAmount.innerHTML = ++likes;
-
-					//Add a class to the SVG so it looks liked.
-					likeSVG.className.baseVal = 'like-button liked';
-					button.style.fontWeight = "bold";
-					button.title = "Dislike comment";
+				if (data === "+" || data === "-") {
+					AlterCommentLikes(commentId, data);
 				}
-				else if (data === "-") {
-					//decrease the amount of likes.
-					let likes = parseInt(likesAmount.innerHTML);
-					likesAmount.innerHTML = --likes;
-
-					//Remove the class from the SVG so it looks unliked
-					likeSVG.className.baseVal = 'like-button';
-					button.style.fontWeight = "normal";
-					button.title = "Like comment";
+				else if (data === "0") {
+					Message("Somethig went wrong");
 				}
-
 			}
 		});
 	}

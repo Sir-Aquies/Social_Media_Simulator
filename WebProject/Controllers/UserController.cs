@@ -423,7 +423,7 @@ namespace WebProject.Controllers
 			TempData["TotalComments"] = totalComments.First();
 		}
 
-		public async Task<IActionResult> AllUsers()
+		public async Task<IActionResult> SearchUsers()
 		{
 			UserModel loggedUser = await _UserManager.GetUserAsync(HttpContext.User);
 

@@ -23,6 +23,7 @@ namespace WebProject.Controllers
 
 		public async Task<IActionResult> ViewPost(int postId)
 		{
+			UserModel loggedUser = await _UserManager.GetUserAsync(HttpContext.User);
 			PostModel post = await _Models.Posts.FromSqlRaw("SELECT * FROM Posts WHERE Id = {0}", postId).AsNoTracking().FirstOrDefaultAsync();
 
 			if (post == null) 
@@ -33,6 +34,8 @@ namespace WebProject.Controllers
 			post.User = await _Models.Users
 				.Select(u => new UserModel { Id = u.Id, UserName = u.UserName, ProfilePicture = u.ProfilePicture })
 				.Where(u => u.Id == post.UserId).AsNoTracking().FirstOrDefaultAsync();
+
+			ViewData["loggedUserId"] = loggedUser.Id;
 
 			return PartialView("ViewPost", post);
 		}
@@ -139,7 +142,7 @@ namespace WebProject.Controllers
 
 			postModel.UsersLikes = await GetPostLikesSelective(postModel.Id);
 			postModel.Comments = await LoadComments(postModel);
-			ViewData["UserId"] = loggedUser.Id;
+			ViewData["loggedUserId"] = loggedUser.Id;
 
 			return PartialView("Post", postModel);
 		}

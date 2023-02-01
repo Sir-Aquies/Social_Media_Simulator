@@ -1,15 +1,4 @@
-﻿//Get CreatePost.cshtml partial view (from LookForCreatePost) and display it in a background.
-function CreatePostTab() {
-	$.get("/Post/LookForCreatePost", function (data, status) {
-		if (status === "success") {
-			const background = Background();
-			//Insert the partial view.
-			background.innerHTML = data;
-			document.body.style.overflow = "hidden";
-		}
-	});
-}
-
+﻿//When a post is clicked, it shows the post and all its comments.
 function ShowCompletePost(postId) {
 	if (!postId)
 		return
@@ -24,10 +13,7 @@ function ShowCompletePost(postId) {
 				const tab = document.createElement("div");
 				tab.id = 'view-black-background';
 				tab.className = 'view-post-black-background';
-				tab.addEventListener("dblclick", () => {
-					tab.remove();
-					document.body.style.overflow = "auto";
-				});
+				tab.addEventListener("dblclick", () => { RemoveViewPostTab() });
 				document.body.appendChild(tab);
 
 				tab.innerHTML = data;
@@ -38,6 +24,23 @@ function ShowCompletePost(postId) {
 			}
 		}
 	);
+}
+
+function RemoveViewPostTab() {
+	document.getElementById('view-black-background').remove();
+	document.body.style.overflow = 'auto';
+}
+
+//Get CreatePost.cshtml partial view (from LookForCreatePost) and display it in a background.
+function CreatePostTab() {
+	$.get("/Post/LookForCreatePost", function (data, status) {
+		if (status === "success") {
+			const background = Background();
+			//Insert the partial view.
+			background.insertAdjacentHTML('beforeend', data);
+			document.body.style.overflow = "hidden";
+		}
+	});
 }
 
 //Passes the content and media (if there is) to CreatePost action method who will create the post.
@@ -95,7 +98,7 @@ function EditPostTab(postId, input) {
 					const background = Background();
 
 					//Insert the partial view.
-					background.innerHTML = data;
+					background.insertAdjacentHTML('beforeend', data);
 
 					//Call function in the case the post had a media (picture) if it did not it will return.
 					EditImage();
@@ -176,35 +179,14 @@ function DeletePost(postId, input) {
 }
 
 //Function that handles when a user likes or dislikes a post.
-function LikePost(postId, button) {
-	//Span element with the likes amount.
-	const likesAmount = button.children[0];
-	//SVG element
-	const likeSVG = button.children[1];
+function LikePost(postId) {
 
 	if (postId != undefined) {
 		$.post("/Post/LikePost", { PostId: postId }, function (data, status) {
 			if (status === "success") {
 				//the response (data) consist of a string, "+" for like, "-" for dislike and "0" for errors.
-				if (data === "+") {
-					//Increase the amount of likes.
-					let likes = parseInt(likesAmount.innerHTML);
-					likesAmount.innerHTML = ++likes;
-
-					//Add a class to the SVG so it looks liked and change title.
-					likeSVG.className.baseVal = 'like-button liked';
-					button.style.fontWeight = "bold";
-					button.title = "Dislike post";
-				}
-				else if (data === "-") {
-					//Decrease the amount of likes.
-					let likes = parseInt(likesAmount.innerHTML);
-					likesAmount.innerHTML = --likes;
-
-					//Remove the liked class from the SVG so it looks unliked and change title.
-					likeSVG.className.baseVal = 'like-button';
-					button.style.fontWeight = "normal";
-					button.title = "Like post";
+				if (data === "+" || data === "-") {
+					AlterPostLikes(postId, data);
 				}
 				else if (data === "0") {
 					Message("Somethig went wrong");
@@ -344,8 +326,8 @@ function UnblurImage(cover) {
 function RemoveTab() {
 	document.getElementById("BlackBackground").remove();
 
+	//If the user has the view post tab open do not restore the overflow.
 	const viewPostBG = document.getElementById('view-black-background');
-
 	if (!viewPostBG) {
 		document.body.style.overflow = "auto";
 	}
@@ -394,6 +376,13 @@ function Background() {
 	tab.className = 'black-background';
 	tab.addEventListener("dblclick", () => { RemoveTab() });
 	document.body.appendChild(tab);
+
+	const closeTabButton = document.createElement('img');
+	closeTabButton.src = '/Icons/close-round-icon.svg';
+	closeTabButton.className = 'close-tab-button';
+	closeTabButton.onclick = () => { RemoveTab() }
+
+	tab.appendChild(closeTabButton);
 
 	return tab;
 }

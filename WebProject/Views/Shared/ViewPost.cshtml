@@ -1,7 +1,8 @@
 ﻿@model PostModel
+<img class="close-tab-button" src="~/Icons/close-round-icon.svg" onclick="RemoveViewPostTab()" />
 
 <article class="view-post-container">
-	<article id="view-post-@Model.Id" data-post-container>
+	<article id="view-post-@Model.Id">
 		<partial name="Post" model="Model"></partial>
 
 		@foreach (CommentModel comment in Model.Comments.OrderByDescending(c => c.Likes))

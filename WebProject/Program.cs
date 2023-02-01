@@ -21,7 +21,6 @@ builder.Services.AddSession(options =>
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<WebProjectContext>(options =>
-
 	options.UseSqlServer(builder.Configuration.GetConnectionString("WebProjectContext") ?? 
 	throw new InvalidOperationException("Connection string 'WebProjectContext' not found.")));
 
@@ -63,8 +62,8 @@ using (var scope = app.Services.CreateScope())
 	//RandomUsers randomUsers = new(ClientFactory, UserManager, ServiceFactory);
 	//randomUsers.StartAsync(new CancellationToken());
 
-	//RandomPosts randomPost = new(ClientFactory, ServiceFactory);
-	//randomPost.StartAsync(new CancellationToken());
+	RandomPosts randomPost = new(ClientFactory, ServiceFactory);
+	await randomPost.StartAsync(new CancellationToken());
 
 	//RandomLikes randomLikes = new(ServiceFactory);
 	//randomLikes.StartAsync(new CancellationToken());

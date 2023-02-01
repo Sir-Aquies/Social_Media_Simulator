@@ -56,6 +56,41 @@ function AddRangePost(postsString) {
     }
 }
 
+function AlterPostLikes(postId, action) {
+    const likesAmountSpans = [...document.querySelectorAll(`[data-post-likes-${postId}]`)];
+
+    for (let i = 0; i < likesAmountSpans.length; i++) {
+        //Get the span element and increase/decrease the amount of likes.
+        const likesSpan = likesAmountSpans[i].children[0];
+        let likes = parseInt(likesSpan.innerHTML);
+
+        if (action === '+')
+            likesSpan.innerHTML = ++likes;
+
+        if (action === '-')
+            likesSpan.innerHTML = --likes;
+
+        //Get the svg element and add/delete the class "liked" to it so it looks liked/disliked.
+        const SVGLikes = likesAmountSpans[i].children[1];
+        if (action === '+')
+            SVGLikes.className.baseVal = 'like-button liked';
+
+        if (action === '-')
+            SVGLikes.className.baseVal = 'like-button';
+
+        //Chage the font weight of the button and change its title.
+        if (action === '+') {
+            likesAmountSpans[i].style.fontWeight = 'bold';
+            likesAmountSpans[i].title = 'Dislike post';
+        }
+
+        if (action === '-') {
+            likesAmountSpans[i].style.fontWeight = 'normal';
+            likesAmountSpans[i].title = 'Like post';
+        }
+    }
+}
+
 function RemovePostFromContainer(postId) {
     //Find the post container base on his id and remove it.
     const postContainer = containers.find(p => p.id == `${postId}`);
@@ -78,6 +113,17 @@ function UpdatePostFromContainer(postString) {
 
     //Add the updated post.
     outdatedPostContainer.prepend(updatedPost);
+
+    //If view post tab is open also update the post there.
+    const viewPost = document.getElementById(`view-post-${updatedPost.dataset.id}`);
+    if (viewPost) {
+        //Get the outdated post an remove it.
+        const outdatedPost = viewPost.children[0];
+        outdatedPost.remove();
+
+        //Add the updated post.
+        viewPost.prepend(updatedPost.cloneNode(true));
+    }
 }
 
 function AddCommentToPost(commentString) {
@@ -90,15 +136,54 @@ function AddCommentToPost(commentString) {
     //Insert the new comment right after the post.
     postContainer.insertBefore(newComment, postContainer.children[1]);
 
-    //Get the span element that holds the amount of comments and increase it.
-    const commentSpan = document.getElementById(`Comments-${newComment.dataset.postid}`);
-    let commentAmount = parseInt(commentSpan.innerHTML);
-    commentSpan.innerHTML = `${++commentAmount}`;
+    //Get the spans elements (there can be 2 if view post tab is open) that holds the amount of comments and increase it.
+    const commentsButtons = [...document.querySelectorAll(`[data-post-comments-${newComment.dataset.postid}]`)];
+    for (let i = 0; i < commentsButtons.length; i++) {
+        const commentsAmountSpan = commentsButtons[i].children[0];
+        let amountOfComments = parseInt(commentsAmountSpan.innerHTML);
+        commentsAmountSpan.innerHTML = ++amountOfComments;
+    }
 
+    //If the user has the the view post tab open also add the comment there.
     const viewPost = document.getElementById(`view-post-${newComment.dataset.postid}`);
 
-    if (viewPostBG) {
-        viewPostBG.insertBefore(newComment, viewPostBG.children[1]);
+    if (viewPost) {
+        viewPost.insertBefore(newComment.cloneNode(true), viewPost.children[1]);
+    }
+}
+
+function AlterCommentLikes(commentId, action) {
+    const likesAmountSpans = [...document.querySelectorAll(`[data-comment-likes-${commentId}]`)];
+
+    for (let i = 0; i < likesAmountSpans.length; i++) {
+        //Get the span element and increase/decrease the amount of likes.
+        const likesSpan = likesAmountSpans[i].children[0];
+        let likes = parseInt(likesSpan.innerHTML);
+
+        if (action === '+')
+            likesSpan.innerHTML = ++likes;
+
+        if (action === '-')
+            likesSpan.innerHTML = --likes;
+
+        //Get the svg element and add/delete the class "liked" to it so it looks liked/disliked.
+        const SVGLikes = likesAmountSpans[i].children[1];
+        if (action === '+')
+            SVGLikes.className.baseVal = 'like-button liked';
+
+        if (action === '-')
+            SVGLikes.className.baseVal = 'like-button';
+
+        //Chage the font weight of the button and change its title.
+        if (action === '+') {
+            likesAmountSpans[i].style.fontWeight = 'bold';
+            likesAmountSpans[i].title = 'Disliked comment';
+        }
+
+        if (action === '-') {
+            likesAmountSpans[i].style.fontWeight = 'normal';
+            likesAmountSpans[i].title = 'Like comment';
+        }
     }
 }
 
@@ -113,10 +198,23 @@ function RemoveCommentFromPost(postId, commentId) {
         }
     }
 
-    //Get the span element that holds the amount of comments and decrease it.
-    const commentSpan = document.getElementById(`Comments-${postId}`);
-    let commentAmount = parseInt(commentSpan.innerHTML);
-    commentSpan.innerHTML = `${--commentAmount}`;
+    //Get the spans elements (there can be 2 if view post tab is open) that hold the amount of comments and decrease it.
+    const commentsButtons = [...document.querySelectorAll(`[data-post-comments-${postId}]`)];
+    for (let i = 0; i < commentsButtons.length; i++) {
+        const commentsAmountSpan = commentsButtons[i].children[0];
+        let amountOfComments = parseInt(commentsAmountSpan.innerHTML);
+        commentsAmountSpan.innerHTML = --amountOfComments;
+    }
+
+    //If view post tab is open also remove the comment from there.
+    const viewPost = document.getElementById(`view-post-${postId}`);
+    if (viewPost) {
+        for (let i = 0; i < viewPost.children.length; i++) {
+            if (parseInt(viewPost.children[i].dataset.id) === commentId) {
+                viewPost.children[i].remove();
+            }
+        }
+    }
 }
 
 //This function converts a string in to a DOM and returns the element.
