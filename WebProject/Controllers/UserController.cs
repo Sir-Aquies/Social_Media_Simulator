@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using WebProject.Services;
+using Microsoft.Extensions.Hosting;
 
 namespace WebProject.Controllers
 {
@@ -18,6 +19,7 @@ namespace WebProject.Controllers
 		private readonly ITendency _Tendency;
 
 		private readonly int inicialAmountPostsToLoad = 10;
+		private readonly int showCommentsPerPost = 3;
 
 		public UserController(WebProjectContext models, UserManager<UserModel> userManager, ILogger<UserController> logger, ITendency tendency)
 		{
@@ -136,8 +138,8 @@ namespace WebProject.Controllers
 
 			//Pass info to the partial view.
 			//Amount of comments to load for each post.
-			ViewData["commentsAmount"] = 3;
-			ViewData["UserId"] = loggedUser.Id;
+			ViewData["commentsAmount"] = showCommentsPerPost;
+			ViewData["LoggedUserId"] = loggedUser.Id;
 			ViewBag.blur = loggedUser.ShowImages ? "1" : "0";
 
 			return PartialView("PostList", posts);
@@ -176,9 +178,8 @@ namespace WebProject.Controllers
 			return View(new DynamicUser { User = loggedUser, PageUser = pageUser });
 		}
 
-		//TODO - think where to put the liked comments.
 		//Loads and shows all the posts the page user has liked.
-		public async Task<IActionResult> LikedPosts(string userName)
+		public async Task<IActionResult> LikedPostsAndComments(string userName)
 		{
 			UserModel loggedUser = await _UserManager.GetUserAsync(HttpContext.User);
 
@@ -194,10 +195,11 @@ namespace WebProject.Controllers
 				return View("UserPage", new DynamicUser { User = loggedUser, PageUser = pageUser });
 			}
 
-			//Load the first posts with the comments from the database, from 0 to inicialAmountPostsToLoad.
+			//Load the first posts with the comments from the databas (from 0 to inicialAmountPostsToLoad).
 			pageUser.LikedPost = await GetLikedPost(pageUser.Id, 0, inicialAmountPostsToLoad);
 			//Use to pass the number to a javascript method.
-			ViewData["startFromPost"] = inicialAmountPostsToLoad.ToString();
+			ViewData["startFromPost"] = inicialAmountPostsToLoad;
+			ViewData["inicialAmountPostsToLoad"] = inicialAmountPostsToLoad;
 
 			await LoadPageUserStats(pageUser.Id);
 
@@ -209,7 +211,7 @@ namespace WebProject.Controllers
 			List<PostModel> posts = await _Models.Posts
 				.FromSqlRaw("SELECT * FROM Posts WHERE Id IN " +
 				"(SELECT PostId FROM PostLikes WHERE UserId = {0}) " +
-				"ORDER BY PostDate DESC OFFSET {1} ROWS FETCH NEXT {2} ROWS ONLY", userId, startFromRow, amountOfRows)
+				"ORDER BY Id DESC OFFSET {1} ROWS FETCH NEXT {2} ROWS ONLY", userId, startFromRow, amountOfRows)
 				.AsNoTracking().ToListAsync();
 
 			foreach (PostModel post in posts)
@@ -227,7 +229,7 @@ namespace WebProject.Controllers
 		public async Task<IActionResult> LoadMorePostsLikes(string userId, int startFromRow, int amountOfRows)
 		{
 			List<PostModel> posts = await GetLikedPost(userId, startFromRow, amountOfRows);
-			UserModel logedUser = await _UserManager.GetUserAsync(HttpContext.User);
+			UserModel loggedUser = await _UserManager.GetUserAsync(HttpContext.User);
 
 			if (posts == null)
 				return NotFound("Posts not found.");
@@ -239,9 +241,62 @@ namespace WebProject.Controllers
 
 			//Pass info to the partial view.
 			//Amount of comments to load for each post.
-			ViewData["commentsAmount"] = 3;
-			ViewData["UserId"] = logedUser.Id;
-			ViewBag.blur = logedUser.ShowImages ? "1" : "0";
+			ViewData["commentsAmount"] = showCommentsPerPost;
+			ViewData["LoggedUserId"] = loggedUser.Id;
+			ViewBag.blur = loggedUser.ShowImages ? "1" : "0";
+
+			return PartialView("PostList", posts);
+		}
+
+		private async Task<List<PostModel>> GetLikedCommentsPost(string userId, int startFromRow, int amountOfRows)
+		{
+			List<PostModel> posts = new();
+
+			List<CommentModel> comments = await _Models.Comments
+				.FromSqlRaw("SELECT * FROM Comments WHERE Id IN " +
+				"(SELECT CommentId FROM CommentLikes WHERE UserId = {0}) " +
+				"ORDER BY Id DESC OFFSET {1} ROWS FETCH NEXT {2} ROWS ONLY;", userId, startFromRow, amountOfRows)
+				.AsNoTracking().ToListAsync();
+
+			foreach (CommentModel comment in comments)
+			{
+				comment.UsersLikes = await GetCommentLikesSelective(comment.Id);
+				comment.User = await _Models.Users
+				.Select(u => new UserModel { Id = u.Id, UserName = u.UserName, ProfilePicture = u.ProfilePicture })
+				.Where(u => u.Id == comment.UserId).AsNoTracking().FirstOrDefaultAsync();
+
+				comment.Post = await _Models.Posts.FromSqlRaw("SELECT * FROM Posts WHERE Id = {0}", comment.PostId).AsNoTracking().FirstOrDefaultAsync();
+				comment.Post.User = await _Models.Users
+					.Select(u => new UserModel { Id = u.Id, UserName = u.UserName, ProfilePicture = u.ProfilePicture })
+					.Where(u => u.Id == comment.Post.UserId).AsNoTracking().FirstOrDefaultAsync();
+				comment.Post.UsersLikes = await GetPostLikesSelective(comment.Post.Id);
+				comment.Post.Comments = new List<CommentModel>() { comment };
+
+				posts.Add(comment.Post);
+			}
+
+			return posts;
+		}
+
+		public async Task<IActionResult> LoadMoreLikedComments(string userId, int startFromRow, int amountOfRows)
+		{
+			UserModel loggedUser = await _UserManager.GetUserAsync(HttpContext.User);
+
+			List<PostModel> posts = await GetLikedCommentsPost(userId, startFromRow, amountOfRows);
+
+			if (posts == null)
+				return NotFound("Posts not found.");
+
+			if (posts.Count == 0)
+			{
+				return NoContent();
+			}
+
+			//Pass info to the partial view.
+			//Amount of comments to load for each post.
+			ViewData["commentsAmount"] = showCommentsPerPost;
+			ViewData["LoggedUserId"] = loggedUser.Id;
+			ViewBag.blur = loggedUser.ShowImages ? "1" : "0";
 
 			return PartialView("PostList", posts);
 		}
@@ -345,14 +400,14 @@ namespace WebProject.Controllers
 
 			//Pass info to the partial view.
 			//Amount of comments to load for each post.
-			ViewData["commentsAmount"] = 3;
+			ViewData["commentsAmount"] = showCommentsPerPost;
 			ViewData["LoggedUserId"] = loggedUser.Id;
 			ViewBag.blur = loggedUser.ShowImages ? "1" : "0";
 
 			return PartialView("PostList", posts);
 		}
 
-		//Loads the comments for a single post.
+		//Loads the comments with its likes and user for a single post.
 		private async Task<List<CommentModel>> LoadComments(PostModel post)
 		{
 			List<CommentModel> comments = await _Models.Comments

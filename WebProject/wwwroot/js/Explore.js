@@ -16,13 +16,57 @@
 
 let loadingRandomPosts = false;
 
-function SetScrollEventExplore() {
-	window.addEventListener('scroll', function () {
+function SetScrollEventExplore(startFrom, PostLoader) {
+	let startFromRow = parseInt(startFrom);
+
+	window.onscroll = function () {
 		if (this.window.scrollY > (mainContainer.clientHeight * (80 / 100)) && !loadingRandomPosts) {
 			loadingRandomPosts = true;
-			LoadMoreRandomPosts();
+			PostLoader(startFromRow);
+			startFromRow += 5;
 		}
-	});
+	}
+}
+
+function SwitchToTopPosts(inialAmountToLoad) {
+	$.ajax(
+		{
+			type: "GET",
+			url: "/Explore/LoadTopPosts",
+			data: { startFromRow: 0 },
+			success: function (data) {
+				EmptyMainContainer();
+				AddRangePost(data);
+
+				SetScrollEventExplore(inialAmountToLoad, LoadMoreTopPosts);
+
+				loadingRandomPosts = false;
+			},
+			error: function (details) {
+				Message(details.responseText)
+			}
+		}
+	);
+}
+
+function LoadMoreTopPosts(startFromRow) {
+	if (!startFromRow)
+		return;
+
+	$.ajax(
+		{
+			type: "GET",
+			url: "/Explore/LoadTopPosts",
+			data: { startFromRow },
+			success: function (data) {
+				AddRangePost(data);
+				loadingRandomPosts = false;
+			},
+			error: function (details) {
+				Message(details.responseText)
+			}
+		}
+	);
 }
 
 function ReloadUsersInLeftBox(amountOfUsers) {
@@ -46,6 +90,7 @@ function ReloadUsersInLeftBox(amountOfUsers) {
 }
 
 window.addEventListener('load', function () {
-	SetScrollEventExplore();
+	SetScrollEventExplore(LoadMoreRandomPosts);
 	ReloadUsersInLeftBox(6);
 })
+

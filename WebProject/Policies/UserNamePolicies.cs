@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using WebProject.Models;
+#nullable disable
 
 namespace WebProject.Policies
 {
 	public class UserNamePolicies : UserValidator<UserModel>
 	{
-		public override async Task<IdentityResult> ValidateAsync(UserManager<UserModel> userManager, UserModel userModel)
+		public override Task<IdentityResult> ValidateAsync(UserManager<UserModel> userManager, UserModel userModel)
 		{
 			//IdentityResult result = await base.ValidateAsync(userManager, userModel);
 			List<IdentityError> errors = new List<IdentityError>();
@@ -18,7 +19,7 @@ namespace WebProject.Policies
 				});
 			}
 
-			return errors.Count == 0 ? IdentityResult.Success : IdentityResult.Failed(errors.ToArray());
+			return Task.FromResult(errors.Count == 0 ? IdentityResult.Success : IdentityResult.Failed(errors.ToArray()));
 		}
 	}
 }

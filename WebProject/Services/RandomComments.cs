@@ -24,9 +24,9 @@ namespace WebProject.Services
 		{
 			using (var scope = _serviceScopeFactory.CreateScope())
 			{
-				var _webProjectContext = scope.ServiceProvider.GetRequiredService<WebProjectContext>();
+				var _Models = scope.ServiceProvider.GetRequiredService<WebProjectContext>();
 
-				if (await _webProjectContext.Comments.AsNoTracking().CountAsync() <= 5)
+				if (await _Models.Comments.AsNoTracking().CountAsync() < 0)
 				{
 					for (int i = 0; i < 100; i++)
 					{
@@ -47,19 +47,18 @@ namespace WebProject.Services
 			List<CommentModel> comments = new();
 			Random rnd = new();
 
-			int apiToChosse = rnd.Next(3);
-
-			if (apiToChosse == 0)
+			switch (rnd.Next(3))
 			{
-				comments = await HipsterTextAsync();
-			}
-			else if (apiToChosse == 1)
-			{
-				comments.Add(await FavQuoteAsync());
-			}
-			else if (apiToChosse == 2)
-			{
-				comments = await LoremIpsumAsync();
+				case 0:
+					comments = await HipsterTextAsync();
+					break;
+				case 1:
+					//Only returns one comment.
+					comments.Add(await FavQuoteAsync());
+					break;
+				case 2:
+					comments = await LoremIpsumAsync();
+					break;
 			}
 
 			if (comments.Count <= 0)
@@ -72,12 +71,15 @@ namespace WebProject.Services
 
 		private async Task AddCommentsToRandomPosts(List<CommentModel> comments)
 		{
-			List<int> postsIds = await GetRandomPostIds(comments.Count);
-			List<string> usersIds = await GetRandomUserIds(comments.Count);
-
 			using (var scope = _serviceScopeFactory.CreateScope())
 			{
-				var _webProjectContext = scope.ServiceProvider.GetRequiredService<WebProjectContext>();
+				var _Models = scope.ServiceProvider.GetRequiredService<WebProjectContext>();
+
+				List<int> postsIds = await _Models.Database
+					.SqlQueryRaw<int>($"SELECT TOP {comments.Count} Id FROM Posts ORDER BY NEWID();").ToListAsync();
+
+				List<string> usersIds = await _Models.Database
+					.SqlQueryRaw<string>($"SELECT TOP {comments.Count} Id FROM AspNetUsers WHERE ProfilePicture LIKE 'https%' ORDER BY NEWID();").AsNoTracking().ToListAsync();
 
 				List<CommentModel> commentsToAdd = new();
 
@@ -89,64 +91,13 @@ namespace WebProject.Services
 					commentsToAdd.Add(comments[i]);
 				}
 
-				await _webProjectContext.Comments.AddRangeAsync(commentsToAdd);
-				await _webProjectContext.SaveChangesAsync();
+				_Models.Comments.AddRange(commentsToAdd);
+				await _Models.SaveChangesAsync();
 			}
-		}
-
-		private async Task<List<string>> GetRandomUserIds(int amount)
-		{
-			List<string> output = new();
-			Random index = new();
-
-			using (var scope = _serviceScopeFactory.CreateScope())
-			{
-				var _userManager = scope.ServiceProvider.GetRequiredService<UserManager<UserModel>>();
-
-				List<UserModel> users = await _userManager.Users.AsNoTracking().Where(u => u.ProfilePicture.StartsWith("https")).ToListAsync();
-
-				if (amount > users.Count)
-				{
-					return output;
-				}
-
-				for (int i = 0; i < amount; i++)
-				{
-					output.Add(users[index.Next(users.Count)].Id);
-				}
-			}
-
-			return output;
-		}
-
-		private async Task<List<int>> GetRandomPostIds(int amount)
-		{
-			List<int> output = new();
-			Random index = new();
-
-			using (var scope = _serviceScopeFactory.CreateScope())
-			{
-				var _webProjectContext = scope.ServiceProvider.GetRequiredService<WebProjectContext>();
-
-				List<PostModel> posts = await _webProjectContext.Posts.AsNoTracking().ToListAsync();
-
-				if (amount > posts.Count)
-				{
-					return output;
-				}
-
-				for (int i = 0; i < amount; i++)
-				{
-					output.Add(posts[index.Next(posts.Count)].Id);
-				}
-			}
-
-			return output;
 		}
 
 		private async Task<List<CommentModel>> HipsterTextAsync()
 		{
-			List<CommentModel> output = new();
 			HttpClient httpClient = _httpClientFactory.CreateClient(); 
 
 			HttpResponseMessage response = await httpClient.GetAsync("https://random-data-api.com/api/hipster/random_hipster_stuff");
@@ -156,6 +107,7 @@ namespace WebProject.Services
 
 			HipsterText hipsterText = JsonConvert.DeserializeObject<HipsterText>(apiResponse);
 
+			List<CommentModel> output = new();
 			foreach (string content in hipsterText.paragraphs)
 			{
 				CommentModel post = new()
@@ -173,34 +125,32 @@ namespace WebProject.Services
 		private async Task<CommentModel> FavQuoteAsync()
 		{
 			HttpClient httpClient = _httpClientFactory.CreateClient();
-			CommentModel output = new();
 
 			HttpResponseMessage response = await httpClient.GetAsync("https://favqs.com/api/qotd");
 			response.EnsureSuccessStatusCode();
 
 			string apiResponse = await response.Content.ReadAsStringAsync();
 
-			FavQuote favQuote = JsonConvert.DeserializeObject<FavQuote>(apiResponse);
-
-			output.Content = favQuote.quote.body;
-			output.Date = DateTime.Now;
-
-			return output;
+			return new CommentModel()
+			{
+				Content = JsonConvert.DeserializeObject<FavQuote>(apiResponse).quote.body,
+				Date = DateTime.Now
+			};
 		}
 
 		private async Task<List<CommentModel>> LoremIpsumAsync()
 		{
 			HttpClient httpClient = _httpClientFactory.CreateClient();
-			List<CommentModel> output = new();
-
 			HttpResponseMessage response = await httpClient.GetAsync("https://random-data-api.com/api/lorem_ipsum/random_lorem_ipsum");
 			response.EnsureSuccessStatusCode();
 
 			string apiResponse = await response.Content.ReadAsStringAsync();
-
 			LoremIpsum loremIpsum = JsonConvert.DeserializeObject<LoremIpsum>(apiResponse);
 
-			output.Add(new CommentModel() { Content = loremIpsum.very_long_sentence, Date = DateTime.Now });
+			List<CommentModel> output = new()
+			{
+				new CommentModel() { Content = loremIpsum.very_long_sentence, Date = DateTime.Now }
+			};
 
 			Random paragrapsToTake = new();
 

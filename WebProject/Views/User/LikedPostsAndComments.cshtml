@@ -13,6 +13,7 @@
 <link rel="stylesheet" href="~/css/PostForms.css" asp-append-version="true" />
 
 <style>
+	#switch-post-tab,
 	#pageuser-likes {
 		border-bottom: 3px solid var(--BorderColor);
 	}
@@ -27,6 +28,11 @@
 		@if (Model.PageUser != null)
 		{
 			<partial name="PageUserNav"></partial>
+
+			<nav class="nav-likes-page">
+				<span id="switch-post-tab" onclick="SwitchToPosts('@Model.PageUser.Id', '@ViewData["inicialAmountPostsToLoad"]')">Posts</span>
+				<span id="switch-comment-tab" onclick="SwitchToComments('@Model.PageUser.Id', '@ViewData["inicialAmountPostsToLoad"]')">Comments</span>
+			</nav>
 
 			<partial name="PostList" model="Model.PageUser.LikedPost"></partial>
 		}

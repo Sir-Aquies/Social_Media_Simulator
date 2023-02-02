@@ -24,112 +24,69 @@ namespace WebProject.Services
 		{
 			while (await _likeTimer.WaitForNextTickAsync(stoppingToken) && !stoppingToken.IsCancellationRequested)
 			{
-				await GiveRandomPostLike(3);
-				await GiveRandomCommentLike(3);
+				await LikeRandomPosts(3);
+				await LikeRandomComments(3);
 			}
 		}
 
 		//TODO - add followers.
 		//TODO - add a responsive top bar.
-		private async Task GiveRandomPostLike(int count)
+		private async Task LikeRandomPosts(int count)
 		{
-			Random index = new();
-
 			using (var scope = _serviceScopeFactory.CreateScope())
 			{
-				var userManager = scope.ServiceProvider.GetRequiredService<UserManager<UserModel>>();
-				var _webProjectContext = scope.ServiceProvider.GetRequiredService<WebProjectContext>();
+				var _Models = scope.ServiceProvider.GetRequiredService<WebProjectContext>();
 
-				List<UserModel> users = await userManager.Users.AsNoTracking().Where(u => u.ProfilePicture.StartsWith("https")).ToListAsync();
-				List<PostModel> posts = await _webProjectContext.Posts.AsNoTracking().ToListAsync();
+				List<string> userIds = await _Models.Database
+					.SqlQueryRaw<string>($"SELECT TOP {count} Id FROM AspNetUsers WHERE ProfilePicture LIKE 'https%' ORDER BY NEWID();")
+					.AsNoTracking().ToListAsync();
 
-				List<string> userIds = new();
-
-				for (int i = 0; i < count; i++)
-				{
-					userIds.Add(users[index.Next(users.Count)].Id);
-				}
-
-
-				List<int> postIds = new();
+				List<int> postIds = await _Models.Database
+					.SqlQueryRaw<int>($"SELECT TOP {count} Id FROM Posts ORDER BY NEWID();").ToListAsync();
 
 				for (int i = 0; i < count; i++)
 				{
-					postIds.Add(posts[index.Next(posts.Count)].Id);
-				}
+					List<int> rowExists = await _Models.Database
+						.SqlQueryRaw<int>("SELECT PostId FROM PostLikes WHERE PostId = {0} AND UserId = {1};", postIds[i], userIds[i]).ToListAsync();
 
-				for (int i = 0; i < count; i++)
-				{
-					UserModel user = await userManager.Users.FirstOrDefaultAsync(u => u.Id == userIds[i]);
-					PostModel post = await _webProjectContext.Posts.Include(p => p.UsersLikes).FirstOrDefaultAsync(p => p.Id == postIds[i]);
+					if (rowExists.Count == 0) {
+						int affectedRows = await _Models.Database.ExecuteSqlRawAsync("UPDATE Posts SET Likes = Likes + 1 WHERE Id = {0};", postIds[i]);
 
-					bool alreadyLiked = false;
-
-					foreach (UserModel u in post.UsersLikes)
-					{
-						if (u.Id == user.Id)
-						{
-							alreadyLiked = true;
-							break;
-						}
-					}
-
-					if (!alreadyLiked)
-					{
-						post.Likes++;
-						post.UsersLikes.Add(user);
+						if (affectedRows == 1)
+							await _Models.Database
+								.ExecuteSqlRawAsync("INSERT INTO PostLikes (PostId, UserId) VALUES ({0}, {1});", postIds[i], userIds[i]);
 					}
 				}
-
-				await _webProjectContext.SaveChangesAsync();
 			}
 		}
 
-		private async Task GiveRandomCommentLike(int count)
+		private async Task LikeRandomComments(int count)
 		{
-			Random index = new();
-
 			using (var scope = _serviceScopeFactory.CreateScope())
 			{
-				var userManager = scope.ServiceProvider.GetRequiredService<UserManager<UserModel>>();
-				var _webProjectContext = scope.ServiceProvider.GetRequiredService<WebProjectContext>();
+				var _Models = scope.ServiceProvider.GetRequiredService<WebProjectContext>();
 
-				List<UserModel> users = await userManager.Users.AsNoTracking().Where(u => u.ProfilePicture.StartsWith("https")).ToListAsync();
-				List<CommentModel> comments = await _webProjectContext.Comments.AsNoTracking().ToListAsync();
+				List<string> userIds = await _Models.Database
+					.SqlQueryRaw<string>($"SELECT TOP {count} Id FROM AspNetUsers WHERE ProfilePicture LIKE 'https%' ORDER BY NEWID();")
+					.AsNoTracking().ToListAsync();
 
-				List<string> userIds = new();
-				List<int> commentIds = new();
-
-				for (int i = 0; i < count; i++)
-				{
-					userIds.Add(users[index.Next(users.Count)].Id);
-					commentIds.Add(comments[index.Next(comments.Count)].Id);
-				}
+				List<int> commentIds = await _Models.Database
+					.SqlQueryRaw<int>($"SELECT TOP {count} Id FROM Comments ORDER BY NEWID();").ToListAsync();
 
 				for (int i = 0; i < count; i++)
 				{
-					UserModel user = await userManager.Users.FirstOrDefaultAsync(u => u.Id == userIds[i]);
-					CommentModel comment = await _webProjectContext.Comments.Include(c => c.UsersLikes).FirstOrDefaultAsync(p => p.Id == commentIds[i]);
+					List<int> rowExists = await _Models.Database
+						.SqlQueryRaw<int>("SELECT CommentId FROM CommentLikes WHERE CommentId = {0} AND UserId = {1};", commentIds[i], userIds[i]).ToListAsync();
 
-					bool alreadyLiked = false;
-
-					foreach (UserModel u in comment.UsersLikes)
+					if (rowExists.Count == 0)
 					{
-						if (u.Id == user.Id)
-						{
-							alreadyLiked = true;
-							break;
-						}
-					}
+						int affectedRows = await _Models.Database.ExecuteSqlRawAsync("UPDATE CommentLikes SET Likes = Likes + 1 WHERE Id = {0};", commentIds[i]);
 
-					if (!alreadyLiked)
-					{
-						comment.Likes++;
-						comment.UsersLikes.Add(user);
+						if (affectedRows == 1)
+							await _Models.Database
+								.ExecuteSqlRawAsync("INSERT INTO CommentLikes (CommentId, UserId) VALUES ({0}, {1});", commentIds[i], userIds[i]);
 					}
 				}
-
-				await _webProjectContext.SaveChangesAsync();
 			}
 		}
 	}

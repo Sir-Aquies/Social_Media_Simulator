@@ -19,6 +19,12 @@
 	</section>
 
 	<section class="center-box" id="UserPostContainer">
+		<nav class="explore-navigation-bar">
+			<span onclick="SwitchToTopPosts('@ViewData["inicialAmountPostsToLoad"]')">Top posts</span>
+			<span onclick="SwitchToRecentPosts('@ViewData["inicialAmountPostsToLoad"]')">Recent posts</span>
+			<span onclick="SwitchToOldestPosts('@ViewData["inicialAmountPostsToLoad"]')">Oldest posts</span>
+		</nav>
+
 		@if (Model != null)
 		{
 			<partial name="PostList" model="Model.Posts"></partial>

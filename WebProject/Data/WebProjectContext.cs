@@ -33,7 +33,7 @@ namespace WebProject.Data
 				entity.Property(p => p.EditedDate)
 					.HasColumnType("datetime2")
 					.HasDefaultValueSql("getdate()");
-
+				//TODO - remove default value.
 				entity.HasOne(p => p.User).WithMany(u => u.Posts).HasForeignKey(p => p.UserId).OnDelete(DeleteBehavior.Cascade);
 
 				entity.HasMany(p => p.UsersLikes).WithMany(u => u.LikedPost).UsingEntity<Dictionary<string, object>>(

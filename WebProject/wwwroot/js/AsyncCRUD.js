@@ -12,13 +12,13 @@ function SetScrollEvent(userId, startFrom, PostLoader) {
     let startFromRow = parseInt(startFrom);
     let amountOfRows = 5;
 
-    window.addEventListener('scroll', function () {
+    window.onscroll = function() {
         if (this.window.scrollY > (mainContainer.clientHeight * (70 / 100)) && !loadingPosts) {
             loadingPosts = true;
             PostLoader(userId, startFromRow, amountOfRows);
             startFromRow += amountOfRows;
         }
-    });
+    }
 }
 
 function AddPostToContainer(postString) {
@@ -41,7 +41,7 @@ function AddPostToContainer(postString) {
     postContainer.appendChild(newPost);
 
     //Insert the container after the create post button.
-    mainContainer.insertBefore(postContainer, mainContainer.children[1]);
+    mainContainer.insertBefore(postContainer, mainContainer.children[2]);
 
     //Push the new post and his container to the arrays.
     posts.push(newPost);
@@ -51,7 +51,10 @@ function AddPostToContainer(postString) {
 function AddRangePost(postsString) {
     const newPosts = new DOMParser().parseFromString(postsString, 'text/html').all[2].children;
     let length = newPosts.length;
+
     for (let i = 0; i < length; i++) {
+        //Append post to the main container (center-box class) and push it in the containers array.
+        containers.push(newPosts[0]);
         mainContainer.append(newPosts[0]);
     }
 }
@@ -95,6 +98,10 @@ function RemovePostFromContainer(postId) {
     //Find the post container base on his id and remove it.
     const postContainer = containers.find(p => p.id == `${postId}`);
     postContainer.remove();
+
+    //Get the index an remove it from containers;
+    let index = containers.findIndex(p => p.id == `${postId}`);
+    containers.splice(index, 1);
 
     //Function only defined in CompletePost that redirects the user to his page.
     RedirectToUserPage();
@@ -215,6 +222,16 @@ function RemoveCommentFromPost(postId, commentId) {
             }
         }
     }
+}
+
+function EmptyMainContainer() {
+    let length = containers.length;
+
+    for (let i = 0; i < length; i++) {
+        containers[i].remove();
+    }
+
+    containers.splice(0, containers.length)
 }
 
 //This function converts a string in to a DOM and returns the element.

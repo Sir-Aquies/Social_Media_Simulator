@@ -8,7 +8,6 @@ using WebProject.Policies;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton<ITendency, Tendency>();
-builder.Services.AddScoped<Explore>();
 
 builder.Services.AddSession(options =>
 {
@@ -60,16 +59,16 @@ using (var scope = app.Services.CreateScope())
 	await tendency.UpdateStats(context);
 
 	//RandomUsers randomUsers = new(ClientFactory, UserManager, ServiceFactory);
-	//randomUsers.StartAsync(new CancellationToken());
+	//await randomUsers.StartAsync(new CancellationToken());
 
-	RandomPosts randomPost = new(ClientFactory, ServiceFactory);
-	await randomPost.StartAsync(new CancellationToken());
+	//RandomPosts randomPost = new(ClientFactory, ServiceFactory);
+	//await randomPost.StartAsync(new CancellationToken());
 
 	//RandomLikes randomLikes = new(ServiceFactory);
-	//randomLikes.StartAsync(new CancellationToken());
+	//await randomLikes.StartAsync(new CancellationToken());
 
 	//RandomComments randomComments = new(ServiceFactory, ClientFactory);
-	//randomComments.StartAsync(new CancellationToken());
+	//await randomComments.StartAsync(new CancellationToken());
 }
 
 app.UseHttpsRedirection();
@@ -85,7 +84,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
 	name: "Likes", 
 	pattern: "{userName}/Likes",
-	defaults: new { controller = "User", action = "LikedPosts" });
+	defaults: new { controller = "User", action = "LikedPostsAndComments" });
 
 app.MapControllerRoute(
 	name: "Comments",

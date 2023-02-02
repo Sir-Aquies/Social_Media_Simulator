@@ -4,12 +4,12 @@
 		@if (Model.PageUser.ProfilePicture != null)
 		{
 			<img class="user-pic" 
-			src="@(Model.PageUser.ProfilePicture.StartsWith("https") ? "" : "data:image/png;base64,")@Model.PageUser.ProfilePicture" 
-			alt="@Model.PageUser.UserName picture" />
+			src="@(Model.PageUser.ProfilePicture.StartsWith("https") ? "" : "data:image/png;base64,")@Model.PageUser.ProfilePicture"
+		 alt="@Model.PageUser.UserName profile picture" />
 		}
 		else
 		{
-			<img class="user-pic" src="" />
+			<img class="user-pic" src="~/NullProfilePic.png" alt="@Model.PageUser.UserName profile picture" />
 		}
 
 		<div class="user-username">@Model.PageUser?.UserName</div>

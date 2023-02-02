@@ -215,7 +215,7 @@ function LikesTab(postId) {
 }
 
 function LoadMorePosts(userId, startFromRow, amountOfRows) {
-	if (userId === undefined || startFromRow === undefined || amountOfRows === undefined)
+	if (!userId || !startFromRow || !amountOfRows)
 		return;
 
 	$.ajax(
@@ -237,7 +237,7 @@ function LoadMorePosts(userId, startFromRow, amountOfRows) {
 }
 
 function LoadMorePostsMedia(userId, startFromRow, amountOfRows) {
-	if (userId === undefined || startFromRow === undefined || amountOfRows === undefined)
+	if (!userId || !startFromRow || !amountOfRows)
 		return;
 
 	onlyMedia = true;
@@ -261,7 +261,7 @@ function LoadMorePostsMedia(userId, startFromRow, amountOfRows) {
 }
 
 function LoadMorePostsLikes(userId, startFromRow, amountOfRows) {
-	if (userId === undefined || startFromRow === undefined || amountOfRows === undefined)
+	if (!userId || !startFromRow || !amountOfRows)
 		return;
 
 	$.ajax(
@@ -282,8 +282,90 @@ function LoadMorePostsLikes(userId, startFromRow, amountOfRows) {
 	);
 }
 
+function SwitchToPosts(userId, inicialAmountToLoad) {
+	if (!userId || !inicialAmountToLoad)
+		return;
+
+	$.ajax(
+		{
+			type: "GET",
+			url: "/User/LoadMorePostsLikes",
+			data: { userId, startFromRow: 0, amountOfRows: inicialAmountToLoad },
+			success: function (data) {
+				if (data) {
+					//Remove all posts from the main container and add the liked posts.
+					EmptyMainContainer();
+					AddRangePost(data);
+
+					//Change event to load liked post.
+					SetScrollEvent(userId, inicialAmountToLoad, LoadMorePostsLikes);
+
+					//Visual change to indicate the user witch is on.
+					document.getElementById('switch-post-tab').style.borderBottom = '3px solid var(--BorderColor)';
+					document.getElementById('switch-comment-tab').style.borderBottom = 'none';
+				}
+			},
+			error: function (details) {
+				Message(details.responseText);
+			}
+		}
+	);
+}
+
+function SwitchToComments(userId, inicialAmountToLoad) {
+	if (!userId || !inicialAmountToLoad)
+		return;
+
+	$.ajax(
+		{
+			type: "GET",
+			url: "/User/LoadMoreLikedComments",
+			data: { userId, startFromRow: 0, amountOfRows: inicialAmountToLoad },
+			success: function (data) {
+				if (data) {
+					//Remove all the posts from the main container and add the liked comments's posts.
+					EmptyMainContainer();
+					AddRangePost(data);
+
+					//Change event to load liked comments along with its post.
+					SetScrollEvent(userId, inicialAmountToLoad, LoadMoreLikedComments);
+
+					//Visual change to indicate the user witch is on.
+					document.getElementById('switch-post-tab').style.borderBottom = 'none';
+					document.getElementById('switch-comment-tab').style.borderBottom = '3px solid var(--BorderColor)';
+				}
+			},
+			error: function (details) {
+				Message(details.responseText);
+			}
+		}
+	);
+}
+
+function LoadMoreLikedComments(userId, startFromRow, amountOfRows) {
+	if (!userId || !startFromRow || !amountOfRows)
+		return;
+
+	$.ajax(
+		{
+			type: "GET",
+			url: "/User/LoadMoreLikedComments",
+			data: { userId, startFromRow, amountOfRows },
+			success: function (data) {
+				if (data) {
+					AddRangePost(data);
+					loadingPosts = false;
+				}
+			},
+			error: function (details) {
+				Message(details.responseText);
+			}
+		}
+	);
+}
+
 function LoadMorePostsComments(userId, startFromRow, amountOfRows) {
-	if (userId === undefined || startFromRow === undefined || amountOfRows === undefined)
+	if (!userId || !startFromRow || !amountOfRows)
 		return;
 
 	$.ajax(

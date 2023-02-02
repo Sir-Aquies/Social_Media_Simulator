@@ -63,6 +63,8 @@
 	margin-top: 10rem;
 }
 
+.explore-navigation-bar,
+.nav-likes-page,
 .pageuser-navigation-bar {
 	border-top: 1px solid var(--BorderColor);
 	display: flex;
@@ -75,6 +77,18 @@
 .pageuser-navigation-bar a {
 	text-decoration: none;
 	color: inherit;
+	padding: 0 0.5rem;
+}
+
+.explore-navigation-bar span {
+	margin: 0;
+	cursor: pointer;
+	padding: 0 0.5rem;
+}
+
+.nav-likes-page span {
+	margin: 0;
+	cursor: pointer;
 	padding: 0 0.5rem;
 }
 
