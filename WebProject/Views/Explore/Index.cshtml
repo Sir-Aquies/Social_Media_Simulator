@@ -12,6 +12,12 @@
 <link rel="stylesheet" href="~/css/PostContainer.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/PostForms.css" asp-append-version="true" />
 
+<style>
+	#random-post-tab {
+		border-bottom: 3px solid var(--BorderColor);
+	}
+</style>
+
 <section class="box-container">
 	<section class="left-box small-user-list">
 		<p style="margin: 0; text-align: center; font-size: var(--BigTextsize)">Users you might know</p>
@@ -20,9 +26,10 @@
 
 	<section class="center-box" id="UserPostContainer">
 		<nav class="explore-navigation-bar">
-			<span onclick="SwitchToTopPosts('@ViewData["inicialAmountPostsToLoad"]')">Top posts</span>
-			<span onclick="SwitchToRecentPosts('@ViewData["inicialAmountPostsToLoad"]')">Recent posts</span>
-			<span onclick="SwitchToOldestPosts('@ViewData["inicialAmountPostsToLoad"]')">Oldest posts</span>
+			<span id="random-post-tab" onclick="SwitchToTab('@ViewData["inicialAmountPostsToLoad"]', this.id)">Random</span>
+			<span id="top-post-tab" onclick="SwitchToTab('@ViewData["inicialAmountPostsToLoad"]'), this.id">Top</span>
+			<span id="recent-post-tab" onclick="SwitchToTab('@ViewData["inicialAmountPostsToLoad"]', 'recent')">Recent</span>
+			<span id="old-post-tab" onclick="SwitchToTab('@ViewData["inicialAmountPostsToLoad"]', 'old')">Old</span>
 		</nav>
 
 		@if (Model != null)
@@ -50,6 +57,12 @@
 <script src="~/js/AsyncCRUD.js" asp-append-version="true"></script>
 <script src="~/js/PostsScript.js" asp-append-version="true"></script>
 <script src="~/js/CommentsScript.js" asp-append-version="true"></script>
-<script src="~/js/ImagePrev.js" asp-append-version="true"></script>
 <script src="~/js/Tendency.js" asp-append-version="true"></script>
 <script src="~/js/Explore.js" asp-append-version="true"></script>
+
+<script>
+	window.addEventListener('load', function () {
+		SetScrollEventExplore('@ViewData["inicialAmountPostsToLoad"]', LoadMorePostWhenScrolling, LoadMoreRandomPostsMethodName);
+		ReloadUsersInLeftBox(6);
+	})
+</script>

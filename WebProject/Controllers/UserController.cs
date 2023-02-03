@@ -36,7 +36,9 @@ namespace WebProject.Controllers
 		{
 			UserModel loggedUser = await _UserManager.GetUserAsync(HttpContext.User);
 
-			return !string.IsNullOrEmpty(userName) ? RedirectToAction("UserPage", new { userName }) : RedirectToAction("UserPage", new { loggedUser.UserName });
+			return !string.IsNullOrEmpty(userName) ? 
+				RedirectToAction("UserPage", new { userName }) : 
+				RedirectToAction("UserPage", new { loggedUser.UserName });
 		}
 
 		//TODO - delete DynamicUser.
@@ -98,19 +100,15 @@ namespace WebProject.Controllers
 		private async Task<List<PostModel>> GetPosts(UserModel user, int startFromRow, int amountOfRows, bool onlyMedia = false)
 		{
 			//The only different is the "AND Media IS NOT NULL" on the first string.
-			string sql = onlyMedia ? "SELECT * FROM Posts WHERE UserId = {0} AND Media IS NOT NULL ORDER BY PostDate DESC OFFSET {1} ROWS FETCH NEXT {2} ROWS ONLY;"
+			string sql = onlyMedia ? 
+				"SELECT * FROM Posts WHERE UserId = {0} AND Media IS NOT NULL ORDER BY PostDate DESC OFFSET {1} ROWS FETCH NEXT {2} ROWS ONLY;"
 				: "SELECT * FROM Posts WHERE UserId = {0} ORDER BY PostDate DESC OFFSET {1} ROWS FETCH NEXT {2} ROWS ONLY;";
 
-			List<PostModel> posts = await _Models.Posts.FromSqlRaw(sql, user.Id, startFromRow, amountOfRows).AsNoTracking().ToListAsync();
+			List<PostModel> posts = await _Models.Posts
+				.FromSqlRaw(sql, user.Id, startFromRow, amountOfRows)
+				.AsNoTracking().ToListAsync();
 
-			foreach (PostModel post in posts)
-			{
-				//Get the users who liked the post (only the id property)
-				post.UsersLikes = await GetPostLikesSelective(post.Id);
-				//Load the comments
-				post.Comments = await LoadComments(post);
-				post.User = user;
-			}
+			posts = await FillPostsProperties(posts, user);
 
 			return posts;
 		}
@@ -119,7 +117,6 @@ namespace WebProject.Controllers
 		public async Task<IActionResult> LoadMorePosts(string userId, int startFromRow, int amountOfRows, bool onlyMedia = false)
 		{
 			UserModel pageUser = await _UserManager.FindByIdAsync(userId);
-			UserModel loggedUser = await _UserManager.GetUserAsync(HttpContext.User);
 
 			if (pageUser == null)
 				return NotFound("User not found.");
@@ -130,17 +127,12 @@ namespace WebProject.Controllers
 				return NotFound("Posts not found.");
 
 			//If no posts are return from the database.
-			if (posts.Count == 0)
-			{
-				//NoContent stops future calls.
-				return NoContent();
-			}
+			//NoContent stops future calls.
 
-			//Pass info to the partial view.
-			//Amount of comments to load for each post.
-			ViewData["commentsAmount"] = showCommentsPerPost;
-			ViewData["LoggedUserId"] = loggedUser.Id;
-			ViewBag.blur = loggedUser.ShowImages ? "1" : "0";
+			if (posts.Count == 0)
+				return NoContent();
+
+			await LoadPostListInfo();
 
 			return PartialView("PostList", posts);
 		}
@@ -214,14 +206,7 @@ namespace WebProject.Controllers
 				"ORDER BY Id DESC OFFSET {1} ROWS FETCH NEXT {2} ROWS ONLY", userId, startFromRow, amountOfRows)
 				.AsNoTracking().ToListAsync();
 
-			foreach (PostModel post in posts)
-			{
-				post.UsersLikes = await GetPostLikesSelective(post.Id);
-				post.User = await _Models.Users
-				.Select(u => new UserModel { Id = u.Id, UserName = u.UserName, ProfilePicture = u.ProfilePicture })
-				.Where(u => u.Id == post.UserId).AsNoTracking().FirstOrDefaultAsync();
-				post.Comments = await LoadComments(post);
-			}
+			posts = await FillPostsProperties(posts);
 
 			return posts;
 		}
@@ -229,21 +214,14 @@ namespace WebProject.Controllers
 		public async Task<IActionResult> LoadMorePostsLikes(string userId, int startFromRow, int amountOfRows)
 		{
 			List<PostModel> posts = await GetLikedPost(userId, startFromRow, amountOfRows);
-			UserModel loggedUser = await _UserManager.GetUserAsync(HttpContext.User);
 
 			if (posts == null)
 				return NotFound("Posts not found.");
 
 			if (posts.Count == 0)
-			{
 				return NoContent();
-			}
 
-			//Pass info to the partial view.
-			//Amount of comments to load for each post.
-			ViewData["commentsAmount"] = showCommentsPerPost;
-			ViewData["LoggedUserId"] = loggedUser.Id;
-			ViewBag.blur = loggedUser.ShowImages ? "1" : "0";
+			await LoadPostListInfo();
 
 			return PartialView("PostList", posts);
 		}
@@ -280,8 +258,6 @@ namespace WebProject.Controllers
 
 		public async Task<IActionResult> LoadMoreLikedComments(string userId, int startFromRow, int amountOfRows)
 		{
-			UserModel loggedUser = await _UserManager.GetUserAsync(HttpContext.User);
-
 			List<PostModel> posts = await GetLikedCommentsPost(userId, startFromRow, amountOfRows);
 
 			if (posts == null)
@@ -292,11 +268,7 @@ namespace WebProject.Controllers
 				return NoContent();
 			}
 
-			//Pass info to the partial view.
-			//Amount of comments to load for each post.
-			ViewData["commentsAmount"] = showCommentsPerPost;
-			ViewData["LoggedUserId"] = loggedUser.Id;
-			ViewBag.blur = loggedUser.ShowImages ? "1" : "0";
+			await LoadPostListInfo();
 
 			return PartialView("PostList", posts);
 		}
@@ -385,24 +357,17 @@ namespace WebProject.Controllers
 
 		public async Task<IActionResult> LoadMorePostsComments(string userId, int startFromRow, int amountOfRows)
 		{
-			UserModel user = await _UserManager.FindByIdAsync(userId);
-			UserModel loggedUser = await _UserManager.GetUserAsync(HttpContext.User);
+			UserModel pageUser = await _UserManager.FindByIdAsync(userId);
 
-			List<PostModel> posts = await GetCommentedPosts(user, startFromRow, amountOfRows);
+			List<PostModel> posts = await GetCommentedPosts(pageUser, startFromRow, amountOfRows);
 
 			if (posts == null)
 				return NotFound("Posts not found.");
 
 			if (posts.Count == 0)
-			{
 				return NoContent();
-			}
 
-			//Pass info to the partial view.
-			//Amount of comments to load for each post.
-			ViewData["commentsAmount"] = showCommentsPerPost;
-			ViewData["LoggedUserId"] = loggedUser.Id;
-			ViewBag.blur = loggedUser.ShowImages ? "1" : "0";
+			await LoadPostListInfo();
 
 			return PartialView("PostList", posts);
 		}
@@ -458,6 +423,130 @@ namespace WebProject.Controllers
 			}
 
 			return users;
+		}
+
+		public async Task<List<PostModel>> OldFillPostsProperties(List<PostModel> posts)
+		{
+			foreach (PostModel post in posts)
+			{
+				post.Comments = await LoadComments(post);
+				post.UsersLikes = await GetPostLikesSelective(post.Id);
+				post.User = await _Models.Users
+					.Select(u => new UserModel { Id = u.Id, UserName = u.UserName, ProfilePicture = u.ProfilePicture })
+					.Where(u => u.Id == post.UserId).AsNoTracking().FirstOrDefaultAsync();
+			}
+
+			return posts;
+		}
+
+		public async Task<List<PostModel>> FillPostsProperties(List<PostModel> posts, UserModel postOwner = null)
+		{
+			List<UserModel> users = new();
+
+			if (postOwner == null)
+			{
+				List<string> userIds = new();
+
+				for (int i = 0; i < posts.Count; i++)
+				{
+					userIds.Add($"'{posts[i].UserId}'");
+				}
+
+				users = await _Models.Users
+				.FromSqlRaw(string.Format("SELECT * FROM AspNetUsers WHERE Id IN({0});", string.Join(", ", userIds)))
+				.AsNoTracking().ToListAsync();
+			}
+
+			foreach (PostModel post in posts)
+			{
+				post.UsersLikes = await GetPostLikesSelective(post.Id);
+
+				if (postOwner == null)
+				{
+					for (int i = 0; i < users.Count; i++)
+					{
+						if (post.UserId == users[i].Id)
+						{
+							post.User = users[i];
+							break;
+						}
+					}
+				}
+				else
+				{
+					post.User = postOwner;
+				}
+			}
+
+			posts = await NewLoadComments(posts);
+
+			return posts;
+		}
+
+		private async Task<List<PostModel>> NewLoadComments(List<PostModel> posts)
+		{
+			List<int> postIds = new();
+
+			for (int i = 0; i < posts.Count; i++)
+			{
+				postIds.Add(posts[i].Id);
+			}
+
+			List<CommentModel> comments = await _Models.Comments
+				.FromSqlRaw(string.Format("SELECT * FROM Comments WHERE PostId IN ({0})", string.Join(", ", postIds)))
+				.AsNoTracking().ToListAsync();
+
+			List<string> userIds = new();
+
+			for (int i = 0; i < comments.Count; i++)
+			{
+				userIds.Add($"'{comments[i].UserId}'");
+			}
+
+			List<UserModel> users = await _Models.Users
+				.FromSqlRaw(string.Format("SELECT * FROM AspNetUsers WHERE Id IN({0});", string.Join(", ", userIds)))
+				.AsNoTracking().ToListAsync();
+
+			foreach (CommentModel comment in comments)
+			{
+				comment.UsersLikes = await GetCommentLikesSelective(comment.Id);
+				for (int i = 0; i < users.Count; i++)
+				{
+					if (comment.UserId == users[i].Id)
+					{
+						comment.User = users[i];
+						break;
+					}
+				}
+			}
+
+			foreach (PostModel post in posts)
+			{
+				post.Comments = new List<CommentModel>();
+
+				foreach (CommentModel comment in comments)
+				{
+					if (post.Id == comment.PostId)
+					{
+						post.Comments.Add(comment);
+					}
+				}
+			}
+
+			return posts;
+		}
+
+		public async Task LoadPostListInfo(UserModel loggedUser = null)
+		{
+			loggedUser ??= await _UserManager.GetUserAsync(HttpContext.User);
+
+			//Lets the partial view know if the user liked a post or comment.
+			ViewData["LoggedUserId"] = loggedUser.Id;
+			//Lets the partial view know how many comments per post needs to show,
+			//if no value is pass it shows all.
+			ViewData["commentsAmount"] = showCommentsPerPost;
+			//Lets the partial view know if it needs to blur the images.
+			ViewBag.blur = loggedUser.ShowImages ? "1" : "0";
 		}
 
 		private async Task LoadPageUserStats(string userId)

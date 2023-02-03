@@ -13,7 +13,7 @@ function SetScrollEvent(userId, startFrom, PostLoader) {
     let amountOfRows = 5;
 
     window.onscroll = function() {
-        if (this.window.scrollY > (mainContainer.clientHeight * (70 / 100)) && !loadingPosts) {
+        if (!loadingPosts && this.window.scrollY > (mainContainer.clientHeight * (70 / 100))) {
             loadingPosts = true;
             PostLoader(userId, startFromRow, amountOfRows);
             startFromRow += amountOfRows;

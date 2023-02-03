@@ -20,7 +20,7 @@
 				<img onclick="location = '/@Model.User.UserName'; event.stopPropagation()" class="comment-user-pic" src="" alt="@Model.User.UserName" />
 			}
 
-			<a class="post-commments-username" asp-action="UserPage" asp-route-UserName="@Model.User.UserName">@Model.User.UserName</a>
+			<a class="post-commments-username" asp-controller="User" asp-action="UserPage" asp-route-UserName="@Model.User.UserName">@Model.User.UserName</a>
 
 			<span>@(Model.Date.ToString("MM/dd/yyyy") == DateTime.Today.ToString("MM/dd/yyyy") ? Model.Date.ToString("hh:mm tt") : Model.Date.ToString("MM/dd/yyyy"))</span>
 
