@@ -53,7 +53,6 @@ img.user-info-mobile {
 	height: 3rem;
 	margin-left: auto;
 	cursor: pointer;
-	position: relative;
 }
 
 .head-list-buttons {
@@ -78,9 +77,11 @@ img.user-info-mobile {
 .tab-list {
 	position: absolute;
 	display: flex;
+	width: 100vw;
 	background-color: var(--ShadowColor);
 	flex-direction: column;
 	right: 0;
+	top: 5rem;
 }
 
 .tab-list a {
@@ -140,6 +141,7 @@ img.user-info-mobile {
 }
 
 .settings-icon {
+	margin-left: 0.5rem;
 	width: 2rem;
 	height: 2rem;
 }

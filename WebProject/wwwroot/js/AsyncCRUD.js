@@ -29,14 +29,15 @@ function AddPostToContainer(postString) {
     const postContainer = document.createElement('article');
 
     //Set the id.
-    postContainer.id = `${newPost.id}`;
+    postContainer.id = `${newPost.dataset.id}`;
 
     //Add the data attribute data-post-container.
     postContainer.dataset.postContainer = '';
 
     //Add the onclick event to redirect to CompletePost.
     postContainer.onclick = () => {
-        location = `${newPost.dataset.username}/hop/${newPost.dataset.id}`;
+        //location = `${newPost.dataset.username}/hop/${newPost.dataset.id}`;
+        ShowCompletePost(newPost.dataset.id);
     }
     postContainer.appendChild(newPost);
 

@@ -38,6 +38,8 @@ function CreatePostTab() {
 			const background = Background();
 			//Insert the partial view.
 			background.insertAdjacentHTML('beforeend', data);
+			//focus the textarea element.
+			document.getElementById('content-text').focus();
 			document.body.style.overflow = "hidden";
 		}
 	});
@@ -99,6 +101,11 @@ function EditPostTab(postId, input) {
 
 					//Insert the partial view.
 					background.insertAdjacentHTML('beforeend', data);
+					//focus the textarea element.
+					const textArea = document.getElementById('content-text');
+					textArea.focus();
+					//Put the cursor at the end of the text.
+					textArea.setSelectionRange(textArea.value.length, textArea.value.length);
 
 					//Call function in the case the post had a media (picture) if it did not it will return.
 					EditImage();

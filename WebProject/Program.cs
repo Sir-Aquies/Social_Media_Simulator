@@ -8,6 +8,7 @@ using WebProject.Policies;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton<ITendency, Tendency>();
+builder.Services.AddTransient<ModelLogic>();
 
 builder.Services.AddSession(options =>
 {

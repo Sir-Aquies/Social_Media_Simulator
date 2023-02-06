@@ -5,8 +5,10 @@ function CreateCommentTab(postId) {
 			if (status === "success") {
 				//Create a black background.
 				const background = Background();
-				//Insert CreatePost.cshtml partial view to the background.
+				//Insert CreateComment.cshtml partial view to the background.
 				background.insertAdjacentHTML('beforeend', data);
+				//focus the textarea element.
+				document.getElementById('content-text').focus();
 				//Hide the overflow of the document.
 				document.body.style.overflow = "hidden";
 			}

@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.VisualBasic;
+using WebProject.Services;
 
 namespace WebProject.Controllers
 {
@@ -14,11 +15,13 @@ namespace WebProject.Controllers
 	{
 		private readonly WebProjectContext _Models;
 		private readonly UserManager<UserModel> _UserManager;
+		private readonly ModelLogic _Logic;
 
-		public PostController(WebProjectContext Models, UserManager<UserModel> manager)
+		public PostController(WebProjectContext Models, UserManager<UserModel> manager, ModelLogic logic)
 		{
 			_Models = Models;
 			_UserManager = manager;
+			_Logic = logic;
 		}
 
 		public async Task<IActionResult> ViewPost(int postId)
@@ -29,8 +32,8 @@ namespace WebProject.Controllers
 			if (post == null) 
 				return NotFound("Error, post was not found.");
 
-			post.UsersLikes = await GetPostLikesSelective(postId);
-			post.Comments = await LoadComments(post);
+			post.UsersLikes = await _Logic.GetPostLikesSelective(postId);
+			post = await _Logic.SingleLoadComments(post);
 			post.User = await _Models.Users
 				.Select(u => new UserModel { Id = u.Id, UserName = u.UserName, ProfilePicture = u.ProfilePicture })
 				.Where(u => u.Id == post.UserId).AsNoTracking().FirstOrDefaultAsync();
@@ -78,7 +81,7 @@ namespace WebProject.Controllers
 			//Initiate lists so they are not null.
 			newPost.UsersLikes = new List<UserModel>();
 			newPost.Comments = new List<CommentModel>();
-			ViewData["UserId"] = loggedUser.Id;
+			ViewData["loggedUserId"] = loggedUser.Id;
 
 			return PartialView("Post", newPost);
 		}
@@ -95,11 +98,11 @@ namespace WebProject.Controllers
 				PostIdBool = int.TryParse(TempData["PostId"]?.ToString(), out PostId);
 			}
 
-			PostModel postModel = new();
+			PostModel post = new();
 
 			if (PostIdBool)
 			{
-				postModel = await _Models.Posts.FirstOrDefaultAsync(p => p.Id == PostId);
+				post = await _Models.Posts.FirstOrDefaultAsync(p => p.Id == PostId);
 			}
 			else
 			{
@@ -108,31 +111,31 @@ namespace WebProject.Controllers
 
 			UserModel loggedUser = await _UserManager.GetUserAsync(HttpContext.User);
 
-			if (loggedUser.Id != postModel.UserId)
+			if (loggedUser.Id != post.UserId)
 			{
 				return Unauthorized("Access denied, post does not belong to current user.");
 			}
 
 			if (Media != null)
 			{
-				postModel.Media = Convert.ToBase64String(await GetBytes(Media));
+				post.Media = Convert.ToBase64String(await GetBytes(Media));
 			}
 			else if (DeleteMedia)
 			{
-				postModel.Media = null;
+				post.Media = null;
 			}
 
-			if (Content != postModel.Content)
+			if (Content != post.Content)
 			{
-				postModel.Content = Content;
+				post.Content = Content;
 			}
 
-			if (!string.IsNullOrEmpty(postModel.Content) || postModel.Media != null)
+			if (!string.IsNullOrEmpty(post.Content) || post.Media != null)
 			{
-				postModel.IsEdited = true;
-				postModel.EditedDate = DateTime.Now;
+				post.IsEdited = true;
+				post.EditedDate = DateTime.Now;
 
-				_Models.Posts.Update(postModel);
+				_Models.Posts.Update(post);
 				await _Models.SaveChangesAsync();
 			}
 			else
@@ -140,11 +143,11 @@ namespace WebProject.Controllers
 				return BadRequest("Error, post was not edited due to not having content");
 			}
 
-			postModel.UsersLikes = await GetPostLikesSelective(postModel.Id);
-			postModel.Comments = await LoadComments(postModel);
+			post.UsersLikes = await _Logic.GetPostLikesSelective(post.Id);
+			post = await _Logic.SingleLoadComments(post);
 			ViewData["loggedUserId"] = loggedUser.Id;
 
-			return PartialView("Post", postModel);
+			return PartialView("Post", post);
 		}
 
 		[HttpGet]
@@ -206,13 +209,13 @@ namespace WebProject.Controllers
 			//Check if a row exists in PostLikes, if it exists returns the post's id.
 			List<int> postIdExists = await _Models.Database
 				.SqlQueryRaw<int>("SELECT PostId FROM PostLikes WHERE PostId = {0} AND UserId = {1};", postId, loggedUser.Id).ToListAsync();
-			
+
 			if (postIdExists.Count == 1)
 			{
 				//Decrease by one the likes column of the post row.
 				int affectedRows = await _Models.Database.ExecuteSqlRawAsync("UPDATE Posts SET Likes = Likes - 1 WHERE Id = {0};", postId);
 
-				if (affectedRows == 1) 
+				if (affectedRows == 1)
 					//Delete the row from PostLikes.
 					affectedRows += await _Models.Database
 						.ExecuteSqlRawAsync("DELETE FROM PostLikes WHERE PostId = {0} AND UserId = {1};", postId, loggedUser.Id);
@@ -385,50 +388,6 @@ namespace WebProject.Controllers
 				//If both action were successful affectedRows should be 2.
 				return affectedRows == 2 ? "+" : "0";
 			}
-		}
-
-		public async Task<List<UserModel>> GetPostLikesSelective(int postId)
-		{
-			List<UserModel> users = new();
-
-			string[] userLikes = await _Models.Database.SqlQueryRaw<string>($"Select UserId from PostLikes where PostId = {postId}").AsNoTracking().ToArrayAsync();
-
-			for (int i = 0; i < userLikes.Length; i++)
-			{
-				users.Add(new UserModel { Id = userLikes[i] });
-			}
-
-			return users;
-		}
-
-		public async Task<List<CommentModel>> LoadComments(PostModel post)
-		{
-			List<CommentModel> comments = await _Models.Comments.FromSqlRaw($"Select * from Comments where PostId = {post.Id}").AsNoTracking().ToListAsync();
-
-			foreach (CommentModel comment in comments)
-			{
-				comment.UsersLikes = await GetCommentLikesSelective(comment.Id);
-				comment.User = await _Models.Users
-				.Select(u => new UserModel { Id = u.Id, UserName = u.UserName, ProfilePicture = u.ProfilePicture })
-				.Where(u => u.Id == comment.UserId).AsNoTracking().FirstOrDefaultAsync();
-				comment.Post = post;
-			}
-
-			return comments;
-		}
-
-		public async Task<List<UserModel>> GetCommentLikesSelective(int commentId)
-		{
-			List<UserModel> users = new();
-
-			string[] userLikes = await _Models.Database.SqlQueryRaw<string>($"Select UserId from CommentLikes where CommentId = {commentId}").AsNoTracking().ToArrayAsync();
-
-			for (int i = 0; i < userLikes.Length; i++)
-			{
-				users.Add(new UserModel { Id = userLikes[i] });
-			}
-
-			return users;
 		}
 
 		private async Task<byte[]> GetBytes(IFormFile formFile)

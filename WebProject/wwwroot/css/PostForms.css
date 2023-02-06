@@ -92,7 +92,7 @@
 .view-post-container {
     height: fit-content;
     background-color: var(--BackgroundColor);
-    max-width: 624px;
+    width: 630px;
     border-right: 1px solid var(--BorderColor);
     border-left: 1px solid var(--BorderColor);
 }
@@ -107,7 +107,7 @@
     z-index: 3;
     display: flex;
     justify-content: center;
-    padding: 4rem;
+    padding-top: 5rem;
     overflow-y: scroll;
     /* Hide scrollbar for IE, Edge and Firefox */
     -ms-overflow-style: none;
@@ -126,6 +126,6 @@
     right: 1rem;
     top: 1rem;
     cursor: pointer;
-    width: 4rem;
-    height: 4rem;
+    width: 3rem;
+    height: 3rem;
 }

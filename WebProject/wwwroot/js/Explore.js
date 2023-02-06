@@ -22,9 +22,9 @@ function SetScrollEventExplore(startFrom, actionMethodName) {
 function SwitchToTab(inicialAmountToLoad) {
 	if (!inicialAmountToLoad)
 		return;
-
+	let tabName = event.target.id;
 	let actionMethodName = '';
-	switch (event.target.id) {
+	switch (tabName) {
 		case 'random-post-tab':
 			actionMethodName = LoadMoreRandomPostsMethodName;
 			break;
@@ -54,7 +54,7 @@ function SwitchToTab(inicialAmountToLoad) {
 
 				//Change the action method name of the scrolling event.
 				SetScrollEventExplore(inicialAmountToLoad, actionMethodName);
-				SwitchStyleTab(event.target.id);
+				SwitchStyleTab(tabName);
 
 				//Set loading to false so new more posts could be loaded.
 				loadingRandomPosts = false;

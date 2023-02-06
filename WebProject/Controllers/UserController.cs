@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using WebProject.Services;
 using Microsoft.Extensions.Hosting;
+using System.Text;
 
 namespace WebProject.Controllers
 {
@@ -17,19 +18,22 @@ namespace WebProject.Controllers
 		private readonly ILogger<UserController> _Logger;
 		private readonly UserManager<UserModel> _UserManager;
 		private readonly ITendency _Tendency;
+		private readonly ModelLogic _Logic;
 
 		private readonly int inicialAmountPostsToLoad = 10;
 		private readonly int showCommentsPerPost = 3;
+		private const int AmountPostsToLoad = 5;
 
-		public UserController(WebProjectContext models, UserManager<UserModel> userManager, ILogger<UserController> logger, ITendency tendency)
+		public UserController(WebProjectContext models, UserManager<UserModel> userManager, 
+			ILogger<UserController> logger, ITendency tendency, ModelLogic modelLogic)
 		{
 			_Models = models;
 			_UserManager = userManager;
 			_Logger = logger;
 			_Tendency = tendency;
+			_Logic = modelLogic;
 		}
-
-		//TODO - With the likes algorithm then create a tendency page with the most likes and commented post
+		//TODO -- fuse UserDisplayTab with the leftbox.
 		//Eliot09   9a0a92b8-2c82-4199-9972-d1731a300f0c
 		//lazycat381   fbf54244-51e6-4f57-badb-c75ff5742cb4
 		public async Task<IActionResult> SearchUser(string userName)
@@ -42,7 +46,7 @@ namespace WebProject.Controllers
 		}
 
 		//TODO - delete DynamicUser.
-		//"Home page" that shows all the posts of a user (pageUser).
+		//PageUser home page that shows all his/her posts.
 		public async Task<IActionResult> UserPage(string userName)
 		{
 			UserModel loggedUser = await _UserManager.GetUserAsync(HttpContext.User);
@@ -108,7 +112,7 @@ namespace WebProject.Controllers
 				.FromSqlRaw(sql, user.Id, startFromRow, amountOfRows)
 				.AsNoTracking().ToListAsync();
 
-			posts = await FillPostsProperties(posts, user);
+			posts = await _Logic.FillPostsProperties(posts, user);
 
 			return posts;
 		}
@@ -158,9 +162,7 @@ namespace WebProject.Controllers
 
 			if (post != null)
 			{
-				post.UsersLikes = await GetPostLikesSelective(post.Id);
-				post.User = pageUser;
-				post.Comments = await LoadComments(post);
+				post = await _Logic.SingleFillPostProperties(post, pageUser);
 			}
 
 			pageUser.Posts = new List<PostModel> { post };
@@ -198,6 +200,7 @@ namespace WebProject.Controllers
 			return View(new DynamicUser { User = loggedUser, PageUser = pageUser});
 		}
 
+		//TODO - fix the order.
 		private async Task<List<PostModel>> GetLikedPost(string userId, int startFromRow, int amountOfRows)
 		{
 			List<PostModel> posts = await _Models.Posts
@@ -206,7 +209,7 @@ namespace WebProject.Controllers
 				"ORDER BY Id DESC OFFSET {1} ROWS FETCH NEXT {2} ROWS ONLY", userId, startFromRow, amountOfRows)
 				.AsNoTracking().ToListAsync();
 
-			posts = await FillPostsProperties(posts);
+			posts = await _Logic.FillPostsProperties(posts);
 
 			return posts;
 		}
@@ -238,7 +241,7 @@ namespace WebProject.Controllers
 
 			foreach (CommentModel comment in comments)
 			{
-				comment.UsersLikes = await GetCommentLikesSelective(comment.Id);
+				comment.UsersLikes = await _Logic.GetCommentLikesSelective(comment.Id);
 				comment.User = await _Models.Users
 				.Select(u => new UserModel { Id = u.Id, UserName = u.UserName, ProfilePicture = u.ProfilePicture })
 				.Where(u => u.Id == comment.UserId).AsNoTracking().FirstOrDefaultAsync();
@@ -247,7 +250,7 @@ namespace WebProject.Controllers
 				comment.Post.User = await _Models.Users
 					.Select(u => new UserModel { Id = u.Id, UserName = u.UserName, ProfilePicture = u.ProfilePicture })
 					.Where(u => u.Id == comment.Post.UserId).AsNoTracking().FirstOrDefaultAsync();
-				comment.Post.UsersLikes = await GetPostLikesSelective(comment.Post.Id);
+				comment.Post.UsersLikes = await _Logic.GetPostLikesSelective(comment.Post.Id);
 				comment.Post.Comments = new List<CommentModel>() { comment };
 
 				posts.Add(comment.Post);
@@ -310,7 +313,7 @@ namespace WebProject.Controllers
 
 			foreach (CommentModel comment in comments)
 			{
-				comment.UsersLikes = await GetCommentLikesSelective(comment.Id);
+				comment.UsersLikes = await _Logic.GetCommentLikesSelective(comment.Id);
 				comment.User = user;
 
 				PostModel post = await _Models.Posts
@@ -333,7 +336,7 @@ namespace WebProject.Controllers
 
 				foreach (CommentModel c in samePostComments)
 				{
-					c.UsersLikes = await GetCommentLikesSelective(c.Id);
+					c.UsersLikes = await _Logic.GetCommentLikesSelective(c.Id);
 					c.User = user;
 					//In the case that the comment was already fetch in comments.
 					comments.Remove(c);
@@ -343,7 +346,7 @@ namespace WebProject.Controllers
 
 				post.Comments.Add(comment);
 
-				post.UsersLikes = await GetPostLikesSelective(post.Id);
+				post.UsersLikes = await _Logic.GetPostLikesSelective(post.Id);
 
 				post.User = await _Models.Users
 						.Select(u => new UserModel { Id = u.Id, UserName = u.UserName, ProfilePicture = u.ProfilePicture })
@@ -370,170 +373,6 @@ namespace WebProject.Controllers
 			await LoadPostListInfo();
 
 			return PartialView("PostList", posts);
-		}
-
-		//Loads the comments with its likes and user for a single post.
-		private async Task<List<CommentModel>> LoadComments(PostModel post)
-		{
-			List<CommentModel> comments = await _Models.Comments
-				.FromSqlRaw("SELECT * FROM Comments WHERE PostId = {0}", post.Id)
-				.AsNoTracking().ToListAsync();
-
-			foreach (CommentModel comment in comments)
-			{
-				comment.UsersLikes = await GetCommentLikesSelective(comment.Id);
-				comment.User = await _Models.Users
-				.Select(u => new UserModel { Id = u.Id, UserName = u.UserName, ProfilePicture = u.ProfilePicture })
-				.Where(u => u.Id == comment.UserId).AsNoTracking().FirstOrDefaultAsync();
-				comment.Post = post;
-			}
-
-			return comments;
-		}
-
-		//Gets the ids of the users who has liked a certain post.
-		private async Task<List<UserModel>> GetPostLikesSelective(int postId)
-		{
-			List<UserModel> users = new();
-
-			string[] userIds = await _Models.Database
-				.SqlQueryRaw<string>("SELECT UserId FROM PostLikes WHERE PostId = {0}", postId)
-				.AsNoTracking().ToArrayAsync();
-
-			for (int i = 0; i < userIds.Length; i++)
-			{
-				users.Add(new UserModel { Id = userIds[i] });
-			}
-
-			return users;
-		}
-
-		//Gets the ids of the users who has liked a certain comment.
-		private async Task<List<UserModel>> GetCommentLikesSelective(int commentId)
-		{
-			List<UserModel> users = new();
-
-			string[] userIds = await _Models.Database
-				.SqlQueryRaw<string>("Select UserId from CommentLikes where CommentId = {0}", commentId)
-				.AsNoTracking().ToArrayAsync();
-
-			for (int i = 0; i < userIds.Length; i++)
-			{
-				users.Add(new UserModel { Id = userIds[i] });
-			}
-
-			return users;
-		}
-
-		public async Task<List<PostModel>> OldFillPostsProperties(List<PostModel> posts)
-		{
-			foreach (PostModel post in posts)
-			{
-				post.Comments = await LoadComments(post);
-				post.UsersLikes = await GetPostLikesSelective(post.Id);
-				post.User = await _Models.Users
-					.Select(u => new UserModel { Id = u.Id, UserName = u.UserName, ProfilePicture = u.ProfilePicture })
-					.Where(u => u.Id == post.UserId).AsNoTracking().FirstOrDefaultAsync();
-			}
-
-			return posts;
-		}
-
-		public async Task<List<PostModel>> FillPostsProperties(List<PostModel> posts, UserModel postOwner = null)
-		{
-			List<UserModel> users = new();
-
-			if (postOwner == null)
-			{
-				List<string> userIds = new();
-
-				for (int i = 0; i < posts.Count; i++)
-				{
-					userIds.Add($"'{posts[i].UserId}'");
-				}
-
-				users = await _Models.Users
-				.FromSqlRaw(string.Format("SELECT * FROM AspNetUsers WHERE Id IN({0});", string.Join(", ", userIds)))
-				.AsNoTracking().ToListAsync();
-			}
-
-			foreach (PostModel post in posts)
-			{
-				post.UsersLikes = await GetPostLikesSelective(post.Id);
-
-				if (postOwner == null)
-				{
-					for (int i = 0; i < users.Count; i++)
-					{
-						if (post.UserId == users[i].Id)
-						{
-							post.User = users[i];
-							break;
-						}
-					}
-				}
-				else
-				{
-					post.User = postOwner;
-				}
-			}
-
-			posts = await NewLoadComments(posts);
-
-			return posts;
-		}
-
-		private async Task<List<PostModel>> NewLoadComments(List<PostModel> posts)
-		{
-			List<int> postIds = new();
-
-			for (int i = 0; i < posts.Count; i++)
-			{
-				postIds.Add(posts[i].Id);
-			}
-
-			List<CommentModel> comments = await _Models.Comments
-				.FromSqlRaw(string.Format("SELECT * FROM Comments WHERE PostId IN ({0})", string.Join(", ", postIds)))
-				.AsNoTracking().ToListAsync();
-
-			List<string> userIds = new();
-
-			for (int i = 0; i < comments.Count; i++)
-			{
-				userIds.Add($"'{comments[i].UserId}'");
-			}
-
-			List<UserModel> users = await _Models.Users
-				.FromSqlRaw(string.Format("SELECT * FROM AspNetUsers WHERE Id IN({0});", string.Join(", ", userIds)))
-				.AsNoTracking().ToListAsync();
-
-			foreach (CommentModel comment in comments)
-			{
-				comment.UsersLikes = await GetCommentLikesSelective(comment.Id);
-				for (int i = 0; i < users.Count; i++)
-				{
-					if (comment.UserId == users[i].Id)
-					{
-						comment.User = users[i];
-						break;
-					}
-				}
-			}
-
-			foreach (PostModel post in posts)
-			{
-				post.Comments = new List<CommentModel>();
-
-				foreach (CommentModel comment in comments)
-				{
-					if (post.Id == comment.PostId)
-					{
-						post.Comments.Add(comment);
-					}
-				}
-			}
-
-			return posts;
 		}
 
 		public async Task LoadPostListInfo(UserModel loggedUser = null)
