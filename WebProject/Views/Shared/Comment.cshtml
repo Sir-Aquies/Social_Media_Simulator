@@ -3,7 +3,8 @@
 <article class="post-comments" user-profile-left onclick="event.stopPropagation()" data-id="@Model.Id" data-username="@Model.User.UserName" data-postid="@Model.PostId">
 	@if (Model.User.ProfilePicture != null)
 	{
-		<img onclick="location = '/@Model.User.UserName'; event.stopPropagation()" class="user-profile-left" src="@(Model.User.ProfilePicture.StartsWith("https") ? "" : "data:image/png;base64,")@Model.User.ProfilePicture" alt="@Model.User.UserName" />
+		<img onclick="location = '/@Model.User.UserName'; event.stopPropagation()" class="user-profile-left" 
+		src="@(Model.User.ProfilePicture.StartsWith("https") ? "" : "data:image/png;base64,")@Model.User.ProfilePicture" alt="@Model.User.UserName" />
 	}
 	else
 	{
@@ -13,7 +14,8 @@
 		<div class="post-commments-user">
 			@if (Model.User.ProfilePicture != null)
 			{
-				<img onclick="location = '/@Model.User.UserName'; event.stopPropagation()" class="comment-user-pic" src="@(Model.User.ProfilePicture.StartsWith("https") ? "" : "data:image/png;base64,")@Model.User.ProfilePicture" alt="@Model.User.UserName" />
+				<img onclick="location = '/@Model.User.UserName'; event.stopPropagation()" class="comment-user-pic" 
+				src="@(Model.User.ProfilePicture.StartsWith("https") ? "" : "data:image/png;base64,")@Model.User.ProfilePicture" alt="@Model.User.UserName" />
 			}
 			else
 			{
@@ -27,7 +29,6 @@
 			@if (ViewData["LoggedUserId"]?.ToString() == Model.User.Id)
 			{
 				<div class="post-option-button" onclick="OptionButton(this);" onmousedown="event.stopPropagation()">
-					<div class="button">...</div>
 					<div onmousedown="event.stopPropagation()" onclick="event.stopPropagation();" class="post-form">
 						@*<input type="button" value="Edit" onclick="EditCommentWindow(@Model.Id, this);" />*@
 						<input type="button" value="Delete" onclick="DeleteComment(@Model.Id, @Model.PostId, this)" />

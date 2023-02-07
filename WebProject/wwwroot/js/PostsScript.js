@@ -425,7 +425,7 @@ function RemoveTab() {
 //OptionButton displays and indisplays the options inside the option button from the posts.
 function OptionButton(post) {
 	//Get the post-form.
-	const option = post.children[1];
+	const option = post.children[0];
 
 	//If the display is equal to none of undefined, display it.
 	if (option.style.display === 'none' || !option.style.display) {

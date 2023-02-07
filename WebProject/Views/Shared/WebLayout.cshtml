@@ -19,17 +19,7 @@
 			<div class="head-container">
 				<div class="head-home">
 					<!-- Image that when click display the display-tab with the user info -->
-					@if (Model is UserModel)
-					{
-						<img src="@(Model.ProfilePicture.StartsWith("https") ? "" : "data:image/png;base64,")@Model.ProfilePicture"
-						 id="UserMobilePic" class="user-info-mobile" onclick="ToggleTab()" onmousedown="event.stopPropagation();" />
-					}
-					else if (Model is PasswordUser)
-					{
-						<img src="@(Model.User.ProfilePicture.StartsWith("https") ? "" : "data:image/png;base64,")@Model.User.ProfilePicture" 
-						id="UserMobilePic" class="user-info-mobile" onclick="ToggleTab()" onmousedown="event.stopPropagation();" />
-					}
-					else if (Model is DynamicUser && Model.PageUser != null)
+					@if (Model is DynamicUser)
 					{
 						<img src="@(Model.PageUser.ProfilePicture.StartsWith("https") ? "" : "data:image/png;base64,")@Model.PageUser.ProfilePicture" 
 						id="UserMobilePic" class="user-info-mobile" onclick="ToggleTab()" onmousedown="event.stopPropagation();" />
@@ -76,18 +66,10 @@
 				</div>
 			</div>
 		</nav>
-
-		@if (Model is UserModel)
+		@*Left box fro mobiles user*@
+		@if (Model is DynamicUser)
 		{
-			<partial name="UserDisplayTab" model="Model"></partial>
-		}
-		else if (Model is PasswordUser)
-		{
-			<partial name="UserDisplayTab" model="Model.User"></partial>
-		}
-		else if (Model is DynamicUser && Model.PageUser != null)
-		{
-			<partial name="UserDisplayTab" model="Model?.PageUser"></partial>
+			<partial name="UserDisplayTab" model="Model.PageUser"></partial>
 		}
 	</header>
 

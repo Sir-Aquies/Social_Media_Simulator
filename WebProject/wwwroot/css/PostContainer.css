@@ -14,12 +14,11 @@
 	display: flex;
 	align-items: center;
 	margin-bottom: 0.5rem;
-	font-size: var(--SmallTextsize);
 }
 
 .post-info-username {
 	text-decoration: none;
-	color: var(--colortext);
+	color: inherit;
 	font-size: var(--BigTextsize);
 	margin-right: 0.5rem;
 }
@@ -27,31 +26,41 @@
 .post-option-button {
 	position: relative;
 	margin-left: auto;
+	width: 3rem;
+	height: 3rem;
+	cursor: pointer;
 }
 
-.post-option-button > div.button {
+.post-option-button::after {
+	content: '...';
+	position: absolute;
+	left: 0.65rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 2rem;
 	transform: rotate(90deg);
-	cursor: pointer;
-	font-size: 1.7rem;
+	width: 100%;
+	height: 100%;
 }
 
 .post-form {
 	display: none;
 	position: absolute;
-	background-color: var(--ShadowColor);
+	left: -100%;
+	top: 100%;
+	background: var(--ShadowColor);
 	padding: 0.4rem;
-	justify-content: right;
+	justify-content: center;
 	flex-direction: column;
 	z-index: 50;
 }
 
-.post-form > input {
+.post-form input {
 	background-color: transparent;
 	border: 0;
-	font-size: var(--textsize);
+	font-size: var(--BigTextsize);
 	width: 100%;
-	height: fit-content;
-	text-align: right;
 }
 
 .post-form > input:hover {
@@ -60,12 +69,7 @@
 
 @media only screen and (min-width: 820px) {
 	.post-form {
-		left: 0;
-		right: unset;
-	}
-
-	.post-form input {
-		text-align: left;
+		left: 15px;
 	}
 }
 
@@ -152,9 +156,10 @@
 .post-stats > button {
 	display: flex;
 	align-items: center;
+	justify-content: space-evenly;
 	gap: 0.5rem;
 	background-color: Transparent;
-	width: max-content;
+	width: 7rem;
 	padding: 0.4rem;
 	font-size: var(--textsize);
 	border: 0;
@@ -166,8 +171,8 @@
 }
 
 .like-button {
-	width: 1.7rem;
-	height: 1.7rem;
+	width: 2.5rem;
+	height: 2.5rem;
 	stroke: var(--BorderColor);
 	stroke-width: 5px;
 }
@@ -195,8 +200,24 @@
 }
  
 .comment-button {
-	width: 1.7rem;
-	height: 1.7rem;
+	width: 2.5rem;
+	height: 2.5rem;
+}
+
+@media only screen and (min-width: 768px) {
+	.post-stats > button {
+		width: fit-content;
+	}
+
+	.like-button {
+		width: 1.8rem;
+		height: 1.8rem;
+	}
+
+	.comment-button {
+		width: 1.8rem;
+		height: 1.8rem;
+	}
 }
 
 .post-comments {
@@ -276,12 +297,19 @@
 	background-color: Transparent;
 	display: flex;
 	gap: 0.5rem;
-	align-content: center;
-	width: max-content;
+	align-items: center;
+	justify-content: space-evenly;
+	width: 7rem;
 	padding: 0.4rem;
 	font-size: var(--textsize);
 	border: 0;
 	border-radius: 0.4rem;
+}
+
+@media only screen and (min-width: 768px) {
+	.post-comments-stats > button {
+		width: fit-content;
+	}
 }
 
 .post-comments-stats > button:has(.liked) {

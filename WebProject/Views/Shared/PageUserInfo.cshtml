@@ -1,0 +1,32 @@
+﻿@model UserModel
+
+@if (Model != null)
+{
+	<div class="user-info">
+		@if (Model.ProfilePicture != null)
+		{
+			<img class="user-pic" 
+			src="@(Model.ProfilePicture.StartsWith("https") ? "" : "data:image/png;base64,")@Model.ProfilePicture"
+			alt="@Model.UserName profile picture" />
+		}
+		else
+		{
+			<img class="user-pic" src="~/NullProfilePic.png" alt="@Model.UserName profile picture" />
+		}
+
+		<div class="user-username">@Model.UserName</div>
+
+		<div class="user-name">@Model.Name</div>
+
+		<div class="user-description">@Model.Description</div>
+
+		<div class="user-dob">@Model.DateofBirth.ToShortDateString()</div>
+
+		@if (TempData["TotalLikes"] != null)
+		{
+			<div>Total likes: @TempData["TotalLikes"]</div>
+			<div>Total Posts: @TempData["TotalPosts"]</div>
+			<div>Total Comments: @TempData["TotalComments"]</div>
+		}
+	</div>
+}

@@ -78,6 +78,7 @@ img.user-info-mobile {
 	position: absolute;
 	display: flex;
 	width: 100vw;
+	height: 100vh;
 	background-color: var(--ShadowColor);
 	flex-direction: column;
 	right: 0;
@@ -91,8 +92,36 @@ img.user-info-mobile {
 	margin: 0.5rem;
 }
 
+.tab-list a::after {
+	content: '';
+	display: block;
+	border-bottom: 1px solid var(--BorderColor);
+	width: 100%;
+	margin: 0.5rem 0;
+}
+
 .tab-list a.right{
 	margin-left: 0.5rem;
+}
+
+@media only screen and (min-width: 524px) {
+	.tab-list a.right {
+		margin-left: auto;
+	}
+
+	.tab-list a::after {
+		display: none;
+	}
+
+	.tab-list {
+		width: 100%;
+		background-color: transparent;
+		position: static;
+		flex-direction: unset;
+		align-items: center;
+		justify-content: flex-start;
+		height: auto;
+	}
 }
 
 .alert-message {
@@ -146,6 +175,44 @@ img.user-info-mobile {
 	height: 2rem;
 }
 
+@media only screen and (min-width: 225px) {
+	.display-tab {
+		width: 70%;
+	}
+}
+
+@media only screen and (min-width: 524px) {
+	.display-tab {
+		width: 50%;
+	}
+
+	.head-list {
+		width: 100%;
+		height: fit-content;
+		margin-left: 0;
+		cursor: default;
+		border-radius: 0;
+	}
+
+	.head-list-buttons {
+		display: none;
+	}
+}
+
+@media only screen and (min-width: 768px) {
+	.head-home {
+		display: none;
+	}
+
+	.display-tab {
+		display: none;
+	}
+
+	.user-info-mobile {
+		display: none;
+	}
+}
+
 body {
 	margin: 0;
 	font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
@@ -195,55 +262,4 @@ p {
 
 h1, h2, h3, h4, h6 {
 	margin: 0.5rem;
-}
-
-@media only screen and (min-width: 225px) {
-	.display-tab {
-		width: 70%;
-	}
-}
-
-@media only screen and (min-width: 524px) {
-	.tab-list a.right {
-		margin-left: auto;
-	}
-
-	.display-tab {
-		width: 50%;
-	}
-
-	.head-list {
-		width: 100%;
-		height: fit-content;
-		margin-left: 0;
-		cursor: default;
-		border-radius: 0;
-	}
-
-	.tab-list {
-		width: 100%;
-		background-color: transparent;
-		position: static;
-		flex-direction: unset;
-		align-items: center;
-		justify-content: flex-start;
-	}
-
-	.head-list-buttons {
-		display: none;
-	}
-}
-
-@media only screen and (min-width: 768px) {
-	.head-home {
-		display: none;
-	}
-
-	.display-tab {
-		display: none;
-	}
-
-	.user-info-mobile {
-		display: none;
-	}
 }

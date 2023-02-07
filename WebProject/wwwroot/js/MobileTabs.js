@@ -3,24 +3,26 @@ mediaQuery.addListener(HandleTabletChange);
 
 //HandleTabletChange makes the top bar resposive to mobile devices.
 function HandleTabletChange(e) {
-	//Exectes if the width of the screes is lower than 524px.
+
 	if (e.matches) {
-		//Undisplay TabList.
 		$("#TabList").css("display", "none");
 
 		//Add an event to HeadList that displays TabList if its display is none.
 		$("#HeadList").click(function () {
 			if ($("#TabList").css("display") == "none") {
 				$("#TabList").css("display", "flex");
+				$(document.body).css('overflow', 'hidden');
 
 				//Add an event to the document that when the user clicks anywhere else undisplays TabList.
 				$(document).mousedown(function () {
 					$("#TabList").css("display", "none");
+					$(document.body).css('overflow', 'auto');
 					$(document).unbind();
 				});
 			} else {
 				//If TabList is already displayed, undisplay it and remove any events in the document.
 				$("#TabList").css("display", "none");
+				$(document.body).css('overflow', 'auto');
 				$(document).unbind();
 			}
 		});
@@ -28,6 +30,7 @@ function HandleTabletChange(e) {
 		//If the width of the screen is bigger, display Tablist and remove any events in document and HeadList.
 		$("#TabList").css("display", "flex");
 		$("#HeadList").unbind();
+		$(document.body).css('overflow', 'auto');
 		$(document).unbind();
 	}
 }

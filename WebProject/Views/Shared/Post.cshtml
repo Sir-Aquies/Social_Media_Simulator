@@ -15,7 +15,7 @@
 		<a onclick="event.stopPropagation()" class="post-info-username" 
 		asp-action="UserPage" asp-controller="User" asp-route-UserName="@Model.User.UserName">@Model.User.UserName</a>
 
-		<span>@(Model.PostDate.ToString("MM/dd/yyyy") == DateTime.Today.ToString("MM/dd/yyyy") ? Model.PostDate.ToString("hh:mm tt") : Model.PostDate.ToString("MM/dd/yyyy"))</span>
+		<span style="font-size: var(--SmallTextsize)">@(Model.PostDate.ToString("MM/dd/yyyy") == DateTime.Today.ToString("MM/dd/yyyy") ? Model.PostDate.ToString("hh:mm tt") : Model.PostDate.ToString("MM/dd/yyyy"))</span>
 
 		@if (Model.IsEdited)
 		{
@@ -29,8 +29,6 @@
 		@if (ViewData["LoggedUserId"]?.ToString() == Model.User.Id)
 		{
 			<div class="post-option-button" onclick="OptionButton(this); event.stopPropagation()" onmousedown="event.stopPropagation()">
-				<div class="button">...</div>
-
 				<div onmousedown="event.stopPropagation()" onclick="event.stopPropagation();" class="post-form">
 					<input type="button" value="Edit" onclick="EditPostTab(@Model.Id, this);" />
 					<input type="button" value="Delete" onclick="DeletePost(@Model.Id, this)" />
@@ -48,7 +46,7 @@
 			@if (ViewBag.blur == "1")
 			{
 				<div class="blur-image-cont" onclick="event.stopPropagation()">
-					<img src="@(Model.Media.StartsWith("https") ? "" : "data:image/png;base64,")@Model.Media" class="blur-content-image" alt="@Model.User.UserName" />
+					<img src="@(Model.Media.StartsWith("https") ? "" : "data:image/png;base64,")@Model.Media" class="blur-content-image" alt="@Model.User.UserName image" />
 
 					<div class="unblur-button" onclick="UnblurImage(this); event.stopPropagation()">
 						<div>
@@ -59,7 +57,7 @@
 			}
 			else
 			{
-				<img src="@(Model.Media.StartsWith("https") ? "" : "data:image/png;base64,")@Model.Media" alt="@Model.User.UserName" />
+				<img src="@(Model.Media.StartsWith("https") ? "" : "data:image/png;base64,")@Model.Media" alt="@Model.User.UserName image" />
 			}
 		}
 		

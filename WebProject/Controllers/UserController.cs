@@ -33,7 +33,7 @@ namespace WebProject.Controllers
 			_Tendency = tendency;
 			_Logic = modelLogic;
 		}
-		//TODO -- fuse UserDisplayTab with the leftbox.
+
 		//Eliot09   9a0a92b8-2c82-4199-9972-d1731a300f0c
 		//lazycat381   fbf54244-51e6-4f57-badb-c75ff5742cb4
 		public async Task<IActionResult> SearchUser(string userName)

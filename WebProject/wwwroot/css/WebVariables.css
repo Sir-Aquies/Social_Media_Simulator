@@ -6,9 +6,17 @@
     --BorderColor: #EEEEEE; 
     --colortext: white;
     --postBorder: rgb(128, 128, 128);
-    --SmallTextsize: 0.95rem;
-    --textsize: 1.1rem;
-    --BigTextsize: 1.4rem;
+    --SmallTextsize: 1.05rem;
+    --textsize: 1.25rem;
+    --BigTextsize: 1.5rem;
+}
+
+@media only screen and (min-width: 768px){
+    :root {
+        --SmallTextsize: 0.95rem;
+        --textsize: 1.1rem;
+        --BigTextsize: 1.4rem;
+    }
 }
 
 /* When Lightmode is triggered, the document gets the data-theme attribute equalt to "light" 

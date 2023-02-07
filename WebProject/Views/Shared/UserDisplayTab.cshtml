@@ -1,29 +1,5 @@
 ﻿@model UserModel
 
 <div class="display-tab" id="display-tab" onmousedown="event.stopPropagation();">
-	<div class="user-info">
-		@if (Model.ProfilePicture != null)
-		{
-			@if (Model.ProfilePicture.StartsWith("https"))
-			{
-				<img src="@Model.ProfilePicture" class="user-pic" />
-			}
-			else
-			{
-				<img src="data:image/png;base64,@Model.ProfilePicture" class="user-pic" />
-			}
-		}
-		else
-		{
-			<img class="user-pic" src="~/NullProfilePic.png" />
-		}
-
-		<div class="user-username">@Model?.UserName</div>
-
-		<div class="user-name">@Model?.Name</div>
-
-		<div class="user-description">@Model?.Description</div>
-
-		<div class="user-dob">@Model?.DateofBirth.ToShortDateString()</div>
-	</div>
+	<partial name="PageUserInfo" model="Model"></partial>
 </div>
