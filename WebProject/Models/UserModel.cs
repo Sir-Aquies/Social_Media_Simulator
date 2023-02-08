@@ -26,14 +26,18 @@ namespace WebProject.Models
 		/// </summary>
 		public IList<PostModel> Posts { get; set; }
 		/// <summary>
-		/// User's favorite posts { Table }
+		/// User's followers.
 		/// </summary>
-		[NotMapped]
-		public IList<PostModel> FavoritePost { get; set; }
+		public IList<FollowUsers> Followers { get; set; }
+		/// <summary>
+		/// User's followign users.
+		/// </summary>
+		public IList<FollowUsers> Following { get; set; }
+
 		[BindNever]
 		public bool ShowImages { get; set; } = true;
-		public IList<CommentModel> Comments { get; set; }
-		public IList<PostModel> LikedPost { get; set; }
-		public IList<CommentModel> LikedComments { get; set; }
+
+		[NotMapped]
+		public IList<PostModel> FavoritePost { get; set; }
 	}
 }

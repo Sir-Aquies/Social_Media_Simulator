@@ -41,6 +41,19 @@
 	font-size: 2rem;
 }
 
+.follow-button {
+	color: inherit;
+	border: 0;
+	background-color: var(--LayoutColor);
+	border-radius: 5px;
+	font-size: var(--BigTextsize);
+	padding: 0.5rem;
+}
+
+.user-follow-info {
+
+}
+
 .user-description {
 	white-space: pre-wrap;
 	font-size: var(--textsize)

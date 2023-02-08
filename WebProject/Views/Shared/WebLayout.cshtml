@@ -19,7 +19,7 @@
 			<div class="head-container">
 				<div class="head-home">
 					<!-- Image that when click display the display-tab with the user info -->
-					@if (Model is DynamicUser)
+					@if (Model is DynamicUser && Model.PageUser.ProfilePicture != null)
 					{
 						<img src="@(Model.PageUser.ProfilePicture.StartsWith("https") ? "" : "data:image/png;base64,")@Model.PageUser.ProfilePicture" 
 						id="UserMobilePic" class="user-info-mobile" onclick="ToggleTab()" onmousedown="event.stopPropagation();" />

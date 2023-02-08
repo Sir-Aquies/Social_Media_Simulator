@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebProject.Data;
 using WebProject.Models;
-
+#nullable disable
 namespace WebProject.Services
 {
 	public class Tendency : ITendency
@@ -19,12 +19,12 @@ namespace WebProject.Services
 
 		public async Task UpdateStats(WebProjectContext _Models, int amount = 10)
 		{
-			userLikes = await SqlInUsers($"SELECT TOP {amount} Users.Id, SUM(Posts.Likes) AS Total " +
-				"FROM (AspNetUsers AS Users INNER JOIN Posts ON Posts.UserId = Users.Id) " +
-				"GROUP BY Users.Id ORDER BY Total DESC;", _Models);
+			userLikes = await SqlInUsers($"SELECT TOP {amount} U.Id, SUM(Posts.Likes) AS Total " +
+				"FROM (Users AS U INNER JOIN Posts ON Posts.UserId = U.Id) " +
+				"GROUP BY U.Id ORDER BY Total DESC;", _Models);
 
 			userPosts = await SqlInUsers($"SELECT TOP {amount} U.Id, Count(P.Id) AS Total " +
-				"FROM AspNetUsers AS U INNER JOIN Posts AS P ON P.UserId = U.Id " +
+				"FROM Users AS U INNER JOIN Posts AS P ON P.UserId = U.Id " +
 				"GROUP BY U.Id ORDER BY Total DESC;", _Models);
 
 			postLikes = await _Models.Posts
@@ -44,11 +44,15 @@ namespace WebProject.Services
 			List<string> idsForLikes = await _Models.Database
 				.SqlQueryRaw<string>(sql).AsNoTracking().ToListAsync();
 
-			List<UserModel> users = await _Models.Users.Select(u =>
-			new UserModel { Id = u.Id, UserName = u.UserName, ProfilePicture = u.ProfilePicture })
-				.Where(u => idsForLikes.Contains(u.Id)).AsNoTracking().ToListAsync();
+			List<UserModel> users = new();
 
-			users.Reverse();
+			for (int i = 0; i < idsForLikes.Count; i++)
+			{
+				users.Add(await _Models.Users.Select(u =>
+				new UserModel { Id = u.Id, UserName = u.UserName, ProfilePicture = u.ProfilePicture })
+					.Where(u => u.Id == idsForLikes[i])
+					.AsNoTracking().FirstOrDefaultAsync());
+			}
 
 			return users;
 		}

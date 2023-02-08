@@ -15,7 +15,7 @@ namespace WebProject.Services
 		private readonly IHttpClientFactory _httpClientFactory;
 		private readonly IServiceScopeFactory _serviceScopeFactory;
 
-		private readonly PeriodicTimer _postTimer = new(TimeSpan.FromSeconds(10));
+		private readonly PeriodicTimer _postTimer = new(TimeSpan.FromSeconds(7));
 
 		public RandomPosts(IHttpClientFactory httpClientFactory, IServiceScopeFactory factory)
 		{
@@ -25,18 +25,25 @@ namespace WebProject.Services
 
 		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
+			int postAmount = 0;
+
 			using (var scope = _serviceScopeFactory.CreateScope())
 			{
-				var _webProjectContext = scope.ServiceProvider.GetRequiredService<WebProjectContext>();
+				var _Models = scope.ServiceProvider.GetRequiredService<WebProjectContext>();
+				postAmount = await _Models.Posts.AsNoTracking().CountAsync();
 
-				if (await _webProjectContext.Posts.AsNoTracking().CountAsync() == 0)
+				if (await _Models.Users.CountAsync() == 0)
 				{
-					for (int i = 0; i < 100; i++)
-					{
-						await CreateRandomPost();
-					}
+					postAmount = 1;
 				}
+			}
 
+			if (postAmount == 0)
+			{
+				for (int i = 0; i < 100; i++)
+				{
+					await CreateRandomPost();
+				}
 			}
 
 			while (await _postTimer.WaitForNextTickAsync(stoppingToken) && !stoppingToken.IsCancellationRequested)
@@ -50,30 +57,27 @@ namespace WebProject.Services
 			List<PostModel> randomPosts = new();
 			Random rnd = new();
 
-			int apiToChosse = rnd.Next(4);
+			int apiToChosse = rnd.Next(3);
 
 			switch (apiToChosse)
 			{
 				case 0:
-					randomPosts = await HipsterText();
-					break;
-				case 1:
 					//It only returns one PostModel.
 					randomPosts.Add(await FavQuote());
 					break;
-				case 2:
+				case 1:
 					randomPosts = await LoremIpsumAsync();
 					break;
-				case 3:
+				case 2:
 					//Post with null Content property, it will only have an image.
-					randomPosts.Add(new PostModel() { PostDate = DateTime.Now });
+					randomPosts.Add(new PostModel() { Date = DateTime.Now });
 					break;
 			}
 
 			foreach (PostModel post in randomPosts)
 			{
 				//50% chnage of adding an image to the post or the post have null Content property.
-				if (rnd.Next(2) == 1 || apiToChosse == 3)
+				if (rnd.Next(2) == 1 || apiToChosse == 2)
 				{
 					switch (rnd.Next(10))
 					{
@@ -134,11 +138,11 @@ namespace WebProject.Services
 				}
 
 				List<string> userIds = await _Models.Database
-					.SqlQueryRaw<string>($"SELECT TOP {numberOfUsers} Id FROM AspNetUsers WHERE ProfilePicture LIKE 'https%' ORDER BY NEWID();")
+					.SqlQueryRaw<string>($"SELECT TOP {numberOfUsers} Id FROM Users WHERE ProfilePicture LIKE 'https%' ORDER BY NEWID();")
 					.AsNoTracking().ToListAsync();
 
 				List<string> weebIds = numberOfUsers > 0 ? await _Models.Database
-					.SqlQueryRaw<string>($"SELECT TOP {numberOfWeebs} Id FROM AspNetUsers WHERE ProfilePicture LIKE 'https://cdn%' ORDER BY NEWID();")
+					.SqlQueryRaw<string>($"SELECT TOP {numberOfWeebs} Id FROM Users WHERE ProfilePicture LIKE 'https://cdn%' ORDER BY NEWID();")
 					.AsNoTracking().ToListAsync() : new();
 
 				foreach (PostModel post in randomPosts)
@@ -198,32 +202,6 @@ namespace WebProject.Services
 			return JsonConvert.DeserializeObject<Waifu>(apiResponse).images[0].url;
 		}
 
-		private async Task<List<PostModel>> HipsterText()
-		{
-			HttpClient httpClient = _httpClientFactory.CreateClient();
-
-			HttpResponseMessage response = await httpClient.GetAsync("https://random-data-api.com/api/hipster/random_hipster_stuff");
-			response.EnsureSuccessStatusCode();
-
-			string apiResponse = await response.Content.ReadAsStringAsync();
-
-			HipsterText hipsterText = JsonConvert.DeserializeObject<HipsterText>(apiResponse);
-			List<PostModel> output = new();
-
-			foreach (string content in hipsterText.paragraphs)
-			{
-				PostModel post = new()
-				{
-					Content = content,
-					PostDate = DateTime.Now
-				};
-
-				output.Add(post);
-			}
-
-			return output;
-		}
-
 		private async Task<PostModel> FavQuote()
 		{
 			HttpClient httpClient = _httpClientFactory.CreateClient();
@@ -236,7 +214,7 @@ namespace WebProject.Services
 			PostModel output = new()
 			{
 				Content = $"{favQuote.quote.body}\n-{favQuote.quote.author}",
-				PostDate = DateTime.Now
+				Date = DateTime.Now
 			};
 
 			return output;
@@ -254,7 +232,7 @@ namespace WebProject.Services
 
 			LoremIpsum loremIpsum = JsonConvert.DeserializeObject<LoremIpsum>(apiResponse);
 
-			output.Add(new PostModel() { Content = loremIpsum.very_long_sentence, PostDate = DateTime.Now });
+			output.Add(new PostModel() { Content = loremIpsum.very_long_sentence, Date = DateTime.Now });
 
 			Random paragraphsToTake = new();
 
@@ -264,7 +242,7 @@ namespace WebProject.Services
 			{
 				post.Content += loremIpsum.paragraphs[i];
 			}
-			post.PostDate = DateTime.Now;
+			post.Date = DateTime.Now;
 
 			output.Add(post);
 

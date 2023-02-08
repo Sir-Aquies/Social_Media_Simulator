@@ -34,7 +34,7 @@
 				<span id="switch-comment-tab" onclick="SwitchToComments('@Model.PageUser.Id', '@ViewData["inicialAmountPostsToLoad"]')">Comments</span>
 			</nav>
 
-			<partial name="PostList" model="Model.PageUser.LikedPost"></partial>
+			<partial name="PostList" model="Model.PageUser.Posts"></partial>
 		}
 		else
 		{

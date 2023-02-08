@@ -33,7 +33,7 @@ namespace WebProject.Models
 		/// </summary>
 		public UserModel User { get; set; }
 		public PostModel Post { get; set; }
-		public IList<UserModel> UsersLikes { get; set; }
+		public IList<CommentLikes> UserLikes { get; set; }
 		/// <summary>
 		/// Represents the replies the comment has received { Table }
 		/// </summary>

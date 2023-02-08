@@ -16,6 +16,18 @@
 
 		<div class="user-username">@Model.UserName</div>
 
+		@if (Model.Id != ViewData["LoggedUserId"]?.ToString())
+		{
+			<button class="follow-button" onclick="Follow('@Model.Id')">
+				@(Model.Followers.Any(u => u.FollowerId == ViewData["LoggedUserId"]?.ToString()) ? "Unfollow" : "Follow")
+			</button>
+		}
+
+		<div class="user-follow-info">
+			<p>Followers: @(Model.Followers == null ? "0" : Model.Followers.Count)</p>
+			<p>Following: @(Model.Following == null ? "0" : Model.Following.Count)</p>
+		</div>
+
 		<div class="user-name">@Model.Name</div>
 
 		<div class="user-description">@Model.Description</div>

@@ -22,45 +22,103 @@ namespace WebProject.Data
 		{
 			base.OnModelCreating(builder);
 
+			builder.Entity<FollowUsers>(entity =>
+			{
+				//TODO - change name
+				//entity.ToTable("Followers");
+
+				entity.HasKey(f => new { f.CreatorId, f.FollowerId });
+
+				entity.Property(f => f.CreatorId)
+				.HasColumnType("NVARCHAR(450)");
+
+				entity.Property(f => f.FollowerId)
+				.HasColumnType("NVARCHAR(450)");
+
+				entity.Property(f => f.FollowedDate)
+				.HasColumnType("DATETIME2")
+				.HasDefaultValueSql("GETDATE()");
+
+				entity.HasOne(f => f.Creator).WithMany(u => u.Followers).HasForeignKey(f => f.FollowerId).OnDelete(DeleteBehavior.Cascade);
+
+				entity.HasOne(f => f.Follower).WithMany(u => u.Following).HasForeignKey(f => f.CreatorId).OnDelete(DeleteBehavior.ClientCascade);
+			});
+
+			builder.Entity<UserModel>(entity =>
+			{
+				entity.ToTable("Users");
+
+				entity.Property(u => u.Name)
+				.HasColumnType("NVARCHAR(255)");
+				entity.Property(u => u.Description)
+				.HasColumnType("NVARCHAR(500)");
+
+				entity.Ignore(u => u.PhoneNumber);
+				entity.Ignore(u => u.PhoneNumberConfirmed);
+			});
+
 			builder.Entity<PostModel>(entity =>
 			{
 				entity.HasKey(p => p.Id);
 
-				entity.Property(p => p.PostDate)
+				entity.Property(p => p.UserId)
+				.HasColumnType("NVARCHAR(450)");
+
+				entity.Property(p => p.Date)
 					.HasColumnType("datetime2")
 					.HasDefaultValueSql("getdate()");
 
 				entity.Property(p => p.EditedDate)
-					.HasColumnType("datetime2")
-					.HasDefaultValueSql("getdate()");
-				//TODO - remove default value.
-				entity.HasOne(p => p.User).WithMany(u => u.Posts).HasForeignKey(p => p.UserId).OnDelete(DeleteBehavior.Cascade);
+					.HasColumnType("datetime2");
 
-				entity.HasMany(p => p.UsersLikes).WithMany(u => u.LikedPost).UsingEntity<Dictionary<string, object>>(
-						"PostLikes",
-						p => p
-							.HasOne<UserModel>().WithMany().HasForeignKey("UserId").HasConstraintName("FK_PostLikes_User_UserId").OnDelete(DeleteBehavior.Cascade), 
-						p => p
-							.HasOne<PostModel>().WithMany().HasForeignKey("PostId").HasConstraintName("FK_PostLikes_Post_PostId").OnDelete(DeleteBehavior.ClientCascade));
+				entity.HasOne(p => p.User).WithMany(u => u.Posts).HasForeignKey(p => p.UserId).OnDelete(DeleteBehavior.ClientCascade);
+			});
+
+			builder.Entity<PostLikes>(entity =>
+			{
+				entity.HasKey(pl => new { pl.PostId, pl.UserId });
+
+				entity.Property(pl => pl.UserId)
+				.HasColumnType("NVARCHAR(450)");
+
+				entity.Property(pl => pl.LikedDate)
+				.HasColumnType("DATETIME2")
+				.HasDefaultValueSql("GETDATE()");
+
+				entity.HasOne(pl => pl.Post).WithMany(p => p.UserLikes).HasForeignKey(pl => pl.PostId).OnDelete(DeleteBehavior.Cascade);
+				entity.HasOne(pl => pl.User).WithMany().HasForeignKey(pl => pl.UserId).OnDelete(DeleteBehavior.Cascade);
+
 			});
 
 			builder.Entity<CommentModel>(entity =>
 			{
 				entity.HasKey(c => c.Id);
 
+				entity.Property(c => c.UserId).HasColumnType("NVARCHAR(450)");
+
 				entity.Property(c => c.Date)
 					.HasColumnType("datetime2")
 					.HasDefaultValueSql("getdate()");
 
-				entity.HasOne(c => c.User).WithMany(u => u.Comments).HasForeignKey(c => c.UserId).OnDelete(DeleteBehavior.NoAction);
-				entity.HasOne(c => c.Post).WithMany(p => p.Comments).HasForeignKey(c => c.PostId).OnDelete(DeleteBehavior.Cascade);
+				entity.HasOne(c => c.User).WithMany().HasForeignKey(c => c.UserId).OnDelete(DeleteBehavior.SetNull);
 
-				entity.HasMany(p => p.UsersLikes).WithMany(u => u.LikedComments).UsingEntity<Dictionary<string, object>>(
-						"CommentLikes",
-						p => p
-							.HasOne<UserModel>().WithMany().HasForeignKey("UserId").HasConstraintName("FK_CommentLikes_User_UserId").OnDelete(DeleteBehavior.Cascade),
-						p => p
-							.HasOne<CommentModel>().WithMany().HasForeignKey("CommentId").HasConstraintName("FK_CommentLikes_Comment_CommentId").OnDelete(DeleteBehavior.ClientCascade));
+				entity.HasOne(c => c.Post).WithMany(p => p.Comments).HasForeignKey(c => c.PostId).OnDelete(DeleteBehavior.Cascade);
+			});
+
+			builder.Entity<CommentLikes>(entity =>
+			{
+				entity.HasKey(cl => new { cl.CommentId, cl.UserId });
+
+				entity.Property(cl => cl.UserId)
+				.HasColumnType("NVARCHAR(450)");
+
+				entity.Property(cl => cl.LikedDate)
+				.HasColumnType("DATETIME2")
+				.HasDefaultValueSql("GETDATE()");
+
+				entity.HasOne(cl => cl.Comment).WithMany(c => c.UserLikes).HasForeignKey(cl => cl.CommentId).OnDelete(DeleteBehavior.Cascade);
+				entity.HasOne(cl => cl.User).WithMany().HasForeignKey(cl => cl.UserId).OnDelete(DeleteBehavior.Cascade);
+
 			});
 		}
 	}

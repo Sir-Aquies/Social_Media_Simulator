@@ -36,7 +36,7 @@ namespace WebProject.Models
 		[BindNever]
 		public bool IsEdited { get; set; }
 		public DateTime EditedDate { get; set; }
-		public DateTime PostDate { get; set; }
+		public DateTime Date { get; set; }
 
 		/// <summary>
 		/// Represents the comments the post has received.
@@ -46,7 +46,8 @@ namespace WebProject.Models
 		/// Represents the id of the user of the post { int }.
 		/// </summary>
 		public UserModel User { get; set; }
-		public IList<UserModel> UsersLikes { get; set; }
+
+		public IList<PostLikes> UserLikes { get; set; }
 		
 	}
 }

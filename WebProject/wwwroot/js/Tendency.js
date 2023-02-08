@@ -40,6 +40,37 @@ function LoadUsersWithMostPosts() {
 	);
 }
 
+function Follow(userId) {
+	if (!userId)
+		return;
+	const button = event.target;
+
+	$.ajax(
+		{
+			type: "POST",
+			url: "/User/Follow",
+			data: { userId },
+			success: function (data) {
+				if (data) {
+					if (data === '+') {
+						button.innerHTML = 'Unfollow';
+					}
+					else if (data === '-') {
+						button.innerHTML = 'Follow';
+					}
+					else {
+						Message('An error has ocurred, your follow was not saved.');
+					}
+				}
+			},
+			error: function (details) {
+				Message(details.responseText);
+			}
+		}
+	);
+
+}
+
 window.addEventListener('load', function () {
 	LoadUsersWithMostLikes();
 	LoadUsersWithMostPosts()
