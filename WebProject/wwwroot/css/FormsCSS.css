@@ -11,14 +11,14 @@
 
 .field-container {
 	width: 100%;
-	color: var(--colortext);
-	font-size: var(--textsize);
+	color: var(--colorText);
+	font-size: var(--normalFS);
 	margin-bottom: 1.5rem;
 }
 
 .field-container > input {
 	width: 100%;
-	border: 1px solid var(--BorderColor);
+	border: 1px solid var(--borderColor);
 	background-color: transparent;
 	border-radius: 0.4rem;
 	color: inherit;
@@ -28,7 +28,7 @@
 
 .field-container > textarea {
 	width: 100%;
-	border: 1px solid var(--BorderColor);
+	border: 1px solid var(--borderColor);
 	background-color: transparent;
 	border-radius: 0.4rem;
 	color: inherit;
@@ -55,12 +55,12 @@
 	width: fit-content;
 	color: inherit;
 	padding: 0.6rem;
-	border: 1px solid var(--BorderColor);
+	border: 1px solid var(--borderColor);
 	border-radius: 0.4rem;
 }
 
 .button-container a {
-	border: 1px solid var(--BorderColor);
+	border: 1px solid var(--borderColor);
 	border-radius: 0.4rem;
 	width: fit-content;
 	padding: 0.6rem;
@@ -72,7 +72,7 @@
 	.form-container {
 		margin-right: auto;
 		margin-left: auto;
-		border: 1px solid var(--BorderColor);
+		border: 1px solid var(--borderColor);
 	}
 
 	.button-container {

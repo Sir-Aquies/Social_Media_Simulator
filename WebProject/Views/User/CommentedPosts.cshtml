@@ -13,7 +13,7 @@
 
 <style>
 	#pageuser-comments{
-		border-bottom: 3px solid var(--BorderColor);
+		border-bottom: 3px solid var(--borderColor);
 	}
 </style>
 
@@ -51,8 +51,8 @@
 <script src="~/js/PostsScript.js" asp-append-version="true"></script>
 <script src="~/js/CommentsScript.js" asp-append-version="true"></script>
 <script src="~/js/ImagePrev.js" asp-append-version="true"></script>
-<script src="~/js/Tendency.js" asp-append-version="true"></script>
+<script src="~/js/UserScript.js" asp-append-version="true"></script>
 
 <script>
-	SetScrollEvent("@Model.PageUser?.Id", @ViewData["startFromPost"], LoadMorePostsComments);
+	SetScrollEvent("@Model.PageUser?.Id", @ViewData["startFromPost"], @ViewData["PostsPerLoad"], LoadMoreCommentedPosts);
 </script>

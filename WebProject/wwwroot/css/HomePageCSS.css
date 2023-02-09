@@ -17,7 +17,7 @@
 .user-info {
 	width: 100%;
 	padding: 0.6rem;
-	font-size: var(--BigTextsize);
+	font-size: var(--bigFS);
 	left: 0;
 	top: 75px;
 	position: sticky;
@@ -31,7 +31,7 @@
 .user-pic {
 	width: 20vh;
 	height: 20vh;
-	border: 1px solid var(--BorderColor);
+	border: 1px solid var(--borderColor);
 	border-radius: 50%;
 	display: block;
 	object-fit: cover;
@@ -42,32 +42,28 @@
 }
 
 .follow-button {
-	color: inherit;
+	color: var(--bgColor);
 	border: 0;
-	background-color: var(--LayoutColor);
+	background-color: var(--borderColor);
 	border-radius: 5px;
-	font-size: var(--BigTextsize);
-	padding: 0.5rem;
-}
-
-.user-follow-info {
-
+	font-size: var(--bigFS);
+	padding: 0.3rem 0.5rem;
 }
 
 .user-description {
 	white-space: pre-wrap;
-	font-size: var(--textsize)
+	font-size: var(--normalFS)
 }
 
 .user-dob {
-	font-size: var(--textsize)
+	font-size: var(--normalFS)
 }
 
 .center-box {
 	width: 100%;
 	height: fit-content;
-	border-left: 1px solid var(--BorderColor);
-	border-right: 1px solid var(--BorderColor);
+	border-left: 1px solid var(--borderColor);
+	border-right: 1px solid var(--borderColor);
 	display: flex;
 	flex-direction: column;
 }
@@ -79,12 +75,12 @@
 .explore-navigation-bar,
 .nav-likes-page,
 .pageuser-navigation-bar {
-	border-top: 1px solid var(--BorderColor);
+	border-top: 1px solid var(--borderColor);
 	display: flex;
 	justify-content: space-around;
 	gap: 0.5rem;
 	padding: 0.5rem;
-	font-size: var(--BigTextsize);
+	font-size: var(--bigFS);
 }
 
 .pageuser-navigation-bar a {
@@ -108,8 +104,8 @@
 .create-post-container {
 	width: 100%;
 	padding: 1rem;
-	border-top: 1px solid var(--BorderColor);
-	border-bottom: 1px solid var(--BorderColor);
+	border-top: 1px solid var(--borderColor);
+	border-bottom: 1px solid var(--borderColor);
 }
 
 .create-post-button {
@@ -120,8 +116,8 @@
 	margin: 0 auto;
 	display: block;
 	border-radius: 0.5rem;
-	border: 1px solid var(--BorderColor);
-	font-size: var(--textsize);
+	border: 1px solid var(--borderColor);
+	font-size: var(--normalFS);
 }
 
 .right-box {
@@ -129,6 +125,8 @@
 }
 
 .small-user-list .list-user-pic {
+	min-width: 3.5rem;
+	min-height: 3.5rem;
 	width: 3.5rem;
 	height: 3.5rem;
 }
@@ -148,7 +146,7 @@
 .null-model {
 	text-align: center;
 	font-size: 2rem;
-	border: 1px solid var(--BorderColor);
+	border: 1px solid var(--borderColor);
 	padding: 0.7rem;
 }
 
@@ -163,7 +161,7 @@
 }
 
 .question-mark-path {
-	fill: var(--BorderColor);
+	fill: var(--borderColor);
 }
 
 @media only screen and (min-width: 768px) {

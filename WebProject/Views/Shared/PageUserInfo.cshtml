@@ -16,29 +16,37 @@
 
 		<div class="user-username">@Model.UserName</div>
 
-		@if (Model.Id != ViewData["LoggedUserId"]?.ToString())
-		{
-			<button class="follow-button" onclick="Follow('@Model.Id')">
-				@(Model.Followers.Any(u => u.FollowerId == ViewData["LoggedUserId"]?.ToString()) ? "Unfollow" : "Follow")
-			</button>
-		}
-
-		<div class="user-follow-info">
-			<p>Followers: @(Model.Followers == null ? "0" : Model.Followers.Count)</p>
-			<p>Following: @(Model.Following == null ? "0" : Model.Following.Count)</p>
-		</div>
-
 		<div class="user-name">@Model.Name</div>
 
 		<div class="user-description">@Model.Description</div>
 
 		<div class="user-dob">@Model.DateofBirth.ToShortDateString()</div>
 
+		@if (Model.Id != ViewData["LoggedUserId"]?.ToString())
+		{
+			<button class="follow-button" onclick="Follow('@Model.Id')">
+				@if (Model.Followers != null)
+				{
+					@(Model.Followers.Any(u => u.FollowerId == ViewData["LoggedUserId"]?.ToString()) ? "Unfollow" : "Follow")
+				}
+			</button>
+		}
+
+		<div style="cursor: pointer" onclick="FollowersUsersTab('@Model.Id')">
+			Followers:
+			<span data-user-followers>@(Model.Followers == null ? "0" : Model.Followers.Count)</span>
+		</div>
+
+		<div style="cursor: pointer" onclick="FollowingUsersTab('@Model.Id')">
+			Following:
+			<span data-users-following>@(Model.Following == null ? "0" : Model.Following.Count)</span>
+		</div>
+
 		@if (TempData["TotalLikes"] != null)
 		{
-			<div>Total likes: @TempData["TotalLikes"]</div>
-			<div>Total Posts: @TempData["TotalPosts"]</div>
-			<div>Total Comments: @TempData["TotalComments"]</div>
+			<div>Total likes: <span data-total-likes>@TempData["TotalLikes"]</span></div>
+			<div>Total Posts: <span data-total-post>@TempData["TotalPosts"]</span></div>
+			<div>Total Comments: <span data-total-comments>@TempData["TotalComments"]</span></div>
 		}
 	</div>
 }

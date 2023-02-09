@@ -184,7 +184,6 @@ namespace WebProject.Services
 				followers.Add(new FollowUsers { FollowerId = followerIds[i] });
 			}
 
-
 			return followers;
 		}
 

@@ -93,7 +93,7 @@ function SwitchStyleTab(tabName) {
 	document.getElementById('old-post-tab').style.borderBottom = '0';
 
 	if (tabName)
-		document.getElementById(tabName).style.borderBottom = '3px solid var(--BorderColor)';
+		document.getElementById(tabName).style.borderBottom = '3px solid var(--borderColor)';
 }
 
 function ReloadUsersInLeftBox(amountOfUsers) {

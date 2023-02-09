@@ -15,7 +15,7 @@
 <style>
 	#switch-post-tab,
 	#pageuser-likes {
-		border-bottom: 3px solid var(--BorderColor);
+		border-bottom: 3px solid var(--borderColor);
 	}
 </style>
 
@@ -30,8 +30,8 @@
 			<partial name="PageUserNav"></partial>
 
 			<nav class="nav-likes-page">
-				<span id="switch-post-tab" onclick="SwitchToPosts('@Model.PageUser.Id', '@ViewData["inicialAmountPostsToLoad"]')">Posts</span>
-				<span id="switch-comment-tab" onclick="SwitchToComments('@Model.PageUser.Id', '@ViewData["inicialAmountPostsToLoad"]')">Comments</span>
+				<span id="switch-post-tab" onclick="SwitchTabLikedPostsAndComments('@Model.PageUser.Id', @ViewData["startFromPost"], @ViewData["PostsPerLoad"])">Posts</span>
+				<span id="switch-comment-tab" onclick="SwitchTabLikedPostsAndComments('@Model.PageUser.Id', @ViewData["startFromPost"], @ViewData["PostsPerLoad"])">Comments</span>
 			</nav>
 
 			<partial name="PostList" model="Model.PageUser.Posts"></partial>
@@ -58,8 +58,8 @@
 <script src="~/js/PostsScript.js" asp-append-version="true"></script>
 <script src="~/js/CommentsScript.js" asp-append-version="true"></script>
 <script src="~/js/ImagePrev.js" asp-append-version="true"></script>
-<script src="~/js/Tendency.js" asp-append-version="true"></script>
+<script src="~/js/UserScript.js" asp-append-version="true"></script>
 
 <script>
-	SetScrollEvent("@Model.PageUser?.Id", @ViewData["startFromPost"], LoadMorePostsLikes);
+	SetScrollEvent("@Model.PageUser?.Id", @ViewData["startFromPost"], @ViewData["PostsPerLoad"], LoadMorePostsLikes);
 </script>

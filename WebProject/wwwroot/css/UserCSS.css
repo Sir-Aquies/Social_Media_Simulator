@@ -5,7 +5,7 @@
 
 .search-user-bar {
 	width: 100%;
-	font-size: var(--BigTextsize);
+	font-size: var(--bigFS);
 	color: inherit;
 }
 
@@ -23,7 +23,7 @@
 	max-width: 30rem;
 	flex-direction: column;
 	overflow: auto;
-	background-color: var(--BackgroundColor);
+	background-color: var(--bgColor);
 }
 
 .list-user-container {
@@ -32,7 +32,7 @@
 	height: fit-content;
 	display: flex;
 	align-items: center;
-	border: 1px solid var(--BorderColor);
+	border: 1px solid var(--borderColor);
 }
 
 .list-user-info {
@@ -46,7 +46,7 @@
 	height: 7rem;
 	object-fit: cover;
 	cursor: pointer;
-	border: 1px solid var(--BorderColor);
+	border: 1px solid var(--borderColor);
 	margin-right: 1rem;
 	border-radius: 50%;
 }
@@ -69,8 +69,8 @@
 
 .list-user-username {
 	text-decoration: none;
-	color: var(--colortext);
-	font-size: var(--BigTextsize);
+	color: var(--colorText);
+	font-size: var(--bigFS);
 	width: 100%;
 	font-weight: bold;
 }
@@ -78,7 +78,7 @@
 .list-user-name {
 	width: 100%;
 	white-space: initial;
-	font-size: var(--textsize);
+	font-size: var(--normalFS);
 }
 
 .list-user-description {
@@ -86,7 +86,7 @@
 	overflow: hidden;
 	height: fit-content;
 	max-height: 7rem;
-	font-size: var(--SmallTextsize);
+	font-size: var(--smallFS);
 }
 
 .box-container {

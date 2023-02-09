@@ -13,11 +13,11 @@ function ShowCompletePost(postId) {
 				const tab = document.createElement("div");
 				tab.id = 'view-black-background';
 				tab.className = 'view-post-black-background';
-				tab.addEventListener("dblclick", () => { RemoveViewPostTab() });
+				tab.addEventListener('dblclick', () => { RemoveViewPostTab() });
 				document.body.appendChild(tab);
 
 				tab.innerHTML = data;
-				document.body.style.overflow = "hidden";
+				document.body.style.overflow = 'hidden';
 			},
 			error: function (details) {
 				Message(details.responseText);
@@ -33,14 +33,14 @@ function RemoveViewPostTab() {
 
 //Get CreatePost.cshtml partial view (from LookForCreatePost) and display it in a background.
 function CreatePostTab() {
-	$.get("/Post/LookForCreatePost", function (data, status) {
-		if (status === "success") {
+	$.get('/Post/LookForCreatePost', function (data, status) {
+		if (status === 'success') {
 			const background = Background();
 			//Insert the partial view.
 			background.insertAdjacentHTML('beforeend', data);
 			//focus the textarea element.
 			document.getElementById('content-text').focus();
-			document.body.style.overflow = "hidden";
+			document.body.style.overflow = 'hidden';
 		}
 	});
 }
@@ -221,15 +221,15 @@ function LikesTab(postId) {
 	}
 }
 
-function LoadMorePosts(userId, startFromRow, amountOfRows) {
-	if (!userId || !startFromRow || !amountOfRows)
+function LoadMorePosts(userId, startFromRow) {
+	if (!userId || !startFromRow)
 		return;
 
 	$.ajax(
 		{
 			type: "GET",
 			url: "/User/LoadMorePosts",
-			data: { userId, startFromRow, amountOfRows },
+			data: { userId, startFromRow },
 			success: function (data) {
 				if (data) {
 					AddRangePost(data);
@@ -243,8 +243,8 @@ function LoadMorePosts(userId, startFromRow, amountOfRows) {
 	);
 }
 
-function LoadMorePostsMedia(userId, startFromRow, amountOfRows) {
-	if (!userId || !startFromRow || !amountOfRows)
+function LoadMorePostsMedia(userId, startFromRow) {
+	if (!userId || !startFromRow)
 		return;
 
 	onlyMedia = true;
@@ -253,7 +253,7 @@ function LoadMorePostsMedia(userId, startFromRow, amountOfRows) {
 		{
 			type: "GET",
 			url: "/User/LoadMorePosts",
-			data: { userId, startFromRow, amountOfRows, onlyMedia },
+			data: { userId, startFromRow, onlyMedia },
 			success: function (data) {
 				if (data) {
 					AddRangePost(data);
@@ -267,15 +267,15 @@ function LoadMorePostsMedia(userId, startFromRow, amountOfRows) {
 	);
 }
 
-function LoadMorePostsLikes(userId, startFromRow, amountOfRows) {
-	if (!userId || !startFromRow || !amountOfRows)
+function LoadMoreLikedPosts(userId, startFromRow) {
+	if (!userId || !startFromRow)
 		return;
 
 	$.ajax(
 		{
 			type: "GET",
-			url: "/User/LoadMorePostsLikes",
-			data: { userId, startFromRow, amountOfRows },
+			url: "/User/LoadMoreLikedPosts",
+			data: { userId, startFromRow },
 			success: function (data) {
 				if (data) {
 					AddRangePost(data);
@@ -289,57 +289,58 @@ function LoadMorePostsLikes(userId, startFromRow, amountOfRows) {
 	);
 }
 
-function SwitchToPosts(userId, inicialAmountToLoad) {
-	if (!userId || !inicialAmountToLoad)
-		return;
-
-	$.ajax(
-		{
-			type: "GET",
-			url: "/User/LoadMorePostsLikes",
-			data: { userId, startFromRow: 0, amountOfRows: inicialAmountToLoad },
-			success: function (data) {
-				if (data) {
-					//Remove all posts from the main container and add the liked posts.
-					EmptyMainContainer();
-					AddRangePost(data);
-
-					//Change event to load liked post.
-					SetScrollEvent(userId, inicialAmountToLoad, LoadMorePostsLikes);
-
-					//Visual change to indicate the user witch is on.
-					document.getElementById('switch-post-tab').style.borderBottom = '3px solid var(--BorderColor)';
-					document.getElementById('switch-comment-tab').style.borderBottom = 'none';
-				}
-			},
-			error: function (details) {
-				Message(details.responseText);
-			}
-		}
-	);
-}
-
-function SwitchToComments(userId, inicialAmountToLoad) {
-	if (!userId || !inicialAmountToLoad)
+function LoadMoreLikedComments(userId, startFromRow) {
+	if (!userId || !startFromRow)
 		return;
 
 	$.ajax(
 		{
 			type: "GET",
 			url: "/User/LoadMoreLikedComments",
-			data: { userId, startFromRow: 0, amountOfRows: inicialAmountToLoad },
+			data: { userId, startFromRow },
 			success: function (data) {
 				if (data) {
-					//Remove all the posts from the main container and add the liked comments's posts.
+					AddRangePost(data);
+					loadingPosts = false;
+				}
+			},
+			error: function (details) {
+				Message(details.responseText);
+			}
+		}
+	);
+}
+
+function SwitchTabLikedPostsAndComments(userId, startingRow, rowsPerLoad) {
+	if (!userId || !startingRow || !rowsPerLoad)
+		return;
+
+	let tabName = event.target.id;
+	let actionMethodName = 'LoadMoreLikedPosts';
+
+	if (tabName === 'switch-comment-tab') {
+		actionMethodName = 'LoadMoreLikedComments';
+	}
+
+	$.ajax(
+		{
+			type: "GET",
+			url: `/User/${actionMethodName}`,
+			data: { userId, startFromRow: 0 },
+			success: function (data) {
+				if (data) {
+					//Remove all posts from the main container and add the new posts.
 					EmptyMainContainer();
 					AddRangePost(data);
 
-					//Change event to load liked comments along with its post.
-					SetScrollEvent(userId, inicialAmountToLoad, LoadMoreLikedComments);
+					//Change the scroll event.
+					let postLoader = tabName === 'switch-comment-tab' ? LoadMoreLikedComments : LoadMoreLikedPosts;
+					SetScrollEvent(userId, startingRow, rowsPerLoad, postLoader);
 
-					//Visual change to indicate the user witch is on.
+					//Visual change to indicate the user which tab is on.
 					document.getElementById('switch-post-tab').style.borderBottom = 'none';
-					document.getElementById('switch-comment-tab').style.borderBottom = '3px solid var(--BorderColor)';
+					document.getElementById('switch-comment-tab').style.borderBottom = 'none';
+					document.getElementById(tabName).style.borderBottom = '3px solid var(--borderColor)';
 				}
 			},
 			error: function (details) {
@@ -349,37 +350,15 @@ function SwitchToComments(userId, inicialAmountToLoad) {
 	);
 }
 
-function LoadMoreLikedComments(userId, startFromRow, amountOfRows) {
-	if (!userId || !startFromRow || !amountOfRows)
+function LoadMoreCommentedPosts(userId, startFromRow) {
+	if (!userId || !startFromRow)
 		return;
 
 	$.ajax(
 		{
 			type: "GET",
-			url: "/User/LoadMoreLikedComments",
-			data: { userId, startFromRow, amountOfRows },
-			success: function (data) {
-				if (data) {
-					AddRangePost(data);
-					loadingPosts = false;
-				}
-			},
-			error: function (details) {
-				Message(details.responseText);
-			}
-		}
-	);
-}
-
-function LoadMorePostsComments(userId, startFromRow, amountOfRows) {
-	if (!userId || !startFromRow || !amountOfRows)
-		return;
-
-	$.ajax(
-		{
-			type: "GET",
-			url: "/User/LoadMorePostsComments",
-			data: { userId, startFromRow, amountOfRows },
+			url: "/User/LoadMoreCommentedPosts",
+			data: { userId, startFromRow },
 			success: function (data) {
 				if (data) {
 					AddRangePost(data);

@@ -1,7 +1,7 @@
 ﻿nav.head-bar {
-	background-color: var(--LayoutColor);
-	color: var(--colortext);
-	font-size: var(--BigTextsize);
+	background-color: var(--layoutColor);
+	color: var(--colorText);
+	font-size: var(--bigFS);
 	width: 100%;
 	height: max-content;
 	padding: 0.5rem;
@@ -36,7 +36,7 @@ img.user-info-mobile {
 	height: 6vh;
 	margin: 0.3rem;
 	cursor: pointer;
-	border: 1px solid var(--BorderColor);
+	border: 1px solid var(--borderColor);
 	border-radius: 50%;
 	transition: box-shadow 0.1s;
 }
@@ -67,7 +67,7 @@ img.user-info-mobile {
 .head-list-buttons > div {
 	width: 100%;
 	height: 0.3rem;
-	background-color: var(--BorderColor);
+	background-color: var(--borderColor);
 }
 
 .head-list-buttons:hover > div {
@@ -95,7 +95,7 @@ img.user-info-mobile {
 .tab-list a::after {
 	content: '';
 	display: block;
-	border-bottom: 1px solid var(--BorderColor);
+	border-bottom: 1px solid var(--borderColor);
 	width: 100%;
 	margin: 0.5rem 0;
 }
@@ -127,11 +127,11 @@ img.user-info-mobile {
 .alert-message {
 	position: relative;
 	background-color: var(--ShadowColor);
-	color: var(--colortext);
+	color: var(--colorText);
 	width: 100%;
 	height: fit-content;
 	padding: 1rem 1.2rem;
-	font-size: var(--SmallTextsize);
+	font-size: var(--smallFS);
 	overflow: auto;
 	border-top: 0.01rem solid white;
 	border-bottom: 0.01rem solid white;
@@ -159,7 +159,7 @@ img.user-info-mobile {
 	display: block;
 	position: absolute;
 	width: 100%;
-	background-color: var(--LayoutColor);
+	background-color: var(--layoutColor);
 	height: 110vh;
 	transition: all 0.5s;
 	left: -100%;

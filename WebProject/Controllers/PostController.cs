@@ -47,6 +47,7 @@ namespace WebProject.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
+		//TODO - Creating a post with an image causes bugs.
 		public async Task<IActionResult> CreatePost(IFormFile Media, string Content)
 		{
 			UserModel loggedUser = await _UserManager.GetUserAsync(HttpContext.User);
@@ -173,7 +174,7 @@ namespace WebProject.Controllers
 		public async Task<bool> DeletePost(int PostId)
 		{
 			UserModel loggedUser = await _UserManager.GetUserAsync(HttpContext.User);
-			PostModel post = await _Models.Posts.Include(p => p.Comments).ThenInclude(c => c.UserLikes).Include(p => p.UserLikes).FirstOrDefaultAsync(us => us.Id == PostId);
+			PostModel post = await _Models.Posts.Include(p => p.Comments).ThenInclude(c => c.UserLikes).Include(p => p.UserLikes).FirstOrDefaultAsync(p => p.Id == PostId);
 
 			if (loggedUser.Id != post.UserId || post == null)
 			{

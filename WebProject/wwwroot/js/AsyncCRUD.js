@@ -8,14 +8,14 @@ const containers = [...document.querySelectorAll('[data-post-container]')];
 
 let loadingPosts = false;
 
-function SetScrollEvent(userId, startFrom, PostLoader) {
+function SetScrollEvent(userId, startFrom, rowsPerLoad, PostLoader) {
     let startFromRow = parseInt(startFrom);
-    let amountOfRows = 5;
+    let amountOfRows = parseInt(rowsPerLoad);
 
     window.onscroll = function() {
         if (!loadingPosts && this.window.scrollY > (mainContainer.clientHeight * (70 / 100))) {
             loadingPosts = true;
-            PostLoader(userId, startFromRow, amountOfRows);
+            PostLoader(userId, startFromRow);
             startFromRow += amountOfRows;
         }
     }

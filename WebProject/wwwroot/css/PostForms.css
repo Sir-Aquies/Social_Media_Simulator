@@ -2,11 +2,11 @@
     width: 100%;
     max-width: 41.5rem;
     padding: 0.7rem;
-    background-color: var(--BackgroundColor);
-    border: 1px solid var(--BorderColor);
+    background-color: var(--bgColor);
+    border: 1px solid var(--borderColor);
     border-radius: 0.4rem;
-    color: var(--colortext);
-    font-size: var(--textsize);
+    color: var(--colorText);
+    font-size: var(--normalFS);
     z-index: 20;
     display: flex;
     gap: 0.7rem;
@@ -33,9 +33,9 @@
 .button-holder input {
     width: fit-content;
     background-color: Transparent;
-    border: 1px solid var(--BorderColor);
+    border: 1px solid var(--borderColor);
     padding: 0.25rem 0.7rem;
-    font-size: var(--BigTextsize);
+    font-size: var(--bigFS);
     color: inherit;
 }
 
@@ -91,10 +91,10 @@
 
 .view-post-container {
     height: fit-content;
-    background-color: var(--BackgroundColor);
+    background-color: var(--bgColor);
     width: 630px;
-    border-right: 1px solid var(--BorderColor);
-    border-left: 1px solid var(--BorderColor);
+    border-right: 1px solid var(--borderColor);
+    border-left: 1px solid var(--borderColor);
 }
 
 .view-post-black-background {
