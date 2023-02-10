@@ -1,0 +1,54 @@
+﻿@model UserModel
+
+@{
+	if (Model != null)
+	{
+		ViewData["Title"] = Model.UserName;
+	}
+	else
+	{
+		ViewData["Title"] = "User not found";
+	}
+
+	ViewData["LoggedUserId"] = Model.Id;
+	ViewData["commentsAmount"] = "3";
+	ViewBag.blur = Model.ShowImages ? "1" : "0";
+}
+
+<link rel="stylesheet" href="~/css/UserCSS.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/HomePageCSS.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/PostContainer.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/PostForms.css" asp-append-version="true" />
+
+<style>
+	#pageuser-posts {
+		border-bottom: 3px solid var(--borderColor);
+	}
+</style>
+
+<section class="box-container">
+	<section class="left-box">
+		<partial name="PageUserInfo" model="Model"></partial>
+	</section>
+
+	<section class="center-box" id="UserPostContainer">
+		@if (Model != null)
+		{
+			<partial name="PostList" model="Model.Posts"></partial>
+		}
+	</section>
+
+	<section class="right-box small-user-list">
+		<partial name="Right-Box"></partial>
+	</section>
+</section>
+
+<script src="~/js/AsyncCRUD.js" asp-append-version="true"></script>
+<script src="~/js/PostsScript.js" asp-append-version="true"></script>
+<script src="~/js/CommentsScript.js" asp-append-version="true"></script>
+<script src="~/js/UserScript.js" asp-append-version="true"></script>
+
+<script>
+	SetScrollEvent("@Model.Id", @ViewData["startFromPost"], @ViewData["PostsPerLoad"], LoadMoreFollowingUsersPosts);
+	setInterval(() => { UpdateUserStats('@Model.Id') }, 10000);
+</script>

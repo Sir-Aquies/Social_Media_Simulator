@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Authorization;
 using WebProject.Services;
 using Microsoft.Extensions.Hosting;
 using System.Text;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace WebProject.Controllers
 {
@@ -33,7 +35,7 @@ namespace WebProject.Controllers
 			_Tendency = tendency;
 			_Logic = modelLogic;
 		}
-
+		//TODO - refactor all the LoadMorePosts... into one.
 		//Eliot09  2e8e3796-7eb0-4bce-8201-df95004105d1
 		public async Task<IActionResult> SearchUser(string userName)
 		{
@@ -44,8 +46,65 @@ namespace WebProject.Controllers
 				RedirectToAction("UserPage", new { loggedUser.UserName });
 		}
 
+		//Loads all the following user's posts of the loggedUser. 
+		public async Task<IActionResult> Home()
+		{
+			UserModel loggedUser = await _UserManager.GetUserAsync(HttpContext.User);
+
+			if (loggedUser == null)
+				return RedirectToAction("Login", "Account");
+
+			loggedUser.Posts = await GetFollowingUsersPosts(loggedUser.Id, 0, inicialAmountPostsToLoad);
+
+			//Use to pass the variables to a javascript methods (SetScrollEvent and SwitchTo...).
+			ViewData["startFromPost"] = inicialAmountPostsToLoad;
+			ViewData["PostsPerLoad"] = AmountPostsPerLoad;
+
+			loggedUser.Followers = await _Logic.GetFollowers(loggedUser.Id);
+			loggedUser.Following = await _Logic.GetFollowingUsers(loggedUser.Id);
+
+			await LoadPageUserStats(loggedUser.Id);
+
+			return View(loggedUser);
+		}
+
+		private async Task<List<PostModel>> GetFollowingUsersPosts(string userId, int startFromRow, int amountOfRows)
+		{
+			List<PostModel> posts = await _Models.Posts
+				.FromSqlRaw("SELECT * FROM Posts WHERE UserId IN " +
+				"(SELECT CreatorId FROM FollowUsers WHERE FollowerId = {0}) " +
+				"ORDER BY Date DESC OFFSET {1} ROWS FETCH NEXT {2} ROWS ONLY;", userId, startFromRow, amountOfRows)
+				.AsNoTracking().ToListAsync();
+
+			posts = await _Logic.FillPostsProperties(posts);
+
+			return posts;
+		}
+
+		public async Task<IActionResult> LoadMoreFollowingUsersPosts(int startFromRow, int amountOfRows = AmountPostsPerLoad)
+		{
+			UserModel loggedUser = await _UserManager.GetUserAsync(HttpContext.User);
+
+			if (loggedUser == null)
+				return NotFound("User not found.");
+
+			List<PostModel> posts = await GetFollowingUsersPosts(loggedUser.Id, startFromRow, amountOfRows);
+
+			if (posts == null)
+				return NotFound("Posts not found.");
+
+			//If no posts are return from the database.
+			//NoContent stops future calls.
+			if (posts.Count == 0)
+				return NoContent();
+
+			await LoadPostListInfo(loggedUser);
+
+			return PartialView("PostList", posts);
+		}
+
 		//TODO - delete DynamicUser.
-		//PageUser home page that shows all his/her posts.
+		//PageUser profile page that shows all his/her posts.
 		public async Task<IActionResult> UserPage(string userName)
 		{
 			UserModel loggedUser = await _UserManager.GetUserAsync(HttpContext.User);
@@ -484,9 +543,7 @@ namespace WebProject.Controllers
 					return result == 1 ? "+" : "0";
 				}
 				else
-				{
 					return "0";
-				}
 			}
 		}
 
@@ -496,7 +553,7 @@ namespace WebProject.Controllers
 			try
 			{
 				followers = await _Models.Users
-				.FromSqlRaw("SELECT * FROM Users WHERE Id IN(SELECT FollowerId FROM FollowUsers WHERE CreatorId = {0});", userId)
+				.FromSqlRaw("SELECT * FROM Users WHERE Id IN(SELECT FollowerId FROM FollowUsers WHERE CreatorId = {0} ORDER BY FollowedDate DESC OFFSET 0 ROWS);", userId)
 				.AsNoTracking().ToListAsync();
 			}
 			catch
@@ -516,7 +573,7 @@ namespace WebProject.Controllers
 			try
 			{
 				followingUsers = await _Models.Users
-				.FromSqlRaw("SELECT * FROM Users WHERE Id IN(SELECT CreatorId FROM FollowUsers WHERE FollowerId = {0});", userId)
+				.FromSqlRaw("SELECT * FROM Users WHERE Id IN(SELECT CreatorId FROM FollowUsers WHERE FollowerId = {0} ORDER BY FollowedDate DESC OFFSET 0 ROWS);", userId)
 				.AsNoTracking().ToListAsync();
 			}
 			catch
@@ -530,9 +587,32 @@ namespace WebProject.Controllers
 			return PartialView("UsersList", followingUsers);
 		}
 
-		public async Task<string> UpdateUserStats(string userId)
+		public string UpdateUserStats(string userId)
 		{
-			return "";
+			string[] sqlQueries = { 
+				"SELECT SUM(Likes) FROM Posts WHERE UserId = {0}",
+				"SELECT COUNT(Id) FROM Posts WHERE UserId = {0}",
+				"SELECT COUNT(Id) FROM Comments WHERE UserId = {0}",
+				"SELECT COUNT(FollowerId) FROM FollowUsers WHERE CreatorId = {0}",
+				"SELECT COUNT(CreatorId) FROM FollowUsers WHERE FollowerId = {0}"
+			};
+
+			int[] stats = new int[sqlQueries.Length];
+
+			for (int i = 0; i < sqlQueries.Length; i++)
+			{
+				//The try catch is in case it returns null which throws an exception.
+				try
+				{
+					stats[i] = _Models.Database.SqlQueryRaw<int>(sqlQueries[i], userId).ToListAsync().Result[0];
+				}
+				catch { }
+			}
+
+			return JsonConvert.SerializeObject(new { 
+				totalLikes = stats[0], totalPosts = stats[1], 
+				totalComments = stats[2], followersCount = stats[3], 
+				followingCount = stats[4] });
 		}
 
 		public async Task<IActionResult> SearchUsers()
@@ -567,6 +647,11 @@ namespace WebProject.Controllers
 		public IActionResult UsersWithMostPostsView()
 		{
 			return PartialView("UsersList", _Tendency.UsersWithMostPost);
+		}
+		
+		public IActionResult UsersWithMostFollowersView()
+		{
+			return PartialView("UsersList", _Tendency.UsersWithMostFollowers);
 		}
 	}
 }

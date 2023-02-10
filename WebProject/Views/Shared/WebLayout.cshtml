@@ -36,11 +36,15 @@
 					<div class="tab-list" id="TabList" onclick="event.stopPropagation();">
 						@if (Model is DynamicUser || Model is PasswordUser && Model.PageUser != null)
 						{
-							<a asp-area="" asp-controller="User" asp-action="UserPage" asp-route-UserName="@Model.User.UserName">Home</a>
+							<a asp-area="" asp-controller="User" asp-action="Home">Home</a>
+
+							<a asp-area="" asp-controller="User" asp-action="UserPage" asp-route-UserName="@Model.User.UserName">Profile</a>
 						}
 						else if (Model is UserModel)
 						{
-							<a asp-area="" asp-controller="User" asp-action="UserPage" asp-route-UserName="@Model.UserName">Home</a>
+							<a asp-area="" asp-controller="User" asp-action="Home">Home</a>
+
+							<a asp-area="" asp-controller="User" asp-action="UserPage" asp-route-UserName="@Model.UserName">Profile</a>
 						}
 
 						@if (Model is null || Model is LoginModel)
@@ -72,6 +76,12 @@
 		{
 			<div class="display-tab" id="display-tab" onmousedown="event.stopPropagation();">
 				<partial name="PageUserInfo" model="Model.PageUser"></partial>
+			</div>
+		}
+		else if (Model is UserModel)
+		{
+			<div class="display-tab" id="display-tab" onmousedown="event.stopPropagation();">
+				<partial name="PageUserInfo" model="Model"></partial>
 			</div>
 		}
 	</header>

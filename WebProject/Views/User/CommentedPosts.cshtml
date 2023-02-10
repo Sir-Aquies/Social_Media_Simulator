@@ -55,4 +55,5 @@
 
 <script>
 	SetScrollEvent("@Model.PageUser?.Id", @ViewData["startFromPost"], @ViewData["PostsPerLoad"], LoadMoreCommentedPosts);
+	setInterval(() => { UpdateUserStats('@Model.PageUser?.Id') }, 10000);
 </script>

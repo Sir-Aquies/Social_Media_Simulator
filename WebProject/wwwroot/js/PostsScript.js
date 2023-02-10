@@ -221,6 +221,28 @@ function LikesTab(postId) {
 	}
 }
 
+function LoadMoreFollowingUsersPosts(userId, startFromRow) {
+	if (!startFromRow)
+		return;
+
+	$.ajax(
+		{
+			type: "GET",
+			url: "/User/LoadMoreFollowingUsersPosts",
+			data: { startFromRow },
+			success: function (data) {
+				if (data) {
+					AddRangePost(data);
+					loadingPosts = false;
+				}
+			},
+			error: function (details) {
+				Message(details.responseText);
+			}
+		}
+	);
+}
+
 function LoadMorePosts(userId, startFromRow) {
 	if (!userId || !startFromRow)
 		return;

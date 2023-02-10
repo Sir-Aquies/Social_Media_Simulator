@@ -24,6 +24,7 @@ namespace WebProject.Controllers
 			_Logic = logic;
 		}
 
+		//TODO - Update a post's likes if it has increase.
 		public async Task<IActionResult> ViewPost(int postId)
 		{
 			UserModel loggedUser = await _UserManager.GetUserAsync(HttpContext.User);

@@ -62,6 +62,9 @@ using (var scope = app.Services.CreateScope())
 	RandomUsers randomUsers = new(ClientFactory, UserManager, ServiceFactory);
 	await randomUsers.StartAsync(new CancellationToken());
 
+	RandomFollowers randomFollowers = new(ServiceFactory);
+	await randomFollowers.StartAsync(new CancellationToken());
+
 	RandomPosts randomPost = new(ClientFactory, ServiceFactory);
 	await randomPost.StartAsync(new CancellationToken());
 

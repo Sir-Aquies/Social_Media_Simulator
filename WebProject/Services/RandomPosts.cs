@@ -51,7 +51,7 @@ namespace WebProject.Services
 				await CreateRandomPost();
 			}
 		}
-		//TODO - add a sevive to let user know when someone has liked or comment one of the userPage's posts.
+
 		public async Task CreateRandomPost()
 		{
 			List<PostModel> randomPosts = new();

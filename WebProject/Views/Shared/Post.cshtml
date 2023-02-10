@@ -26,7 +26,7 @@
 			</i>
 		}
 
-		@if (ViewData["LoggedUserId"]?.ToString() == Model.User.Id)
+		@if (ViewData["LoggedUserId"]?.ToString() == Model.UserId)
 		{
 			<div class="post-option-button" onclick="OptionButton(this); event.stopPropagation()" onmousedown="event.stopPropagation()">
 				<div onmousedown="event.stopPropagation()" onclick="event.stopPropagation();" class="post-form">

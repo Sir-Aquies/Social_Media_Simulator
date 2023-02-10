@@ -6,19 +6,25 @@ namespace WebProject.Services
 {
 	public class Tendency : ITendency
 	{
+		public List<UserModel> UsersWithMostFollowers => userFollowers;
 		public List<UserModel> UsersWithMostLikes => userLikes;
 		public List<UserModel> UsersWithMostPost => userPosts;
 		public List<PostModel> PostsWithMostLikes => postLikes;
-
 		public List<PostModel> PostWithMostComments => postComments;
 
+		public List<UserModel> userFollowers = new();
 		public List<UserModel> userLikes = new();
 		private List<UserModel> userPosts = new();
 		private List<PostModel> postLikes = new();
 		private List<PostModel> postComments = new();
 
+		//TODO - Create a tab in to show full list.
 		public async Task UpdateStats(WebProjectContext _Models, int amount = 10)
 		{
+			userFollowers = await SqlInUsers($"SELECT TOP {amount} U.Id, COUNT(FollowUsers.FollowerId) AS Followers FROM " +
+				$"(Users AS U INNER JOIN FollowUsers ON FollowUsers.CreatorId = U.Id) " +
+				$"GROUP BY U.Id ORDER BY Followers DESC;", _Models);
+
 			userLikes = await SqlInUsers($"SELECT TOP {amount} U.Id, SUM(Posts.Likes) AS Total " +
 				"FROM (Users AS U INNER JOIN Posts ON Posts.UserId = U.Id) " +
 				"GROUP BY U.Id ORDER BY Total DESC;", _Models);
@@ -62,6 +68,7 @@ namespace WebProject.Services
 	{
 		List<UserModel> UsersWithMostLikes { get; }
 		List<UserModel> UsersWithMostPost { get; }
+		List<UserModel> UsersWithMostFollowers { get; }
 		List<PostModel> PostsWithMostLikes { get; }
 		List<PostModel> PostWithMostComments { get; }
 		Task UpdateStats(WebProjectContext _Models, int amount = 10);

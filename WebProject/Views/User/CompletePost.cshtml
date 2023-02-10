@@ -58,4 +58,5 @@
 	function RedirectToUserPage() {
 		location = '/';
 	}
+	setInterval(() => { UpdateUserStats('@Model.PageUser?.Id') }, 10000);
 </script>

@@ -41,12 +41,17 @@ function AddPostToContainer(postString) {
     }
     postContainer.appendChild(newPost);
 
-    //Insert the container after the create post button.
+    //Insert the container after the PageUserNav.
     mainContainer.insertBefore(postContainer, mainContainer.children[2]);
 
     //Push the new post and his container to the arrays.
     posts.push(newPost);
     containers.push(postContainer);
+
+    //Update the page user stats.
+    const pageUserId = document.getElementById('page-user-id').innerHTML;
+    if (pageUserId != undefined)
+        UpdateUserStats(pageUserId);
 }
 
 function AddRangePost(postsString) {
@@ -93,6 +98,11 @@ function AlterPostLikes(postId, action) {
             likesAmountSpans[i].title = 'Like post';
         }
     }
+
+    //Update the page user stats.
+    const pageUserId = document.getElementById('page-user-id').innerHTML;
+    if (pageUserId != undefined)
+        UpdateUserStats(pageUserId);
 }
 
 function RemovePostFromContainer(postId) {
@@ -103,6 +113,11 @@ function RemovePostFromContainer(postId) {
     //Get the index an remove it from containers;
     let index = containers.findIndex(p => p.id == `${postId}`);
     containers.splice(index, 1);
+
+    //Update the page user stats.
+    const pageUserId = document.getElementById('page-user-id').innerHTML;
+    if (pageUserId != undefined)
+        UpdateUserStats(pageUserId);
 
     //Function only defined in CompletePost that redirects the user to his page.
     RedirectToUserPage();
@@ -132,6 +147,11 @@ function UpdatePostFromContainer(postString) {
         //Add the updated post.
         viewPost.prepend(updatedPost.cloneNode(true));
     }
+
+    //Update the page user stats.
+    const pageUserId = document.getElementById('page-user-id').innerHTML;
+    if (pageUserId != undefined)
+        UpdateUserStats(pageUserId);
 }
 
 function AddCommentToPost(commentString) {
@@ -158,6 +178,11 @@ function AddCommentToPost(commentString) {
     if (viewPost) {
         viewPost.insertBefore(newComment.cloneNode(true), viewPost.children[1]);
     }
+
+    //Update the page user stats.
+    const pageUserId = document.getElementById('page-user-id').innerHTML;
+    if (pageUserId != undefined)
+        UpdateUserStats(pageUserId);
 }
 
 function AlterCommentLikes(commentId, action) {
@@ -193,6 +218,11 @@ function AlterCommentLikes(commentId, action) {
             likesAmountSpans[i].title = 'Like comment';
         }
     }
+
+    //Update the page user stats.
+    const pageUserId = document.getElementById('page-user-id').innerHTML;
+    if (pageUserId != undefined)
+        UpdateUserStats(pageUserId);
 }
 
 function RemoveCommentFromPost(postId, commentId) {
@@ -223,6 +253,11 @@ function RemoveCommentFromPost(postId, commentId) {
             }
         }
     }
+
+    //Update the page user stats.
+    const pageUserId = document.getElementById('page-user-id').innerHTML;
+    if (pageUserId != undefined)
+        UpdateUserStats(pageUserId);
 }
 
 function EmptyMainContainer() {

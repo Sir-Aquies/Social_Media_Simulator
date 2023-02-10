@@ -43,7 +43,6 @@ namespace WebProject.Services
 			}
 		}
 
-		//TODO - add a responsive top bar.
 		private async Task LikeRandomPosts(int count)
 		{
 			using (var scope = _serviceScopeFactory.CreateScope())
