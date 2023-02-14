@@ -43,7 +43,25 @@
 				</div>
 			}
 
-			<partial name="PostList" model="Model.PageUser.Posts"></partial>
+			if (Model.PageUser.Posts.Count > 0)
+			{
+					<partial name="PostList" model="Model.PageUser.Posts"></partial>
+			}
+			else
+			{
+				@if (Model.PageUser.Id == ViewData["LoggedUserId"]?.ToString())
+				{
+					<section class="empty-post-list">
+						You have't created any posts.
+					</section>
+				}
+				else
+				{
+					<section class="empty-post-list">
+						@Model.PageUser.UserName does not have any posts.
+					</section>
+				}
+			}
 		}
 		else
 		{
@@ -70,6 +88,6 @@
 <script src="~/js/UserScript.js" asp-append-version="true"></script>
 
 <script>
-	SetScrollEvent("@Model.PageUser?.Id", @ViewData["startFromPost"], @ViewData["PostsPerLoad"], LoadMorePosts);
+	SetScrollEvent("@Model.PageUser?.Id", @ViewData["startFromPost"], @ViewData["PostsPerLoad"], actionMethods.UserPagePosts);
 	setInterval(() => { UpdateUserStats('@Model.PageUser?.Id') }, 10000);
 </script>

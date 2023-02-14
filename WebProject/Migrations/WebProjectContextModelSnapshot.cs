@@ -209,7 +209,7 @@ namespace WebProject.Migrations
                     b.ToTable("Comments");
                 });
 
-            modelBuilder.Entity("WebProject.Models.FollowUsers", b =>
+            modelBuilder.Entity("WebProject.Models.Followers", b =>
                 {
                     b.Property<string>("CreatorId")
                         .HasColumnType("NVARCHAR(450)");
@@ -226,7 +226,7 @@ namespace WebProject.Migrations
 
                     b.HasIndex("FollowerId");
 
-                    b.ToTable("FollowUsers");
+                    b.ToTable("Followers");
                 });
 
             modelBuilder.Entity("WebProject.Models.PostLikes", b =>
@@ -449,7 +449,7 @@ namespace WebProject.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("WebProject.Models.FollowUsers", b =>
+            modelBuilder.Entity("WebProject.Models.Followers", b =>
                 {
                     b.HasOne("WebProject.Models.UserModel", "Follower")
                         .WithMany("Following")

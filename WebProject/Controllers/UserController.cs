@@ -6,9 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using WebProject.Services;
-using Microsoft.Extensions.Hosting;
-using System.Text;
-using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 
 namespace WebProject.Controllers
@@ -35,7 +32,14 @@ namespace WebProject.Controllers
 			_Tendency = tendency;
 			_Logic = modelLogic;
 		}
-		//TODO - refactor all the LoadMorePosts... into one.
+		//TODO - create messages for empty result.
+		//var mostLikedUsers = _Models.Posts
+		//	.GroupBy(p => p.UserId)
+		//	.Select(g => new { UserId = g.Key, Total = g.Sum(p => p.Likes) })
+		//	.OrderByDescending(x => x.Total)
+		//	.Take(10)
+		//	.ToList();
+
 		//Eliot09  2e8e3796-7eb0-4bce-8201-df95004105d1
 		public async Task<IActionResult> SearchUser(string userName)
 		{
@@ -72,7 +76,7 @@ namespace WebProject.Controllers
 		{
 			List<PostModel> posts = await _Models.Posts
 				.FromSqlRaw("SELECT * FROM Posts WHERE UserId IN " +
-				"(SELECT CreatorId FROM FollowUsers WHERE FollowerId = {0}) " +
+				"(SELECT CreatorId FROM Followers WHERE FollowerId = {0}) " +
 				"ORDER BY Date DESC OFFSET {1} ROWS FETCH NEXT {2} ROWS ONLY;", userId, startFromRow, amountOfRows)
 				.AsNoTracking().ToListAsync();
 
@@ -519,14 +523,14 @@ namespace WebProject.Controllers
 				return "0";
 
 			List<string> creatorId = await _Models.Database
-				.SqlQueryRaw<string>("SELECT CreatorId FROM FollowUsers WHERE CreatorId = {0} AND FollowerId = {1}", userId, loggedUser.Id)
+				.SqlQueryRaw<string>("SELECT CreatorId FROM Followers WHERE CreatorId = {0} AND FollowerId = {1}", userId, loggedUser.Id)
 				.AsNoTracking().ToListAsync();
 
 			//Row exist that means the user wants to unfollow.
 			if (creatorId.Count == 1)
 			{
 				int result = await _Models.Database
-					.ExecuteSqlRawAsync("DELETE FROM FollowUsers WHERE CreatorId = {0} AND FollowerId = {1}", creatorId[0], loggedUser.Id);
+					.ExecuteSqlRawAsync("DELETE FROM Followers WHERE CreatorId = {0} AND FollowerId = {1}", creatorId[0], loggedUser.Id);
 
 				return result == 1 ? "-" : "0";
 			}
@@ -538,7 +542,7 @@ namespace WebProject.Controllers
 				if (userIdExist.Count == 1)
 				{
 					int result = await _Models.Database
-					.ExecuteSqlRawAsync("INSERT INTO FollowUsers (CreatorId, FollowerId, FollowedDate) VALUES ({0}, {1}, {2})", userIdExist[0], loggedUser.Id, DateTime.Now);
+					.ExecuteSqlRawAsync("INSERT INTO Followers (CreatorId, FollowerId, FollowedDate) VALUES ({0}, {1}, {2})", userIdExist[0], loggedUser.Id, DateTime.Now);
 
 					return result == 1 ? "+" : "0";
 				}
@@ -553,7 +557,7 @@ namespace WebProject.Controllers
 			try
 			{
 				followers = await _Models.Users
-				.FromSqlRaw("SELECT * FROM Users WHERE Id IN(SELECT FollowerId FROM FollowUsers WHERE CreatorId = {0} ORDER BY FollowedDate DESC OFFSET 0 ROWS);", userId)
+				.FromSqlRaw("SELECT * FROM Users WHERE Id IN(SELECT FollowerId FROM Followers WHERE CreatorId = {0} ORDER BY FollowedDate DESC OFFSET 0 ROWS);", userId)
 				.AsNoTracking().ToListAsync();
 			}
 			catch
@@ -573,7 +577,7 @@ namespace WebProject.Controllers
 			try
 			{
 				followingUsers = await _Models.Users
-				.FromSqlRaw("SELECT * FROM Users WHERE Id IN(SELECT CreatorId FROM FollowUsers WHERE FollowerId = {0} ORDER BY FollowedDate DESC OFFSET 0 ROWS);", userId)
+				.FromSqlRaw("SELECT * FROM Users WHERE Id IN(SELECT CreatorId FROM Followers WHERE FollowerId = {0} ORDER BY FollowedDate DESC OFFSET 0 ROWS);", userId)
 				.AsNoTracking().ToListAsync();
 			}
 			catch
@@ -593,8 +597,8 @@ namespace WebProject.Controllers
 				"SELECT SUM(Likes) FROM Posts WHERE UserId = {0}",
 				"SELECT COUNT(Id) FROM Posts WHERE UserId = {0}",
 				"SELECT COUNT(Id) FROM Comments WHERE UserId = {0}",
-				"SELECT COUNT(FollowerId) FROM FollowUsers WHERE CreatorId = {0}",
-				"SELECT COUNT(CreatorId) FROM FollowUsers WHERE FollowerId = {0}"
+				"SELECT COUNT(FollowerId) FROM Followers WHERE CreatorId = {0}",
+				"SELECT COUNT(CreatorId) FROM Followers WHERE FollowerId = {0}"
 			};
 
 			int[] stats = new int[sqlQueries.Length];

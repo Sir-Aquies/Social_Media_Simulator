@@ -28,7 +28,7 @@ namespace WebProject.Services
 			//using (var scope = _serviceScopeFactory.CreateScope())
 			//{
 			//	var _Models = scope.ServiceProvider.GetRequiredService<WebProjectContext>();
-			//	likesAmount = await _Models.Database.SqlQueryRaw<int>("SELECT COUNT(CreatorId) FROM FollowUsers").FirstOrDefaultAsync();
+			//	likesAmount = await _Models.Database.SqlQueryRaw<int>("SELECT COUNT(CreatorId) FROM Followers").FirstOrDefaultAsync();
 			//}
 
 			//if (likesAmount == 0)

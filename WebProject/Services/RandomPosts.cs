@@ -1,10 +1,6 @@
 ﻿#nullable disable
-using Azure;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic;
 using Newtonsoft.Json;
-using System.Security.Permissions;
 using WebProject.Data;
 using WebProject.Models;
 

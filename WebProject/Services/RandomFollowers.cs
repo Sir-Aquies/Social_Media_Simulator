@@ -52,13 +52,13 @@ namespace WebProject.Services
 				for (int i = 0; i < minLength; i++)
 				{
 					List<string> alreadyFollowing = await _Models.Database
-						.SqlQueryRaw<string>("SELECT CreatorId FROM FollowUsers WHERE CreatorId = {0} AND FollowerId = {1}", newCreatorIds[i], newFollowersIds[i])
+						.SqlQueryRaw<string>("SELECT CreatorId FROM Followers WHERE CreatorId = {0} AND FollowerId = {1}", newCreatorIds[i], newFollowersIds[i])
 						.AsNoTracking().ToListAsync();
 
 					if (alreadyFollowing.Count == 0)
 					{
 						await _Models.Database
-						.ExecuteSqlRawAsync("INSERT INTO FollowUsers (CreatorId, FollowerId, FollowedDate) VALUES ({0}, {1}, {2})",
+						.ExecuteSqlRawAsync("INSERT INTO Followers (CreatorId, FollowerId, FollowedDate) VALUES ({0}, {1}, {2})",
 						newCreatorIds[i], newFollowersIds[i], DateTime.Now);
 					}
 					

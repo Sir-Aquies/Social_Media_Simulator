@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WebProject.Migrations
 {
     /// <inheritdoc />
-    public partial class followers : Migration
+    public partial class FixMediaBug : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -160,7 +160,7 @@ namespace WebProject.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "FollowUsers",
+                name: "Followers",
                 columns: table => new
                 {
                     CreatorId = table.Column<string>(type: "NVARCHAR(450)", nullable: false),
@@ -169,14 +169,14 @@ namespace WebProject.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_FollowUsers", x => new { x.CreatorId, x.FollowerId });
+                    table.PrimaryKey("PK_Followers", x => new { x.CreatorId, x.FollowerId });
                     table.ForeignKey(
-                        name: "FK_FollowUsers_Users_CreatorId",
+                        name: "FK_Followers_Users_CreatorId",
                         column: x => x.CreatorId,
                         principalTable: "Users",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_FollowUsers_Users_FollowerId",
+                        name: "FK_Followers_Users_FollowerId",
                         column: x => x.FollowerId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -329,8 +329,8 @@ namespace WebProject.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_FollowUsers_FollowerId",
-                table: "FollowUsers",
+                name: "IX_Followers_FollowerId",
+                table: "Followers",
                 column: "FollowerId");
 
             migrationBuilder.CreateIndex(
@@ -378,7 +378,7 @@ namespace WebProject.Migrations
                 name: "CommentLikes");
 
             migrationBuilder.DropTable(
-                name: "FollowUsers");
+                name: "Followers");
 
             migrationBuilder.DropTable(
                 name: "PostLikes");

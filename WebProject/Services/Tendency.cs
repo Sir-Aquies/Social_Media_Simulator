@@ -21,8 +21,8 @@ namespace WebProject.Services
 		//TODO - Create a tab in to show full list.
 		public async Task UpdateStats(WebProjectContext _Models, int amount = 10)
 		{
-			userFollowers = await SqlInUsers($"SELECT TOP {amount} U.Id, COUNT(FollowUsers.FollowerId) AS Followers FROM " +
-				$"(Users AS U INNER JOIN FollowUsers ON FollowUsers.CreatorId = U.Id) " +
+			userFollowers = await SqlInUsers($"SELECT TOP {amount} U.Id, COUNT(Followers.FollowerId) AS Followers FROM " +
+				$"(Users AS U INNER JOIN Followers ON Followers.CreatorId = U.Id) " +
 				$"GROUP BY U.Id ORDER BY Followers DESC;", _Models);
 
 			userLikes = await SqlInUsers($"SELECT TOP {amount} U.Id, SUM(Posts.Likes) AS Total " +

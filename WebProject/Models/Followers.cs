@@ -2,7 +2,7 @@
 
 namespace WebProject.Models
 {
-	public class FollowUsers
+	public class Followers
 	{
 		public DateTime FollowedDate { get; set; }
 

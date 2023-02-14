@@ -5,8 +5,8 @@ using WebProject.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.VisualBasic;
 using WebProject.Services;
+using Newtonsoft.Json;
 
 namespace WebProject.Controllers
 {
@@ -24,7 +24,6 @@ namespace WebProject.Controllers
 			_Logic = logic;
 		}
 
-		//TODO - Update a post's likes if it has increase.
 		public async Task<IActionResult> ViewPost(int postId)
 		{
 			UserModel loggedUser = await _UserManager.GetUserAsync(HttpContext.User);
@@ -48,7 +47,6 @@ namespace WebProject.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		//TODO - Creating a post with an image causes bugs.
 		public async Task<IActionResult> CreatePost(IFormFile Media, string Content)
 		{
 			UserModel loggedUser = await _UserManager.GetUserAsync(HttpContext.User);
@@ -238,6 +236,35 @@ namespace WebProject.Controllers
 				//If both action were successful affectedRows should be 2.
 				return affectedRows == 2 ? "+" : "0";
 			}
+		}
+
+		public async Task<string> UpdatePostInfo(int postId)
+		{
+			if (postId == 0)
+				return "0";
+
+			List<int> likes = new();
+
+			try
+			{
+				likes = await _Models.Database.SqlQueryRaw<int>("SELECT Likes FROM Posts Where Id = {0}", postId).ToListAsync();
+			}
+			catch
+			{
+				likes.Add(0);
+			}
+
+			List<int> comments = new();
+			try
+			{
+				comments = await _Models.Database.SqlQueryRaw<int>("SELECT COUNT(Id) FROM Comments WHERE PostId = {0}", postId).ToListAsync();
+			}
+			catch
+			{
+				comments.Add(0);
+			}
+
+			return JsonConvert.SerializeObject(new { likes = likes.FirstOrDefault(), comments = comments.FirstOrDefault() });
 		}
 
 		//Loads and returns in a partial view the users who like a certain post.

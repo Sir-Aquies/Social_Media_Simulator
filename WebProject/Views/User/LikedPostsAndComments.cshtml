@@ -61,6 +61,6 @@
 <script src="~/js/UserScript.js" asp-append-version="true"></script>
 
 <script>
-	SetScrollEvent("@Model.PageUser?.Id", @ViewData["startFromPost"], @ViewData["PostsPerLoad"], LoadMorePostsLikes);
+	SetScrollEvent("@Model.PageUser?.Id", @ViewData["startFromPost"], @ViewData["PostsPerLoad"], actionMethods.LikedPosts);
 	setInterval(() => { UpdateUserStats('@Model.PageUser?.Id') }, 10000);
 </script>

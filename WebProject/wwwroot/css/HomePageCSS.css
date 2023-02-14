@@ -64,6 +64,7 @@
 	height: fit-content;
 	border-left: 1px solid var(--borderColor);
 	border-right: 1px solid var(--borderColor);
+	border-bottom: 1px solid var(--borderColor);
 	display: flex;
 	flex-direction: column;
 }
@@ -76,6 +77,7 @@
 .nav-likes-page,
 .pageuser-navigation-bar {
 	border-top: 1px solid var(--borderColor);
+	border-bottom: 1px solid var(--borderColor);
 	display: flex;
 	justify-content: space-around;
 	gap: 0.5rem;
@@ -162,6 +164,11 @@
 
 .question-mark-path {
 	fill: var(--borderColor);
+}
+
+.empty-post-list {
+	font-size: 2rem;
+	text-align: center;
 }
 
 @media only screen and (min-width: 768px) {

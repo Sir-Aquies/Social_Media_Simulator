@@ -10,8 +10,8 @@
 		ViewData["Title"] = "User not found";
 	}
 
-	ViewData["LoggedUserId"] = Model.Id;
 	ViewData["commentsAmount"] = "3";
+	ViewData["LoggedUserId"] = Model?.Id;
 	ViewBag.blur = Model.ShowImages ? "1" : "0";
 }
 
@@ -49,6 +49,6 @@
 <script src="~/js/UserScript.js" asp-append-version="true"></script>
 
 <script>
-	SetScrollEvent("@Model.Id", @ViewData["startFromPost"], @ViewData["PostsPerLoad"], LoadMoreFollowingUsersPosts);
-	setInterval(() => { UpdateUserStats('@Model.Id') }, 10000);
+	SetScrollEvent("@Model?.Id", @ViewData["startFromPost"], @ViewData["PostsPerLoad"], actionMethods.FollowingPosts);
+	setInterval(() => { UpdateUserStats('@Model?.Id') }, 10000);
 </script>

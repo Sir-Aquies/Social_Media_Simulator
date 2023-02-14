@@ -172,31 +172,31 @@ namespace WebProject.Services
 			return likes;
 		}
 
-		public async Task<List<FollowUsers>> GetFollowers(string userId)
+		public async Task<List<Followers>> GetFollowers(string userId)
 		{
-			List<FollowUsers> followers = new(); 
+			List<Followers> followers = new(); 
 			string[] followerIds = await _Models.Database
-				.SqlQueryRaw<string>("SELECT FollowerId FROM FollowUsers WHERE CreatorId = {0}", userId)
+				.SqlQueryRaw<string>("SELECT FollowerId FROM Followers WHERE CreatorId = {0}", userId)
 				.AsNoTracking().ToArrayAsync();
 
 			for (int i = 0; i < followerIds.Length; i++)
 			{
-				followers.Add(new FollowUsers { FollowerId = followerIds[i] });
+				followers.Add(new Followers { FollowerId = followerIds[i] });
 			}
 
 			return followers;
 		}
 
-		public async Task<List<FollowUsers>> GetFollowingUsers(string userId)
+		public async Task<List<Followers>> GetFollowingUsers(string userId)
 		{
-			List<FollowUsers> followingUsers = new();
+			List<Followers> followingUsers = new();
 			string[] followingIds = await _Models.Database
-				.SqlQueryRaw<string>("SELECT CreatorId FROM FollowUsers WHERE FollowerId = {0}", userId)
+				.SqlQueryRaw<string>("SELECT CreatorId FROM Followers WHERE FollowerId = {0}", userId)
 				.AsNoTracking().ToArrayAsync();
 
 			for (int i = 0; i < followingIds.Length; i++)
 			{
-				followingUsers.Add(new FollowUsers { FollowerId = followingIds[i] });
+				followingUsers.Add(new Followers { FollowerId = followingIds[i] });
 			}
 
 			return followingUsers;

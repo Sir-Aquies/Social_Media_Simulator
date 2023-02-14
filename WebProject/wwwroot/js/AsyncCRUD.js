@@ -6,21 +6,6 @@ const posts = [...document.getElementsByClassName('post-container')];
 //Array that will contain all of the posts containers.
 const containers = [...document.querySelectorAll('[data-post-container]')];
 
-let loadingPosts = false;
-
-function SetScrollEvent(userId, startFrom, rowsPerLoad, PostLoader) {
-    let startFromRow = parseInt(startFrom);
-    let amountOfRows = parseInt(rowsPerLoad);
-
-    window.onscroll = function() {
-        if (!loadingPosts && this.window.scrollY > (mainContainer.clientHeight * (70 / 100))) {
-            loadingPosts = true;
-            PostLoader(userId, startFromRow);
-            startFromRow += amountOfRows;
-        }
-    }
-}
-
 function AddPostToContainer(postString) {
     //Convert the string post into an object element.
     const newPost = ConvertToDOM(postString);
@@ -48,6 +33,10 @@ function AddPostToContainer(postString) {
     posts.push(newPost);
     containers.push(postContainer);
 
+     //Add it to the observer so its info can be updated.
+    if (postObserver !== undefined)
+        postObserver.observe(postContainer);
+
     //Update the page user stats.
     const pageUserId = document.getElementById('page-user-id').innerHTML;
     if (pageUserId != undefined)
@@ -61,6 +50,11 @@ function AddRangePost(postsString) {
     for (let i = 0; i < length; i++) {
         //Append post to the main container (center-box class) and push it in the containers array.
         containers.push(newPosts[0]);
+
+        //Add it to the observer so its info can be updated.
+        if (postObserver !== undefined)
+            postObserver.observe(newPosts[0]);
+
         mainContainer.append(newPosts[0]);
     }
 }
@@ -108,6 +102,13 @@ function AlterPostLikes(postId, action) {
 function RemovePostFromContainer(postId) {
     //Find the post container base on his id and remove it.
     const postContainer = containers.find(p => p.id == `${postId}`);
+
+    //Unobserve the post container and clear its inteval.
+    if (postObserver !== undefined) {
+        postObserver.unobserve(postContainer);
+        clearInterval(postContainer.updatePostTimer);
+    }
+
     postContainer.remove();
 
     //Get the index an remove it from containers;
@@ -264,6 +265,11 @@ function EmptyMainContainer() {
     let length = containers.length;
 
     for (let i = 0; i < length; i++) {
+        //Unobserve the post container and clear its inteval.
+        if (postObserver !== undefined) {
+            postObserver.unobserve(containers[i]);
+            clearInterval(containers[i].updatePostTimer);
+        }
         containers[i].remove();
     }
 

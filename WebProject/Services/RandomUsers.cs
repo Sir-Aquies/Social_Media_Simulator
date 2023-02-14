@@ -1,16 +1,8 @@
 ﻿#nullable disable
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Net.Http;
 using WebProject.Models;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.Identity;
-using System.Reflection;
 using Microsoft.EntityFrameworkCore;
-using WebProject.Data;
-using System.Reflection.Metadata;
-using System.Security.Policy;
 
 namespace WebProject.Services
 {

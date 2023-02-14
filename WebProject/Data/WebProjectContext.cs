@@ -22,11 +22,8 @@ namespace WebProject.Data
 		{
 			base.OnModelCreating(builder);
 
-			builder.Entity<FollowUsers>(entity =>
+			builder.Entity<Followers>(entity =>
 			{
-				//TODO - change name
-				//entity.ToTable("Followers");
-
 				entity.HasKey(f => new { f.CreatorId, f.FollowerId });
 
 				entity.Property(f => f.CreatorId)

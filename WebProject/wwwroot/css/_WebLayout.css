@@ -100,12 +100,12 @@ img.user-info-mobile {
 	margin: 0.5rem 0;
 }
 
-.tab-list a.right{
+.tab-list .right{
 	margin-left: 0.5rem;
 }
 
 @media only screen and (min-width: 524px) {
-	.tab-list a.right {
+	.tab-list .right {
 		margin-left: auto;
 	}
 
@@ -169,10 +169,69 @@ img.user-info-mobile {
 	left: 0;
 }
 
+#settings-tab {
+	position: relative;
+	margin-top: 0.7rem;
+	margin-right: 0.5rem;
+}
+
+.setting-tag::after {
+	content: '';
+	display: block;
+	border-bottom: 4px solid var(--borderColor);
+	width: 100%;
+	margin: 0.5rem 0;
+}
+
+.settings-list {
+	position: relative;
+	display: flex;
+	width: 100%;
+	background-color: var(--ShadowColor);
+	flex-direction: column;
+}
+
+.settings-list a {
+	text-decoration: none;
+	font-size: inherit;
+	color: inherit;
+	margin: 0.5rem 0;
+	white-space: nowrap;
+}
+
+.settings-list a:hover {
+	background-color: rgb(150, 150, 150);
+}
+
 .settings-icon {
 	margin-left: 0.5rem;
 	width: 2rem;
 	height: 2rem;
+}
+
+@media only screen and (min-width: 524px) {
+	.settings-list {
+		position: absolute;
+		left: -5px;
+		top: 36px;
+		display: none;
+		width: fit-content;
+		border-radius: 5px;
+	}
+
+	.setting-tag::after {
+		display: none;
+	}
+
+	.settings-list a {
+		margin: 0.5rem;
+	}
+
+	#settings-tab {
+		cursor: pointer;
+		margin-top: 0;
+		margin-right: 0;
+	}
 }
 
 @media only screen and (min-width: 225px) {

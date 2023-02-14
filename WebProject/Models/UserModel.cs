@@ -28,11 +28,11 @@ namespace WebProject.Models
 		/// <summary>
 		/// User's followers.
 		/// </summary>
-		public IList<FollowUsers> Followers { get; set; }
+		public IList<Followers> Followers { get; set; }
 		/// <summary>
 		/// User's followign users.
 		/// </summary>
-		public IList<FollowUsers> Following { get; set; }
+		public IList<Followers> Following { get; set; }
 
 		[BindNever]
 		public bool ShowImages { get; set; } = true;
