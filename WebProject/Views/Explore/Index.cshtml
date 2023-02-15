@@ -12,12 +12,6 @@
 <link rel="stylesheet" href="~/css/PostContainer.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/PostForms.css" asp-append-version="true" />
 
-<style>
-	#random-post-tab {
-		border-bottom: 3px solid var(--borderColor);
-	}
-</style>
-
 <section class="box-container">
 	<section class="left-box small-user-list">
 		<p style="margin: 0; text-align: center; font-size: var(--bigFS)">Users you might know</p>
@@ -26,15 +20,24 @@
 
 	<section class="center-box" id="UserPostContainer">
 		<nav class="explore-navigation-bar">
-			<span id="random-post-tab" onclick="SwitchToTab('@ViewData["inicialAmountPostsToLoad"]', this.id)">Random</span>
-			<span id="top-post-tab" onclick="SwitchToTab('@ViewData["inicialAmountPostsToLoad"]'), this.id">Top</span>
-			<span id="recent-post-tab" onclick="SwitchToTab('@ViewData["inicialAmountPostsToLoad"]', 'recent')">Recent</span>
-			<span id="old-post-tab" onclick="SwitchToTab('@ViewData["inicialAmountPostsToLoad"]', 'old')">Old</span>
+			<span id="random-post-tab" onclick="SwitchToTab('@ViewData["inicialAmountPostsToLoad"]')">Random</span>
+			<span id="top-post-tab" onclick="SwitchToTab('@ViewData["inicialAmountPostsToLoad"]')">Top</span>
+			<span id="recent-post-tab" onclick="SwitchToTab('@ViewData["inicialAmountPostsToLoad"]')">Recent</span>
+			<span id="old-post-tab" onclick="SwitchToTab('@ViewData["inicialAmountPostsToLoad"]')">Oldest</span>
 		</nav>
 
 		@if (Model != null)
 		{
-			<partial name="PostList" model="Model.Posts"></partial>
+			if (Model.Posts.Count > 0)
+			{
+				<partial name="PostList" model="Model.Posts"></partial>
+			}
+			else
+			{
+				<section class="empty-post-list">
+					We could find any post.
+				</section>
+			}
 		}
 		else
 		{
@@ -62,7 +65,24 @@
 
 <script>
 	window.addEventListener('load', function () {
-		SetScrollEventExplore('@ViewData["inicialAmountPostsToLoad"]', LoadMoreRandomPostsMethodName);
+		switch ("@ViewBag.tabName") {
+			case 'Top':
+				SwitchStyleTab('top-post-tab');
+				SetScrollEventExplore(@ViewData["inicialAmountPostsToLoad"], LoadMoreRandomPostsMethodName);
+				break;
+			case 'Recent':
+				SwitchStyleTab('recent-post-tab');
+				SetScrollEventExplore(@ViewData["inicialAmountPostsToLoad"], LoadMoreRecentPostsMethodName);
+				break;
+			case 'Oldest':
+				SwitchStyleTab('old-post-tab');
+				SetScrollEventExplore(@ViewData["inicialAmountPostsToLoad"], LoadMoreOldPostsMethodName);
+				break;
+			default:
+				SwitchStyleTab('random-post-tab');
+				SetScrollEventExplore(@ViewData["inicialAmountPostsToLoad"], LoadMoreRandomPostsMethodName);
+		}
+
 		ReloadUsersInLeftBox(6);
 	})
 </script>

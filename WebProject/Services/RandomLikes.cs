@@ -1,12 +1,6 @@
 ﻿#nullable disable
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
-using Newtonsoft.Json;
-using System.ComponentModel.Design;
 using WebProject.Data;
-using WebProject.Models;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace WebProject.Services
 {
@@ -21,25 +15,40 @@ namespace WebProject.Services
 			_serviceScopeFactory = factory;
 		}
 
+		private async Task InitiaSeed()
+		{
+			int likesCount = 0;
+
+			using (var scope = _serviceScopeFactory.CreateScope())
+			{
+				var _Models = scope.ServiceProvider.GetRequiredService<WebProjectContext>();
+				List<int> amountInDatabase = await _Models.Database.SqlQueryRaw<int>("SELECT COUNT(PostId) FROM PostLikes").ToListAsync();
+				likesCount = amountInDatabase.FirstOrDefault();
+
+				if (!await _Models.Users.AsNoTracking().AnyAsync())
+				{
+					likesCount = -1;
+				}
+			}
+
+			if (likesCount < 10 && likesCount != -1)
+			{
+				for (int i = 0; i < 500; i++)
+				{
+					await LikeRandomPosts(2);
+					await LikeRandomComments(2);
+				}
+			}
+		}
+
 		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
-			//int likesAmount = 0;
-
-			//using (var scope = _serviceScopeFactory.CreateScope())
-			//{
-			//	var _Models = scope.ServiceProvider.GetRequiredService<WebProjectContext>();
-			//	likesAmount = await _Models.Database.SqlQueryRaw<int>("SELECT COUNT(CreatorId) FROM Followers").FirstOrDefaultAsync();
-			//}
-
-			//if (likesAmount == 0)
-			//{
-			//	for (int i = 0;)
-			//}
+			await InitiaSeed();
 
 			while (await _likeTimer.WaitForNextTickAsync(stoppingToken) && !stoppingToken.IsCancellationRequested)
 			{
-				await LikeRandomPosts(2);
-				await LikeRandomComments(2);
+				await LikeRandomPosts(3);
+				await LikeRandomComments(3);
 			}
 		}
 

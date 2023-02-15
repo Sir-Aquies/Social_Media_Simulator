@@ -97,6 +97,27 @@
 	white-space: pre-wrap;
 }
 
+/* width */
+.content-text::-webkit-scrollbar {
+	width: 5px;
+}
+
+/* background */
+.content-text::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+/* Handle */
+.content-text::-webkit-scrollbar-thumb {
+	background: var(--borderColor);
+	border-radius: 4px;
+}
+
+/* Handle on hover */
+.content-text::-webkit-scrollbar-thumb:hover {
+	background: var(--layoutColor);
+}
+
 .flip-div {
 	width: 100%;
 	text-align: center !important;
@@ -164,6 +185,7 @@
 	font-size: var(--normalFS);
 	border: 0;
 	border-radius: 0.4rem;
+	position: relative;
 }
 
 .post-stats > button:has(.liked) {
@@ -187,16 +209,11 @@
 	fill: var(--borderColor);
 }
 
-.post-stats > button:hover {
-	background-color: rgb(128, 128, 128, 0.86);
-}
-
-.post-stats > button:hover:not(.liked) .like-button-bg {
-	fill: var(--borderColor);
-}
-
-.post-stats > button:hover:has(.liked) .like-button-bg {
-	fill: transparent;
+.sparkling-like {
+	width: 5rem;
+	height: 5rem;
+	position: absolute;
+	right: -7px;
 }
  
 .comment-button {
@@ -214,9 +231,27 @@
 		height: 1.8rem;
 	}
 
+	.sparkling-like {
+		width: 4rem;
+		height: 4rem;
+		right: -15px;
+	}
+
 	.comment-button {
 		width: 1.8rem;
 		height: 1.8rem;
+	}
+
+	.post-stats > button:hover {
+		background-color: rgb(128, 128, 128, 0.86);
+	}
+
+	.post-stats > button:hover:not(.liked) .like-button-bg {
+		fill: var(--borderColor);
+	}
+
+	.post-stats > button:hover:has(.liked) .like-button-bg {
+		fill: transparent;
 	}
 }
 

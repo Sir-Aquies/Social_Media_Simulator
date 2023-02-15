@@ -45,14 +45,14 @@
 
 			if (Model.PageUser.Posts.Count > 0)
 			{
-					<partial name="PostList" model="Model.PageUser.Posts"></partial>
+				<partial name="PostList" model="Model.PageUser.Posts"></partial>
 			}
 			else
 			{
 				@if (Model.PageUser.Id == ViewData["LoggedUserId"]?.ToString())
 				{
 					<section class="empty-post-list">
-						You have't created any posts.
+						You haven't created any posts.
 					</section>
 				}
 				else

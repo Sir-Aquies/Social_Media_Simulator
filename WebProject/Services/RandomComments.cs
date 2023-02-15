@@ -20,23 +20,33 @@ namespace WebProject.Services
 			_httpClientFactory = httpClientFactory;
 		}
 
+		public async Task InitialSeed()
+		{
+			int commentCount = 0;
+
+			using (var scope = _serviceScopeFactory.CreateScope())
+			{
+				var _Models = scope.ServiceProvider.GetRequiredService<WebProjectContext>();
+				commentCount = await _Models.Comments.AsNoTracking().CountAsync();
+
+				if (!await _Models.Users.AsNoTracking().AnyAsync())
+				{
+					commentCount = -1;
+				}
+			}
+
+			if (commentCount < 10 && commentCount != -1)
+			{
+				for (int i = 0; i < 100; i++)
+				{
+					await CreateRandomComment();
+				}
+			}
+		}
+
 		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
-			//int commentAmount = 0;
-
-			//using (var scope = _serviceScopeFactory.CreateScope())
-			//{
-			//	var _Models = scope.ServiceProvider.GetRequiredService<WebProjectContext>();
-			//	commentAmount = await _Models.Comments.AsNoTracking().CountAsync();
-			//}
-
-			//if (commentAmount == 0)
-			//{
-			//	for (int i = 0; i < 100; i++)
-			//	{
-			//		await CreateRandomComment();
-			//	}
-			//}
+			await InitialSeed();
 
 			while (await _commentTimer.WaitForNextTickAsync(stoppingToken) && !stoppingToken.IsCancellationRequested)
 			{

@@ -1,17 +1,9 @@
 ﻿@model UserModel
 
 @{
-	if (Model != null)
-	{
-		ViewData["Title"] = Model.UserName;
-	}
-	else
-	{
-		ViewData["Title"] = "User not found";
-	}
-
+	ViewData["Title"] = "Home";
 	ViewData["commentsAmount"] = "3";
-	ViewData["LoggedUserId"] = Model?.Id;
+	ViewData["LoggedUserId"] = Model.Id;
 	ViewBag.blur = Model.ShowImages ? "1" : "0";
 }
 
@@ -20,21 +12,24 @@
 <link rel="stylesheet" href="~/css/PostContainer.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/PostForms.css" asp-append-version="true" />
 
-<style>
-	#pageuser-posts {
-		border-bottom: 3px solid var(--borderColor);
-	}
-</style>
-
 <section class="box-container">
 	<section class="left-box">
 		<partial name="PageUserInfo" model="Model"></partial>
 	</section>
 
 	<section class="center-box" id="UserPostContainer">
-		@if (Model != null)
+		@if (Model.Posts != null)
 		{
-			<partial name="PostList" model="Model.Posts"></partial>
+			if (Model.Posts.Count > 0)
+			{
+				<partial name="PostList" model="Model.Posts"></partial>
+			}
+			else
+			{
+				<section class="empty-post-list">
+					You don't follow any creator, <a asp-controller="User" asp-action="SearchUsers">find creators</a>.
+				</section>
+			}
 		}
 	</section>
 

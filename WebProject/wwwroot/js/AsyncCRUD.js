@@ -67,8 +67,10 @@ function AlterPostLikes(postId, action) {
         const likesSpan = likesAmountSpans[i].children[0];
         let likes = parseInt(likesSpan.innerHTML);
 
-        if (action === '+')
+        if (action === '+') {
             likesSpan.innerHTML = ++likes;
+            SparklingLikeEffect(likesAmountSpans[i]);
+        }
 
         if (action === '-')
             likesSpan.innerHTML = --likes;
@@ -97,6 +99,20 @@ function AlterPostLikes(postId, action) {
     const pageUserId = document.getElementById('page-user-id').innerHTML;
     if (pageUserId != undefined)
         UpdateUserStats(pageUserId);
+}
+
+function SparklingLikeEffect(parent) {
+    if (parent === undefined)
+        return;
+
+    const img = document.createElement('img');
+    img.src = '/sparkling.gif';
+    img.className = 'sparkling-like';
+    parent.appendChild(img);
+
+    setTimeout(() => {
+        parent.removeChild(img);
+    }, 900)
 }
 
 function RemovePostFromContainer(postId) {

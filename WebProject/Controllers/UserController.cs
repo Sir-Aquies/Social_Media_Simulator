@@ -32,7 +32,7 @@ namespace WebProject.Controllers
 			_Tendency = tendency;
 			_Logic = modelLogic;
 		}
-		//TODO - create messages for empty result.
+
 		//var mostLikedUsers = _Models.Posts
 		//	.GroupBy(p => p.UserId)
 		//	.Select(g => new { UserId = g.Key, Total = g.Sum(p => p.Likes) })

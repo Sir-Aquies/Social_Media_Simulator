@@ -19,28 +19,33 @@ namespace WebProject.Services
 			_serviceScopeFactory = factory;
 		}
 
-		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+		private async Task InitialSeed()
 		{
-			int postAmount = 0;
+			int postCount = 0;
 
 			using (var scope = _serviceScopeFactory.CreateScope())
 			{
 				var _Models = scope.ServiceProvider.GetRequiredService<WebProjectContext>();
-				postAmount = await _Models.Posts.AsNoTracking().CountAsync();
+				postCount = await _Models.Posts.AsNoTracking().CountAsync();
 
-				if (await _Models.Users.CountAsync() == 0)
+				if (!await _Models.Users.AsNoTracking().AnyAsync())
 				{
-					postAmount = 1;
+					postCount = -1;
 				}
 			}
 
-			if (postAmount == 0)
+			if (postCount < 10 && postCount != -1)
 			{
 				for (int i = 0; i < 100; i++)
 				{
 					await CreateRandomPost();
 				}
 			}
+		}
+
+		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+		{
+			await InitialSeed();
 
 			while (await _postTimer.WaitForNextTickAsync(stoppingToken) && !stoppingToken.IsCancellationRequested)
 			{
@@ -72,7 +77,7 @@ namespace WebProject.Services
 
 			foreach (PostModel post in randomPosts)
 			{
-				//50% chnage of adding an image to the post or the post have null Content property.
+				//50% chance of adding an image to the post or the post have null Content property.
 				if (rnd.Next(2) == 1 || apiToChosse == 2)
 				{
 					switch (rnd.Next(10))
@@ -137,21 +142,21 @@ namespace WebProject.Services
 					.SqlQueryRaw<string>($"SELECT TOP {numberOfUsers} Id FROM Users WHERE ProfilePicture LIKE 'https%' ORDER BY NEWID();")
 					.AsNoTracking().ToListAsync();
 
-				List<string> weebIds = numberOfUsers > 0 ? await _Models.Database
+				List<string> weebIds = await _Models.Database
 					.SqlQueryRaw<string>($"SELECT TOP {numberOfWeebs} Id FROM Users WHERE ProfilePicture LIKE 'https://cdn%' ORDER BY NEWID();")
-					.AsNoTracking().ToListAsync() : new();
+					.AsNoTracking().ToListAsync();
 
 				foreach (PostModel post in randomPosts)
 				{
 					if (post.Media != null && post.Media.StartsWith("https://cdn"))
 					{
-						post.UserId = weebIds[0];
-						weebIds.Remove(weebIds[0]);
+						post.UserId = weebIds.FirstOrDefault();
+						weebIds.Remove(weebIds.FirstOrDefault());
 						continue;
 					}
 
-					post.UserId = userIds[0];
-					userIds.Remove(userIds[0]);
+					post.UserId = userIds.FirstOrDefault();
+					userIds.Remove(userIds.FirstOrDefault());
 				}
 
 				_Models.Posts.AddRange(randomPosts);

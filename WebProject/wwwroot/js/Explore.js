@@ -24,23 +24,31 @@ function SwitchToTab(inicialAmountToLoad) {
 		return;
 	let tabName = event.target.id;
 	let actionMethodName = '';
+	let urlTab = '';
 	switch (tabName) {
 		case 'random-post-tab':
 			actionMethodName = LoadMoreRandomPostsMethodName;
+			urlTab = 'Random';
 			break;
 		case 'top-post-tab':
 			actionMethodName = LoadMoreTopPostsMethodName;
+			urlTab = 'Top';
 			break;
 		case 'recent-post-tab':
 			actionMethodName = LoadMoreRecentPostsMethodName;
+			urlTab = 'Recent';
 			break;
 		case 'old-post-tab':
 			actionMethodName = LoadMoreOldPostsMethodName;
+			urlTab = 'Oldest';
 			break;
 	}
 
 	if (actionMethodName.length === 0)
 		return;
+
+	//Change the url.
+	window.history.replaceState({}, '', urlTab);
 
 	$.ajax(
 		{
@@ -56,7 +64,7 @@ function SwitchToTab(inicialAmountToLoad) {
 				SetScrollEventExplore(inicialAmountToLoad, actionMethodName);
 				SwitchStyleTab(tabName);
 
-				//Set loading to false so new more posts could be loaded.
+				//Set loading to false just in case is true.
 				loadingRandomPosts = false;
 			},
 			error: function (details) {

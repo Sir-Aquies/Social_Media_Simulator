@@ -15,8 +15,35 @@ namespace WebProject.Services
 			_serviceScopeFactory = factory;
 		}
 
+		private async Task InitialSeed()
+		{
+			int followerCount = 0;
+
+			using (var scope = _serviceScopeFactory.CreateScope())
+			{
+				var _Models = scope.ServiceProvider.GetRequiredService<WebProjectContext>();
+				List<int> amountInDatabase = await _Models.Database.SqlQueryRaw<int>("SELECT COUNT(FollowerId) FROM Followers;").ToListAsync();
+				followerCount = amountInDatabase.FirstOrDefault();
+
+				if (!await _Models.Users.AsNoTracking().AnyAsync())
+				{
+					followerCount = -1;
+				}
+			}
+
+			if (followerCount < 10 && followerCount != -1)
+			{
+				for (int i = 0; i < 200; i++)
+				{
+					await AddRandomFollower(2);
+				}
+			}
+		}
+
 		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
+			await InitialSeed();
+
 			while (await _followerTimer.WaitForNextTickAsync(stoppingToken) && !stoppingToken.IsCancellationRequested)
 			{
 				await AddRandomFollower(2);

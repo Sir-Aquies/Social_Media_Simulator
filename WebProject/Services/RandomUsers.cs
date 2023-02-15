@@ -21,6 +21,17 @@ namespace WebProject.Services
 			_serviceScopeFactory = factory;
 		}
 
+		private async Task InitialSeed()
+		{
+			if (_userManager.Users.AsNoTracking().Count() < 10)
+			{
+				for (int i = 0; i < 50; i++)
+				{
+					await CreateRandomUser();
+				}
+			}
+		}
+
 		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
 			await InitialSeed();
@@ -174,18 +185,6 @@ namespace WebProject.Services
 			string apiResponse = await response.Content?.ReadAsStringAsync();
 
 			return JsonConvert.DeserializeObject<Waifu>(apiResponse).images[0].url;
-		}
-
-		public async Task InitialSeed()
-		{
-			if (_userManager.Users.AsNoTracking().Count() < 10)
-			{
-				for (int i = 0; i < 30; i++)
-				{
-					await CreateRandomUser();
-				}
-			}
-			
 		}
 	}
 }

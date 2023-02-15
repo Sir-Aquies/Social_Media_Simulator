@@ -377,12 +377,20 @@ function UpdatePostInfo(postId) {
 				for (let i = 0; i < likeButtons.length; i++) {
 					//The first children contains amount of likes.
 					const likesSpan = likeButtons[i].children[0];
+
+					if (postInfo.likes > parseInt(likesSpan.innerHTML))
+						SparklingLikeEffect(likeButtons[i]);
+
 					likesSpan.innerHTML = postInfo.likes;
 				}
 
 				for (let i = 0; i < commentButtons.length; i++) {
 					//The first children contains amount of comments.
 					const commentSpan = commentButtons[i].children[0];
+
+					if (postInfo.comments > parseInt(commentSpan.innerHTML))
+						SparklingLikeEffect(commentButtons[i]);
+
 					commentSpan.innerHTML = postInfo.comments;
 				}
 			},

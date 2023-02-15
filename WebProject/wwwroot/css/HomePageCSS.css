@@ -169,6 +169,7 @@
 .empty-post-list {
 	font-size: 2rem;
 	text-align: center;
+	margin: 2rem 0;
 }
 
 @media only screen and (min-width: 768px) {

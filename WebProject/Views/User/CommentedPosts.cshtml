@@ -27,7 +27,25 @@
 		{
 			<partial name="PageUserNav"></partial>
 
-			<partial name="PostList" model="Model.PageUser.Posts"></partial>
+			if (Model.PageUser.Posts.Count > 0)
+			{
+				<partial name="PostList" model="Model.PageUser.Posts"></partial>
+			}
+			else
+			{
+				@if (Model.PageUser.Id == ViewData["LoggedUserId"]?.ToString())
+				{
+					<section class="empty-post-list">
+						You haven't comment any post, <a asp-controller="Explore" asp-action="Index">explore posts</a>.
+					</section>
+				}
+				else
+				{
+					<section class="empty-post-list">
+						@Model.PageUser.UserName haven't comment a single post.
+					</section>
+				}
+			}
 		}
 		else
 		{
@@ -50,7 +68,6 @@
 <script src="~/js/AsyncCRUD.js" asp-append-version="true"></script>
 <script src="~/js/PostsScript.js" asp-append-version="true"></script>
 <script src="~/js/CommentsScript.js" asp-append-version="true"></script>
-<script src="~/js/ImagePrev.js" asp-append-version="true"></script>
 <script src="~/js/UserScript.js" asp-append-version="true"></script>
 
 <script>
