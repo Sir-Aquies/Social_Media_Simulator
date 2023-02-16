@@ -19,11 +19,11 @@
 			<div class="head-container">
 				<div class="head-home">
 					<!-- Image that when click display the display-tab with the user info -->
-					@if (Model is DynamicUser)
+					@if (Model is UserModel)
 					{
-						if (Model.PageUser.ProfilePicture != null)
+						if (Model.ProfilePicture != null)
 						{
-							<img src="@(Model.PageUser.ProfilePicture.StartsWith("https") ? "" : "data:image/png;base64,")@Model.PageUser.ProfilePicture" 
+							<img src="@(Model.ProfilePicture.StartsWith("https") ? "" : "data:image/png;base64,")@Model.ProfilePicture" 
 							id="UserMobilePic" class="user-info-mobile" onclick="ToggleDisplayTab()" onmousedown="event.stopPropagation();" />
 						}
 						else
@@ -42,30 +42,24 @@
 					</div>
 					
 					<div class="tab-list" id="TabList" onclick="event.stopPropagation();">
-						@if (Model is DynamicUser || Model is PasswordUser && Model.PageUser != null)
+						@if (Model is UserModel)
 						{
-							<a asp-area="" asp-controller="User" asp-action="Home">Home</a>
+							<a asp-controller="User" asp-action="Home">Home</a>
 
-							<a asp-area="" asp-controller="User" asp-action="UserPage" asp-route-UserName="@Model.User.UserName">Profile</a>
-						}
-						else if (Model is UserModel)
-						{
-							<a asp-area="" asp-controller="User" asp-action="Home">Home</a>
-
-							<a asp-area="" asp-controller="User" asp-action="UserPage" asp-route-UserName="@Model.UserName">Profile</a>
+							<a asp-controller="User" asp-action="UserPage" asp-route-userName="">Profile</a>
 						}
 
-						@if (Model is null || Model is LoginModel)
+						@if (Model == null || Model is LoginModel)
 						{
-							<a asp-area="" asp-controller="Account" asp-action="Login">Log in</a>
-							<a asp-area="" asp-controller="Account" asp-action="Register">Register</a>
+							<a asp-controller="Account" asp-action="Login">Log in</a>
+							<a asp-controller="Account" asp-action="Register">Register</a>
 						}
 						
-						@if (Model is not null && Model is not LoginModel)
+						@if (Model != null && Model is not LoginModel)
 						{
-							<a asp-area="" asp-controller="User" asp-action="SearchUsers">Search</a>
+							<a asp-controller="User" asp-action="SearchUsers">Search</a>
 
-							<a asp-controller="Explore" asp-action="Index">Explore</a>
+							<a asp-controller="Explore" asp-action="Random">Explore</a>
 
 							<div class="right" id="settings-tab" onclick="ToggleSettingsTab()">
 								<span class="setting-tag">Settings
@@ -74,7 +68,6 @@
 									</svg>
 								</span>
 								
-
 								<div id="settings-list" class="settings-list">
 									<a asp-controller="Settings" asp-action="EditProfile">Edit profile</a>
 									<a asp-controller="Settings" asp-action="Appearance">Web Appearance</a>
@@ -82,13 +75,6 @@
 									<a asp-controller="Account" asp-action="Logout">Log out</a>
 								</div>
 							</div>
-
-							@*<a class="right" asp-area="" asp-controller="Settings" asp-action="EditProfile">
-								Settings
-								<svg class="settings-icon" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 122.88 122.88">
-									<path fill-rule="evenodd" fill="var(--borderColor)" class="cls-1" d="M73.48,15.84A46.87,46.87,0,0,1,84.87,21L91,14.84a7.6,7.6,0,0,1,10.72,0L108,21.15a7.6,7.6,0,0,1,0,10.72l-6.6,6.6a46.6,46.6,0,0,1,4.34,10.93h9.52A7.6,7.6,0,0,1,122.88,57V65.9a7.6,7.6,0,0,1-7.58,7.58h-9.61a46.83,46.83,0,0,1-4.37,10.81L108,91a7.6,7.6,0,0,1,0,10.72L101.73,108A7.61,7.61,0,0,1,91,108l-6.34-6.35a47.22,47.22,0,0,1-11.19,5v8.59a7.6,7.6,0,0,1-7.58,7.58H57a7.6,7.6,0,0,1-7.58-7.58v-7.76a47.39,47.39,0,0,1-12.35-4.68L31.87,108a7.62,7.62,0,0,1-10.72,0l-6.31-6.31a7.61,7.61,0,0,1,0-10.72l4.72-4.72A47.38,47.38,0,0,1,14,73.48H7.58A7.6,7.6,0,0,1,0,65.9V57A7.6,7.6,0,0,1,7.58,49.4h6.35a47.2,47.2,0,0,1,5.51-12.94l-4.6-4.59a7.62,7.62,0,0,1,0-10.72l6.31-6.31a7.6,7.6,0,0,1,10.72,0l5,5A46.6,46.6,0,0,1,49.4,15V7.58A7.6,7.6,0,0,1,57,0H65.9a7.6,7.6,0,0,1,7.58,7.58v8.26ZM59.86,36.68a24.6,24.6,0,1,1-24.6,24.59,24.59,24.59,0,0,1,24.6-24.59Z" />
-								</svg>
-							</a>*@
 						}
 					</div>
 				</div>
@@ -96,7 +82,7 @@
 		</nav>
 
 		@*left-box fro mobiles users*@
-		@if (Model is DynamicUser || Model is UserModel)
+		@if (Model is UserModel)
 		{
 			<div class="display-tab" id="display-tab" onmousedown="event.stopPropagation();"></div>
 		}

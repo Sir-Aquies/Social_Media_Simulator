@@ -101,16 +101,12 @@ app.MapControllerRoute(
 	defaults: new { controller = "User", action = "MediaPosts" });
 
 app.MapControllerRoute(
-	name: "Posts",
-	pattern: "{username}/hop/{PostId}",
-	defaults: new { controller = "User", action = "CompletePost" });
-
-app.MapControllerRoute(name: "Users", 
+	name: "Users", 
 	pattern: "{userName}", 
 	defaults: new { controller = "User", action = "UserPage"});
 
 app.MapControllerRoute(
 	name: "default",
-	pattern: "{controller=User}/{action=SearchUser}/{id?}");
+	pattern: "{controller=User}/{action=UserPage}/{id?}");
 
 app.Run();

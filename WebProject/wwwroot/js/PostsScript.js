@@ -1,6 +1,6 @@
 ﻿//When a post is clicked, it shows the post and all its comments.
 function ShowCompletePost(postId) {
-	if (!postId)
+	if (Number.isNaN(postId))
 		return
 
 	$.ajax(
@@ -46,6 +46,9 @@ function CreatePostTab() {
 
 //Passes the content and media (if there is) to CreatePost action method who will create the post.
 function CreatePost(input) {
+	if (input === undefined)
+		return;
+
 	const content = input.parentElement.parentElement.children[0].value;
 	const [file] = input.parentElement.children[2].files;
 	//Get the token for request verification token.
@@ -82,11 +85,11 @@ function CreatePost(input) {
 
 //Get EditPost.cshtml partial view (from LookforPost) and display it in a background.
 function EditPostTab(postId, input) {
+	if (Number.isNaN(postId) || input === undefined)
+		return;
+
 	//Undisplay the post option button parent element.
 	input.parentElement.style.display = "none";
-
-	if (!postId)
-		return;
 
 	$.ajax(
 		{
@@ -121,6 +124,9 @@ function EditPostTab(postId, input) {
 
 //Passes the new content and new media (if there is) to EditPost action method who will edit the post.
 function EditPost(input) {
+	if (input === undefined)
+		return;
+
 	const content = input.parentElement.parentElement.children[0].value;
 	const [file] = input.parentElement.children[2].files;
 	//Get the token for request verification token.
@@ -168,66 +174,111 @@ function EditPost(input) {
 
 //DeletPost passes the id of the post to DeletePost action method who will delete the post and removes the post container from the DOM.
 function DeletePost(postId, input) {
+	if (Number.isNaN(postId) || input === undefined)
+		return;
+
 	//Undisplay the post option button parent element.
 	input.parentElement.style.display = "none";
 	//Get the token for request verification token.
 	const token = $('input[name="__RequestVerificationToken"]').val();
 
-	if (postId != undefined) {
-		$.post("/Post/DeletePost", { __RequestVerificationToken: token, PostId: postId }, function (data, status) {
-			//the data variable consist of a boolean return from the action method (true for deleted, false for error).
-			if (status === "success" && data) {
-				//Remove the post container.
-				RemovePostFromContainer(postId);
-			}
-		});
-	}
+	$.post("/Post/DeletePost", { __RequestVerificationToken: token, PostId: postId }, function (data, status) {
+		//the data variable consist of a boolean return from the action method (true for deleted, false for error).
+		if (status === "success" && data) {
+			//Remove the post container.
+			RemovePostFromContainer(postId);
+		}
+	});
 }
 
 //Function that handles when a user likes or dislikes a post.
 function LikePost(postId) {
+	if (Number.isNaN(postId))
+		return;
 
-	if (postId != undefined) {
-		$.post("/Post/LikePost", { PostId: postId }, function (data, status) {
-			if (status === "success") {
-				//the response (data) consist of a string, "+" for like, "-" for dislike and "0" for errors.
-				if (data === "+" || data === "-") {
-					AlterPostLikes(postId, data);
-				}
-				else if (data === "0") {
-					Message("Somethig went wrong");
-				}
+	$.post("/Post/LikePost", { PostId: postId }, function (data, status) {
+		if (status === "success") {
+			//the response (data) consist of a string, "+" for like, "-" for dislike and "0" for errors.
+			if (data === "+" || data === "-") {
+				AlterPostLikes(postId, data);
 			}
-		});
-	}
+			else if (data === "0") {
+				Message("Somethig went wrong");
+			}
+		}
+	});
 }
 
 function LikesTab(postId) {
-	if (postId != undefined) {
-		$.get('/Post/PostLikesTab', { postId }, (data, status) => {
-			if (status === 'success') {
-				const background = Background();
+	if (Number.isNaN(postId))
+		return;
 
-				document.body.style.overflow = 'hidden';
+	$.get('/Post/PostLikesTab', { postId }, (data, status) => {
+		if (status === 'success') {
+			const background = Background();
 
-				const tabContainer = document.createElement('div');
-				tabContainer.className = 'users-list-tab';
-				tabContainer.innerHTML = data;
+			document.body.style.overflow = 'hidden';
 
-				background.appendChild(tabContainer);
-			}
-		});
-	}
+			const tabContainer = document.createElement('div');
+			tabContainer.className = 'users-list-tab';
+			tabContainer.innerHTML = data;
+
+			background.appendChild(tabContainer);
+		}
+	});
 }
+
+const actionMethods = {
+	FollowingPosts: 'LoadMoreFollowingUsersPosts',
+	UserPagePosts: 'LoadMorePosts',
+	LikedPosts: 'LoadMoreLikedPosts',
+	LikedComments: 'LoadMoreLikedComments',
+	CommentedPosts: 'LoadMoreCommentedPosts'
+};
 
 let loadingPosts = false;
 
-function SetScrollEvent(userId, startFrom, rowsPerLoad, actionMethod, onlyMediaPosts = false) {
-	if (startFrom === undefined || rowsPerLoad === undefined || !actionMethod)
+function SelectActionMethod(tabName) {
+	if (!IsString(tabName))
 		return;
 
-	let startFromRow = parseInt(startFrom);
-	let amountOfRows = parseInt(rowsPerLoad);
+	let methodToUse = '';
+
+	switch (tabName) {
+		case '#pageuser-posts':
+			methodToUse = actionMethods.UserPagePosts;
+			break;
+		case '#pageuser-media':
+			methodToUse = actionMethods.UserPagePosts;
+			break;
+		case '#pageuser-likes':
+			methodToUse = actionMethods.LikedPosts;
+			break;
+		case 'liked-comments':
+			methodToUse = actionMethods.LikedComments;
+			break;
+		case '#pageuser-comments':
+			methodToUse = actionMethods.CommentedPosts;
+			break;
+		case 'follwing-posts':
+			methodToUse = actionMethods.FollowingPosts;
+			break;
+	}
+
+	return methodToUse;
+}
+
+function SetScrollEvent(userId, startFromRow, rowsPerLoad, tabName, onlyMediaPosts = false) {
+	if (Number.isNaN(startFromRow) || Number.isNaN(rowsPerLoad) || !IsString(tabName) || !IsString(userId))
+		return;
+
+	const actionMethod = SelectActionMethod(tabName)
+
+	if (actionMethod === undefined)
+		return;
+
+	if (tabName === '#pageuser-media')
+		onlyMediaPosts = true;
 
 	window.onscroll = function () {
 		if (!loadingPosts && this.window.scrollY > (mainContainer.clientHeight * (70 / 100))) {
@@ -240,27 +291,19 @@ function SetScrollEvent(userId, startFrom, rowsPerLoad, actionMethod, onlyMediaP
 				LoadMorePostsGlobal(startFromRow, actionMethod, userId);
 			}
 
-			startFromRow += amountOfRows;
+			startFromRow += rowsPerLoad;
 		}
 	}
 }
 
-const actionMethods = {
-	FollowingPosts: 'LoadMoreFollowingUsersPosts',
-	UserPagePosts: 'LoadMorePosts',
-	LikedPosts: 'LoadMoreLikedPosts',
-	LikedComments: 'LoadMoreLikedComments',
-	CommentedPosts: 'LoadMoreCommentedPosts'
-};
-
 function LoadMorePostsGlobal(startFromRow, actionMethod, userId = null, onlyMediaPosts = false) {
-	if (Number.isNaN(startFromRow) || actionMethod === undefined)
+	if (Number.isNaN(startFromRow) || !IsString(actionMethod))
 		return;
 
 	const sendData = { userId, startFromRow };
 
 	if (onlyMediaPosts)
-		sendData.onlyMediaPosts = onlyMediaPosts;
+		sendData.onlyMedia = onlyMediaPosts;
 
 	$.ajax(
 		{
@@ -281,7 +324,7 @@ function LoadMorePostsGlobal(startFromRow, actionMethod, userId = null, onlyMedi
 }
 
 function SwitchTabLikedPostsAndComments(userId, startingRow, rowsPerLoad) {
-	if (!userId || !startingRow || !rowsPerLoad)
+	if (!IsString(userId) || Number.isNaN(startingRow) || Number.isNaN(rowsPerLoad))
 		return;
 
 	let tabName = event.target.id;
@@ -303,7 +346,7 @@ function SwitchTabLikedPostsAndComments(userId, startingRow, rowsPerLoad) {
 					AddRangePost(data);
 
 					//Change the scroll event.
-					let postLoader = tabName === 'switch-comment-tab' ? actionMethods.LikedComments : actionMethods.LikedPosts;
+					let postLoader = tabName === 'switch-comment-tab' ? 'liked-comments' : '#pageuser-likes';
 					SetScrollEvent(userId, startingRow, rowsPerLoad, postLoader);
 
 					//Visual change to indicate the user which tab is on.
@@ -402,6 +445,9 @@ function UpdatePostInfo(postId) {
 }
 
 function UnblurImage(cover) {
+	if (cover === undefined)
+		return;
+
 	const imageContainer = cover.parentElement;
 	const image = imageContainer.children[0];
 	const button = cover.children[0];
@@ -432,6 +478,9 @@ function RemoveTab() {
 
 //OptionButton displays and indisplays the options inside the option button from the posts.
 function OptionButton(post) {
+	if (post === undefined)
+		return;
+
 	//Get the post-form.
 	const option = post.children[0];
 
@@ -451,6 +500,9 @@ function OptionButton(post) {
 }
 
 function Message(message) {
+	if (!IsString(message))
+		return;
+
 	const messageContainer = document.createElement('aside');
 	messageContainer.className = 'alert-message';
 
@@ -482,4 +534,11 @@ function Background() {
 	tab.appendChild(closeTabButton);
 
 	return tab;
+}
+
+function IsString(string) {
+	if (typeof string === 'string')
+		return true;
+
+	return false;
 }

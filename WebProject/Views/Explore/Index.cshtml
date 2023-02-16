@@ -20,10 +20,10 @@
 
 	<section class="center-box" id="UserPostContainer">
 		<nav class="explore-navigation-bar">
-			<span id="random-post-tab" onclick="SwitchToTab('@ViewData["inicialAmountPostsToLoad"]')">Random</span>
-			<span id="top-post-tab" onclick="SwitchToTab('@ViewData["inicialAmountPostsToLoad"]')">Top</span>
-			<span id="recent-post-tab" onclick="SwitchToTab('@ViewData["inicialAmountPostsToLoad"]')">Recent</span>
-			<span id="old-post-tab" onclick="SwitchToTab('@ViewData["inicialAmountPostsToLoad"]')">Oldest</span>
+			<span id="random-post-tab" onclick="SwitchToTab(@ViewBag.StartFromRow, @ViewBag.RowsPerLoad)">Random</span>
+			<span id="top-post-tab" onclick="SwitchToTab(@ViewBag.StartFromRow, @ViewBag.RowsPerLoad)">Top</span>
+			<span id="recent-post-tab" onclick="SwitchToTab(@ViewBag.StartFromRow, @ViewBag.RowsPerLoad)">Recent</span>
+			<span id="old-post-tab" onclick="SwitchToTab(@ViewBag.StartFromRow, @ViewBag.RowsPerLoad)">Oldest</span>
 		</nav>
 
 		@if (Model != null)
@@ -65,24 +65,7 @@
 
 <script>
 	window.addEventListener('load', function () {
-		switch ("@ViewBag.tabName") {
-			case 'Top':
-				SwitchStyleTab('top-post-tab');
-				SetScrollEventExplore(@ViewData["inicialAmountPostsToLoad"], LoadMoreRandomPostsMethodName);
-				break;
-			case 'Recent':
-				SwitchStyleTab('recent-post-tab');
-				SetScrollEventExplore(@ViewData["inicialAmountPostsToLoad"], LoadMoreRecentPostsMethodName);
-				break;
-			case 'Oldest':
-				SwitchStyleTab('old-post-tab');
-				SetScrollEventExplore(@ViewData["inicialAmountPostsToLoad"], LoadMoreOldPostsMethodName);
-				break;
-			default:
-				SwitchStyleTab('random-post-tab');
-				SetScrollEventExplore(@ViewData["inicialAmountPostsToLoad"], LoadMoreRandomPostsMethodName);
-		}
-
+		SelectInicialTab("@ViewBag.tabName", @ViewBag.StartFromRow, @ViewBag.RowsPerLoad);
 		ReloadUsersInLeftBox(6);
 	})
 </script>

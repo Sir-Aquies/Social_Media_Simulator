@@ -15,19 +15,18 @@ namespace WebProject.Controllers
 		private readonly UserManager<UserModel> _UserManager;
 		private readonly ModelLogic _Logic;
 
-		private const int AmountPostsToLoad = 5;
+		private const int amountPostsPerLoad = 5;
 		private const string sessionRetrievedPostsIds = "_retrievedPostsIds";
 		private const int inicialAmountPostsToLoad = 10;
 		private const int showCommentsPerPost = 3;
 
-		enum Tab
+		private enum Tab
 		{
 			Random,
 			Top,
 			Recent,
 			Oldest,
 		}
-
 
 		public ExploreController(WebProjectContext models, UserManager<UserModel> userManager, ModelLogic logic)
 		{
@@ -43,7 +42,8 @@ namespace WebProject.Controllers
 			loggedUser.Posts = await PostsFromTab(Tab.Top, 0, inicialAmountPostsToLoad);
 			loggedUser.Posts = await _Logic.FillPostsProperties(loggedUser.Posts.ToList());
 
-			ViewData["inicialAmountPostsToLoad"] = inicialAmountPostsToLoad;
+			ViewBag.StartFromRow = inicialAmountPostsToLoad;
+			ViewBag.RowsPerLoad = amountPostsPerLoad;
 			ViewBag.tabName = "Top";
 
 			return View("Index", loggedUser);
@@ -56,7 +56,8 @@ namespace WebProject.Controllers
 			loggedUser.Posts = await PostsFromTab(Tab.Recent, 0, inicialAmountPostsToLoad);
 			loggedUser.Posts = await _Logic.FillPostsProperties(loggedUser.Posts.ToList());
 
-			ViewData["inicialAmountPostsToLoad"] = inicialAmountPostsToLoad;
+			ViewBag.StartFromRow = inicialAmountPostsToLoad;
+			ViewBag.RowsPerLoad = amountPostsPerLoad;
 			ViewBag.tabName = "Recent";
 
 			return View("Index", loggedUser);
@@ -69,7 +70,8 @@ namespace WebProject.Controllers
 			loggedUser.Posts = await PostsFromTab(Tab.Oldest, 0, inicialAmountPostsToLoad);
 			loggedUser.Posts = await _Logic.FillPostsProperties(loggedUser.Posts.ToList());
 
-			ViewData["inicialAmountPostsToLoad"] = inicialAmountPostsToLoad;
+			ViewBag.StartFromRow = inicialAmountPostsToLoad;
+			ViewBag.RowsPerLoad = amountPostsPerLoad;
 			ViewBag.tabName = "Oldest";
 
 			return View("Index", loggedUser);
@@ -91,7 +93,8 @@ namespace WebProject.Controllers
 			string newIds = string.Join(", ", postsIds);
 			HttpContext.Session.SetString(sessionRetrievedPostsIds, newIds);
 
-			ViewData["inicialAmountPostsToLoad"] = inicialAmountPostsToLoad;
+			ViewBag.StartFromRow = inicialAmountPostsToLoad;
+			ViewBag.RowsPerLoad = amountPostsPerLoad;
 			ViewBag.tabName = "Random";
 
 			return View("Index", loggedUser);
@@ -128,8 +131,8 @@ namespace WebProject.Controllers
 			string oldPostsIds = HttpContext.Session.GetString(sessionRetrievedPostsIds);
 
 			List<PostModel> posts = string.IsNullOrEmpty(oldPostsIds) ?
-				await RetrievedRandomPosts(AmountPostsToLoad, "") :
-				await RetrievedRandomPosts(AmountPostsToLoad, oldPostsIds);
+				await RetrievedRandomPosts(amountPostsPerLoad, "") :
+				await RetrievedRandomPosts(amountPostsPerLoad, oldPostsIds);
 
 			//Save the ids of the post in a session variable.
 			if (!string.IsNullOrEmpty(oldPostsIds))
@@ -157,7 +160,7 @@ namespace WebProject.Controllers
 			return PartialView("PostList", posts);
 		}
 
-		public async Task<IActionResult> LoadMoreTopPosts(int startFromRow, int amountOfRows = AmountPostsToLoad)
+		public async Task<IActionResult> LoadMoreTopPosts(int startFromRow, int amountOfRows = amountPostsPerLoad)
 		{
 			List<PostModel> posts = await PostsFromTab(Tab.Top, startFromRow, amountOfRows);
 
@@ -173,7 +176,7 @@ namespace WebProject.Controllers
 			return PartialView("PostList", posts);
 		}
 
-		public async Task<IActionResult> LoadMoreRecentPosts(int startFromRow, int amountOfRows = AmountPostsToLoad)
+		public async Task<IActionResult> LoadMoreRecentPosts(int startFromRow, int amountOfRows = amountPostsPerLoad)
 		{
 			List<PostModel> posts = await PostsFromTab(Tab.Recent, startFromRow, amountOfRows);
 
@@ -189,7 +192,7 @@ namespace WebProject.Controllers
 			return PartialView("PostList", posts);
 		}
 
-		public async Task<IActionResult> LoadMoreOldPosts(int startFromRow, int amountOfRows = AmountPostsToLoad)
+		public async Task<IActionResult> LoadMoreOldPosts(int startFromRow, int amountOfRows = amountPostsPerLoad)
 		{
 			List<PostModel> posts = await PostsFromTab(Tab.Oldest, startFromRow, amountOfRows);
 
