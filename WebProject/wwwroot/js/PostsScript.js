@@ -260,7 +260,7 @@ function SelectActionMethod(tabName) {
 		case '#pageuser-comments':
 			methodToUse = actionMethods.CommentedPosts;
 			break;
-		case 'follwing-posts':
+		case '#following-posts':
 			methodToUse = actionMethods.FollowingPosts;
 			break;
 	}

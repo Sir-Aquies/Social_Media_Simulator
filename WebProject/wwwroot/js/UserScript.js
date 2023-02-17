@@ -2,7 +2,7 @@
 	$.ajax(
 		{
 			type: "GET",
-			url: "/User/UsersWithMostLikesView",
+			url: '/Search/UsersWithMostLikesView',
 			success: function (data) {
 				const users = new DOMParser().parseFromString(data, 'text/html').all[2].children;
 				let length = users.length;
@@ -23,7 +23,7 @@ function LoadUsersWithMostPosts() {
 	$.ajax(
 		{
 			type: "GET",
-			url: "/User/UsersWithMostPostsView",
+			url: '/Search/UsersWithMostPostsView',
 			success: function (data) {
 				const users = new DOMParser().parseFromString(data, 'text/html').all[2].children;
 				let length = users.length;
@@ -44,7 +44,7 @@ function LoadUsersWithMostFollowers() {
 	$.ajax(
 		{
 			type: "GET",
-			url: "/User/UsersWithMostFollowersView",
+			url: '/Search/UsersWithMostFollowersView',
 			success: function (data) {
 				const users = new DOMParser().parseFromString(data, 'text/html').all[2].children;
 				let length = users.length;
@@ -187,7 +187,13 @@ function UpdateStatInUserInfo(info, dataAttibute) {
 	const spans = [...document.querySelectorAll(`[${dataAttibute}]`)];
 
 	for (let i = 0; i < spans.length; i++) {
+		spans[i].style.position = 'relative';
+		let previousLikes = parseInt(spans[i].innerHTML);
 		spans[i].innerHTML = info;
+
+		if (info > parseInt(previousLikes)) {
+			SparklingLikeEffect(spans[i], true);
+		}
 	}
 }
 

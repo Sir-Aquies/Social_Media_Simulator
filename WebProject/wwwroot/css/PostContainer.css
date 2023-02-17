@@ -215,6 +215,15 @@
 	position: absolute;
 	right: -7px;
 }
+
+.center-sparkling-like {
+	width: 4rem;
+	height: 4rem;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+}
  
 .comment-button {
 	width: 2.5rem;

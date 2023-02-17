@@ -18,18 +18,18 @@ namespace WebProject.Services
 		private List<PostModel> postLikes = new();
 		private List<PostModel> postComments = new();
 
-		//TODO - Create a tab in to show full list.
+		//TODO - Refactor all the CSS files.
 		public async Task UpdateStats(WebProjectContext _Models, int amount = 10)
 		{
-			userFollowers = await SqlInUsers($"SELECT TOP {amount} U.Id, COUNT(Followers.FollowerId) AS Followers FROM " +
+			userFollowers = await SqlQueryForUsers($"SELECT TOP {amount} U.Id, COUNT(Followers.FollowerId) AS Followers FROM " +
 				$"(Users AS U INNER JOIN Followers ON Followers.CreatorId = U.Id) " +
 				$"GROUP BY U.Id ORDER BY Followers DESC;", _Models);
 
-			userLikes = await SqlInUsers($"SELECT TOP {amount} U.Id, SUM(Posts.Likes) AS Total " +
+			userLikes = await SqlQueryForUsers($"SELECT TOP {amount} U.Id, SUM(Posts.Likes) AS Total " +
 				"FROM (Users AS U INNER JOIN Posts ON Posts.UserId = U.Id) " +
 				"GROUP BY U.Id ORDER BY Total DESC;", _Models);
 
-			userPosts = await SqlInUsers($"SELECT TOP {amount} U.Id, Count(P.Id) AS Total " +
+			userPosts = await SqlQueryForUsers($"SELECT TOP {amount} U.Id, Count(P.Id) AS Total " +
 				"FROM Users AS U INNER JOIN Posts AS P ON P.UserId = U.Id " +
 				"GROUP BY U.Id ORDER BY Total DESC;", _Models);
 
@@ -45,7 +45,7 @@ namespace WebProject.Services
 			postComments = await _Models.Posts.Where(p => postCommenstIds.Contains(p.Id)).AsNoTracking().ToListAsync();
 		}
 
-		public async Task<List<UserModel>> SqlInUsers(string sql, WebProjectContext _Models)
+		public async Task<List<UserModel>> SqlQueryForUsers(string sql, WebProjectContext _Models)
 		{
 			List<string> idsForLikes = await _Models.Database
 				.SqlQueryRaw<string>(sql).AsNoTracking().ToListAsync();

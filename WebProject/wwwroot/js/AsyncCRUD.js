@@ -101,13 +101,18 @@ function AlterPostLikes(postId, action) {
         UpdateUserStats(pageUserId);
 }
 
-function SparklingLikeEffect(parent) {
+function SparklingLikeEffect(parent, center = false) {
     if (parent === undefined)
         return;
 
     const img = document.createElement('img');
     img.src = '/sparkling.gif';
-    img.className = 'sparkling-like';
+    if (center) {
+        img.className = 'center-sparkling-like';
+    }
+    else {
+        img.className = 'sparkling-like';
+    }
     parent.appendChild(img);
 
     setTimeout(() => {

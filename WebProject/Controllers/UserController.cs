@@ -33,14 +33,6 @@ namespace WebProject.Controllers
 			_Logic = modelLogic;
 		}
 
-		//var mostLikedUsers = _Models.Posts
-		//	.GroupBy(p => p.UserId)
-		//	.Select(g => new { UserId = g.Key, Total = g.Sum(p => p.Likes) })
-		//	.OrderByDescending(x => x.Total)
-		//	.Take(10)
-		//	.ToList();
-
-		//Eliot09  2e8e3796-7eb0-4bce-8201-df95004105d1
 		//Loads all the following user's posts of the loggedUser. 
 		public async Task<IActionResult> Home()
 		{
@@ -224,7 +216,7 @@ namespace WebProject.Controllers
 			}
 
 			//Load the first posts with the comments from the databas (from 0 to inicialAmountPostsToLoad).
-			pageUser.Posts = await GetLikedPost(pageUser.Id, 0, inicialAmountPostsToLoad);
+			pageUser.Posts = await GetLikedPosts(pageUser.Id, 0, inicialAmountPostsToLoad);
 			//Use to pass the variables to a javascript methods (SetScrollEvent and SwitchTo...).
 			ViewData["startFromPost"] = inicialAmountPostsToLoad;
 			ViewData["PostsPerLoad"] = AmountPostsPerLoad;
@@ -239,7 +231,7 @@ namespace WebProject.Controllers
 			return View("Profile", pageUser);
 		}
 
-		private async Task<List<PostModel>> GetLikedPost(string userId, int startFromRow, int amountOfRows)
+		private async Task<List<PostModel>> GetLikedPosts(string userId, int startFromRow, int amountOfRows)
 		{
 			List<PostModel> posts = await _Models.Posts
 				.FromSqlRaw("SELECT * FROM Posts WHERE Id IN " +
@@ -254,7 +246,7 @@ namespace WebProject.Controllers
 
 		public async Task<IActionResult> LoadMoreLikedPosts(string userId, int startFromRow, int amountOfRows = AmountPostsPerLoad)
 		{
-			List<PostModel> posts = await GetLikedPost(userId, startFromRow, amountOfRows);
+			List<PostModel> posts = await GetLikedPosts(userId, startFromRow, amountOfRows);
 
 			if (posts == null)
 				return NotFound("Posts not found.");
@@ -464,45 +456,6 @@ namespace WebProject.Controllers
 			TempData["TotalLikes"] = counts[0];
 			TempData["TotalPosts"] = counts[1];
 			TempData["TotalComments"] = counts[2];
-
-			////Total likes the page user has received in his/her posts.
-			//try
-			//{
-			//	List<int> totalLikes = await _Models.Database
-			//	.SqlQueryRaw<int>("SELECT SUM(Likes) FROM Posts WHERE UserId = {0}", userId).ToListAsync();
-			//	TempData["TotalLikes"] = totalLikes.First();
-
-			//}
-			//catch
-			//{
-			//	TempData["TotalLikes"] = 0;
-			//}
-
-
-			////Number of posts the page user has made.
-			//try
-			//{
-			//	List<int> totalPosts = await _Models.Database
-			//	.SqlQueryRaw<int>("SELECT COUNT(Id) FROM Posts WHERE UserId = {0}", userId).ToListAsync();
-			//	TempData["TotalPosts"] = totalPosts.First();
-			//}
-			//catch
-			//{
-			//	TempData["TotalPosts"] = 0;
-			//}
-
-
-			////Number of comments the page user has made.
-			//try
-			//{
-			//	List<int> totalComments = await _Models.Database
-			//	.SqlQueryRaw<int>("SELECT COUNT(Id) FROM Comments WHERE UserId = {0}", userId).ToListAsync();
-			//	TempData["TotalComments"] = totalComments.First();
-			//}
-			//catch
-			//{
-			//	TempData["TotalComments"] = 0;
-			//}
 		}
 
 		public async Task<string> Follow(string userId)
@@ -610,45 +563,6 @@ namespace WebProject.Controllers
 				totalLikes = stats[0], totalPosts = stats[1], 
 				totalComments = stats[2], followersCount = stats[3], 
 				followingCount = stats[4] });
-		}
-
-		public async Task<IActionResult> SearchUsers()
-		{
-			UserModel loggedUser = await _UserManager.GetUserAsync(HttpContext.User);
-
-			return View(loggedUser);
-		}
-
-		public async Task<IActionResult> LookUsersByUserName(string userName)
-		{
-			List<UserModel> users = await _Models.Users
-				.FromSqlRaw("SELECT * FROM Users WHERE UserName LIKE {0};", userName + "%")
-				.AsNoTracking().ToListAsync();
-
-			return PartialView("UsersList", users);
-		}
-
-		public async Task<IActionResult> GetRandomUsersView(int amountOfUsers)
-		{
-			List<UserModel> users = await _Models.Users.FromSqlRaw($"SELECT TOP { amountOfUsers } * FROM Users ORDER BY NEWID();")
-				.AsNoTracking().ToListAsync();
-
-			return PartialView("UsersList", users);
-		}
-
-		public IActionResult UsersWithMostLikesView()
-		{
-			return PartialView("UsersList", _Tendency.UsersWithMostLikes);
-		}
-
-		public IActionResult UsersWithMostPostsView()
-		{
-			return PartialView("UsersList", _Tendency.UsersWithMostPost);
-		}
-		
-		public IActionResult UsersWithMostFollowersView()
-		{
-			return PartialView("UsersList", _Tendency.UsersWithMostFollowers);
 		}
 	}
 }

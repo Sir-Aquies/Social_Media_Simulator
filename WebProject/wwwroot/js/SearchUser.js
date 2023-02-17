@@ -12,7 +12,7 @@
 	$.ajax(
 		{
 			type: "GET",
-			url: "/User/LookUsersByUserName",
+			url: "/Search/LookUsersByUserName",
 			data: { userName },
 			success: function (data) {
 				PutUsersInTheList(data);
@@ -47,7 +47,28 @@ function ReloadUsers(amountOfUsers) {
 	$.ajax(
 		{
 			type: "GET",
-			url: "/User/GetRandomUsersView",
+			url: "/Search/GetRandomUsersView",
+			data: { amountOfUsers },
+			success: function (data) {
+				PutUsersInTheList(data);
+			},
+			error: function (details) {
+
+			}
+		}
+	);
+}
+
+function SwitchSearchUsersTab() {
+	let tabName = event.target.id;
+
+	if (typeof tabName !== 'string')
+		return;
+
+	$.ajax(
+		{
+			type: "GET",
+			url: "/Search/GetRandomUsersView",
 			data: { amountOfUsers },
 			success: function (data) {
 				PutUsersInTheList(data);

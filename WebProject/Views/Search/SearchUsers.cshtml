@@ -1,0 +1,27 @@
+﻿@model UserModel
+@{
+	ViewData["Title"] = "Search Users";
+}
+
+<link rel="stylesheet" href="~/css/HomePageCSS.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/UserCSS.css" asp-append-version="true"/>
+
+<div class="search-bar-box">
+	<input class="search-user-bar" type="text" onkeyup="SearchUserName(this)"/>
+</div>
+
+<div class="explore-navigation-bar">
+	<span id="top-liked-users" onclick="SwitchSearchUsersTab()">Top likes</span>
+	<span id="top-followers-users" onclick="SwitchSearchUsersTab()">Top followers</span>
+	<span id="top-commented-users" onclick="SwitchSearchUsersTab()">Top commented</span>
+	<span id="random-users" onclick="SwitchSearchUsersTab()">Random</span>
+	<span id="oldest-users" onclick="SwitchSearchUsersTab()">Oldest</span>
+	<span id="recent-users" onclick="SwitchSearchUsersTab()">Recent</span>
+
+</div>
+
+<section class="box-container">
+	<div class="users-table"></div>
+</section>
+
+<script src="~/js/SearchUser.js" asp-append-version="true"></script>
