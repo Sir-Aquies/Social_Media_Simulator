@@ -33,12 +33,3 @@ body {
     color: var(--colorText) !important;
     font-size: var(--normalFS) !important;
 }
-
-/*
-    Old color values.
-    --bgColor: #121212;
-    --layoutColor: #0f0f0f;
-    --ShadowColor: #1b1b1b;
-    --borderColor: #ffffff;
-    --colorText: #ffffff;
-*/

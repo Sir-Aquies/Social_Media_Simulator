@@ -1,6 +1,8 @@
 ﻿@model UserModel
 @{
 	ViewData["Title"] = "Search Users";
+	int.TryParse(ViewData["startFromRow"]?.ToString(), out int startFromRow);
+	int.TryParse(ViewData["rowsPerLoad"]?.ToString(), out int rowsPerLoad);
 }
 
 <link rel="stylesheet" href="~/css/HomePageCSS.css" asp-append-version="true" />
@@ -10,14 +12,23 @@
 	<input class="search-user-bar" type="text" onkeyup="SearchUserName(this)"/>
 </div>
 
-<div class="explore-navigation-bar">
-	<span id="top-liked-users" onclick="SwitchSearchUsersTab()">Top likes</span>
-	<span id="top-followers-users" onclick="SwitchSearchUsersTab()">Top followers</span>
-	<span id="top-commented-users" onclick="SwitchSearchUsersTab()">Top commented</span>
-	<span id="random-users" onclick="SwitchSearchUsersTab()">Random</span>
-	<span id="oldest-users" onclick="SwitchSearchUsersTab()">Oldest</span>
-	<span id="recent-users" onclick="SwitchSearchUsersTab()">Recent</span>
+<style>
+	#random-users {
+		border-bottom: 3px solid var(--borderColor);
+	}
 
+	.explore-navigation-bar {
+		border: 1px solid var(--borderColor);
+		max-width: 60rem;
+		margin: 0 auto;
+	}
+</style>
+
+<div class="explore-navigation-bar">
+	<span id="random-users" onclick="SwitchSearchUsersTab(@startFromRow, @rowsPerLoad)">Random</span>
+	<span id="top-liked-users" onclick="SwitchSearchUsersTab(@startFromRow, @rowsPerLoad)">Top likes</span>
+	<span id="top-followers-users" onclick="SwitchSearchUsersTab(@startFromRow, @rowsPerLoad)">Top followers</span>
+	<span id="top-commented-users" onclick="SwitchSearchUsersTab(@startFromRow, @rowsPerLoad)">Top commented</span>
 </div>
 
 <section class="box-container">

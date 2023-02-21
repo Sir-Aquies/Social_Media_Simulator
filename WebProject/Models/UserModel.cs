@@ -39,5 +39,8 @@ namespace WebProject.Models
 
 		[NotMapped]
 		public IList<PostModel> FavoritePost { get; set; }
+
+		[NotMapped]
+		public int Total = 0;
 	}
 }

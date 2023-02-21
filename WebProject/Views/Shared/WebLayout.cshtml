@@ -8,7 +8,8 @@
 	<title>@ViewData["Title"]</title>
 
 	<link rel="stylesheet" href="~/css/WebVariables.css" asp-append-version="true"/>
-	<script async src="~/js/ChangeMode.js" asp-append-version="true"></script>
+	<script src="~/js/ChangeMode.js" asp-append-version="true" async ></script>
+	<script src="~/js/GlobalFuntions.js" asp-append-version="true" async ></script>
 
 	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 	<link rel="stylesheet" href="~/css/_WebLayout.css" asp-append-version="true" />
@@ -44,9 +45,9 @@
 					<div class="tab-list" id="TabList" onclick="event.stopPropagation();">
 						@if (Model is UserModel)
 						{
-							<a asp-controller="User" asp-action="Home">Home</a>
+							<a asp-controller="User" asp-action="Home" onclick="DeleteSessionStorage()">Home</a>
 
-							<a asp-controller="User" asp-action="UserPage" asp-route-userName="">Profile</a>
+							<a asp-controller="User" asp-action="UserPage" asp-route-userName="" onclick="DeleteSessionStorage()">Profile</a>
 						}
 
 						@if (Model == null || Model is LoginModel)

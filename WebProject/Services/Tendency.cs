@@ -45,7 +45,7 @@ namespace WebProject.Services
 			postComments = await _Models.Posts.Where(p => postCommenstIds.Contains(p.Id)).AsNoTracking().ToListAsync();
 		}
 
-		public async Task<List<UserModel>> SqlQueryForUsers(string sql, WebProjectContext _Models)
+		private async Task<List<UserModel>> SqlQueryForUsers(string sql, WebProjectContext _Models)
 		{
 			List<string> idsForLikes = await _Models.Database
 				.SqlQueryRaw<string>(sql).AsNoTracking().ToListAsync();

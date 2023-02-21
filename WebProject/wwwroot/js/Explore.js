@@ -144,15 +144,15 @@ function SelectInicialTab(tabName, startFromRow, rowsPerLoad) {
 	}
 }
 
-function ReloadUsersInLeftBox(amountOfUsers) {
-	if (Number.isNaN(amountOfUsers))
+function ReloadUsersInLeftBox(amountOfRows) {
+	if (Number.isNaN(amountOfRows))
 		return;
 
 	$.ajax(
 		{
-			type: "GET",
-			url: "/User/GetRandomUsersView",
-			data: { amountOfUsers },
+			type: 'GET',
+			url: '/Search/LoadRandomUsers',
+			data: { amountOfRows },
 			success: function (data) {
 				const userMightKnowList = document.getElementById('users-might-know');
 				userMightKnowList.innerHTML = data;

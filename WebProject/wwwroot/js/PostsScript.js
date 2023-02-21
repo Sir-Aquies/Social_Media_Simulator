@@ -499,25 +499,6 @@ function OptionButton(post) {
 	});
 }
 
-function Message(message) {
-	if (!IsString(message))
-		return;
-
-	const messageContainer = document.createElement('aside');
-	messageContainer.className = 'alert-message';
-
-	messageContainer.innerHTML = message;
-
-	const deleteButton = document.createElement('button');
-	deleteButton.className = 'close-button';
-	deleteButton.onclick = function() {
-		this.parentElement.style.display = 'none';
-	}
-	messageContainer.appendChild(deleteButton);
-
-	document.getElementById('main-header').appendChild(messageContainer);
-}
-
 //This creates and returns a semi transparent black brackground, any element appended will be centered.
 function Background() {
 	const tab = document.createElement("div");
@@ -534,11 +515,4 @@ function Background() {
 	tab.appendChild(closeTabButton);
 
 	return tab;
-}
-
-function IsString(string) {
-	if (typeof string === 'string')
-		return true;
-
-	return false;
 }
