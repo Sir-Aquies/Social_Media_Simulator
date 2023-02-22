@@ -66,6 +66,8 @@ namespace WebProject.Controllers
 			if (users.Count == 0)
 				return NoContent();
 
+			ViewData["userListStatName"] = "Total Likes";
+
 			return PartialView("UsersList", users);
 		}
 
@@ -76,18 +78,19 @@ namespace WebProject.Controllers
 		//	.Take(10)
 		//	.ToList();
 		//TODO - show to total amount of likes, followers, etc.
-		public async Task<List<UserModel>> GetUsersWithMostLikes(int startFromRow, int amountOfRows)
+		private async Task<List<UserModel>> GetUsersWithMostLikes(int startFromRow, int amountOfRows)
 		{
-			List<UserModel> usersWithMostLikes = await UsersFromQuery(
-				"SELECT U.Id, SUM(Posts.Likes) AS Total " +
-				"FROM (Users AS U INNER JOIN Posts ON Posts.UserId = U.Id) GROUP BY U.Id " +
-				"ORDER BY Total DESC OFFSET {0} ROWS FETCH NEXT {1} ROWS ONLY;",
-				startFromRow, amountOfRows);
+			List<UserModel> usersWithMostLikes = await _Models.Users.FromSqlRaw(
+				"SELECT * FROM Users WHERE Id IN(" +
+				"SELECT UserId FROM Posts GROUP BY UserId ORDER BY SUM(Likes) " +
+				"DESC OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY);", startFromRow, amountOfRows).AsNoTracking().ToListAsync();
 
-			var usersLinq = await _Models.Posts
-				.GroupBy(p => p.UserId)
-				.Select(g => new { UserId = g.Key, Total = g.Sum(p => p.Likes) })
-				.OrderByDescending(g => g.Total).Skip(startFromRow).Take(amountOfRows).ToListAsync();
+			for (int i = 0; i < usersWithMostLikes.Count; i++)
+			{
+				List<int> totalLikes = await _Models.Database.SqlQueryRaw<int>("SELECT SUM(Likes) FROM Posts WHERE UserId = {0}", usersWithMostLikes[i].Id).ToListAsync();
+
+				usersWithMostLikes[i].Total = totalLikes.FirstOrDefault();
+			}
 
 			return usersWithMostLikes;
 		}
@@ -105,12 +108,14 @@ namespace WebProject.Controllers
 			return PartialView("UsersList", users);
 		}
 
-		public async Task<List<UserModel>> GetUsersWithMostFollowers(int startFromRow, int amountOfRows)
+		private async Task<List<UserModel>> GetUsersWithMostFollowers(int startFromRow, int amountOfRows)
 		{
 			List<UserModel> usersWithMostFollowers = await UsersFromQuery(
 				"SELECT Followers.CreatorId, COUNT(Followers.FollowerId) AS TotalFollowers " +
 				"FROM Followers GROUP BY CreatorId ORDER BY TotalFollowers " +
 				"DESC OFFSET {0} ROWS FETCH NEXT {1} ROWS ONLY;", startFromRow, amountOfRows);
+
+			//SELECT * FROM Users WHERE Id IN(SELECT CreatorId FROM Followers GROUP BY CreatorId ORDER BY COUNT(FollowerId) DESC OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY);
 
 			return usersWithMostFollowers;
 		}
@@ -128,7 +133,7 @@ namespace WebProject.Controllers
 			return PartialView("UsersList", users);
 		}
 
-		public async Task<List<UserModel>> GetUsersWithMostCommentsInPosts(int startFromRow, int amountOfRows)
+		private async Task<List<UserModel>> GetUsersWithMostCommentsInPosts(int startFromRow, int amountOfRows)
 		{
 			List<UserModel> mostCommentedUsers = await UsersFromQuery(
 				"SELECT Posts.UserId, COUNT(Comments.Id) AS TotalComments " +
@@ -149,7 +154,7 @@ namespace WebProject.Controllers
 			for (int i = 0; i < idsOfUsers.Count; i++)
 			{
 				users.Add(await _Models.Users.Select(u =>
-				new UserModel { Id = u.Id, UserName = u.UserName, ProfilePicture = u.ProfilePicture })
+				new UserModel { Id = u.Id, UserName = u.UserName, Name = u.Name, Description = u.Description, ProfilePicture = u.ProfilePicture })
 					.Where(u => u.Id == idsOfUsers[i])
 					.AsNoTracking().FirstOrDefaultAsync());
 			}

@@ -73,6 +73,7 @@
 	margin-top: 10rem;
 }
 
+.search-navigation-bar,
 .explore-navigation-bar,
 .nav-likes-page,
 .pageuser-navigation-bar {
@@ -126,14 +127,14 @@
 	display: none;
 }
 
-.small-user-list .list-user-pic {
+.small-user-list .user-list-pic {
 	min-width: 3.5rem;
 	min-height: 3.5rem;
 	width: 3.5rem;
 	height: 3.5rem;
 }
 
-.small-user-list .list-user-description {
+.small-user-list .user-list-description {
 	display: none !important;
 }
 

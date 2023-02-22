@@ -1,6 +1,11 @@
-﻿.search-bar-box {
+﻿.box-container {
+	display: block;
 	padding: 0.5rem;
-	margin-bottom: 1rem;
+}
+
+.search-bar-box {
+	width: 100%;
+	margin: 0 auto 1rem;
 }
 
 .search-user-bar {
@@ -9,12 +14,149 @@
 	color: inherit;
 }
 
+.search-navigation-bar {
+	border: 1px solid var(--borderColor);
+	margin: 0 auto;
+	gap: 1rem;
+	overflow-x: auto;
+	justify-content: initial;
+}
+
+.search-navigation-bar span {
+	white-space: nowrap;
+	cursor: pointer;
+}
+
 .users-table {
+	display: flex;
+	width: 100%;
+	flex-direction: column;
+	margin: 0 auto;
+}
+
+.user-list-container {
+	width: 100%;
+	padding: 0.5rem 0.8rem;
+	display: flex;
+	align-items: center;
+	border: 1px solid var(--borderColor);
+	gap: 1rem;
+}
+
+.user-list-info {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}
+
+.user-list-pic {
+	min-width: 7rem;
+	min-height: 7rem;
+	width: 7rem;
+	height: 7rem;
+	object-fit: cover;
+	cursor: pointer;
+	border: 1px solid var(--borderColor);
+	border-radius: 50%;
+}
+
+.list-name-container {
 	display: flex;
 	width: 100%;
 	flex-direction: column;
 }
 
+.user-list-username {
+	text-decoration: none;
+	color: inherit;
+	font-size: var(--bigFS);
+	width: 100%;
+	font-weight: bold;
+}
+
+.user-list-name {
+	width: 100%;
+	white-space: nowrap;
+	/*font-size: var(--normalFS);*/
+}
+
+.user-list-content {
+	width: 100%;
+	text-align: center;
+}
+
+.user-list-description {
+	display: none;
+	overflow: hidden;
+	height: fit-content;
+	/*max-height: 7rem;*/
+	font-size: var(--smallFS);
+	text-align: center;
+}
+
+.user-list-stats-box {
+	width: 100%;
+	font-size: var(--bigFS);
+	text-align: center;
+	margin-right: auto;
+}
+
+.user-list-stats-name {
+	white-space: nowrap;
+	margin: 0.5rem 0;
+	text-align: inherit;
+}
+
+.user-list-stats {
+	text-align: inherit;
+}
+
+@media only screen and (min-width: 545px) {
+	.user-list-info {
+		width: fit-content;
+	}
+
+	.user-list-description {
+		display: block;
+		width: 100%;
+	}
+
+	.search-navigation-bar {
+		justify-content: space-around;
+		gap: 0.5rem;
+	}
+}
+
+@media only screen and (min-width: 768px) {
+	.users-table {
+		width: 90%;
+	}
+
+	.search-bar-box {
+		width: 90%;
+	}
+
+	.search-navigation-bar {
+		width: 90%;
+	}
+}
+
+@media only screen and (min-width: 1024px) {
+	.users-table {
+		width: 75%;
+	}
+
+	.search-bar-box {
+		width: 75%;
+	}
+
+	.search-navigation-bar {
+		width: 75%;
+	}
+}
+
+/* Use fo the likes and followers tab */
 .users-list-tab {
 	display: flex;
 	height: fit-content;
@@ -26,105 +168,13 @@
 	background-color: var(--bgColor);
 }
 
-.list-user-container {
-	width: 100%;
-	padding: 0.8rem 0.4rem;
-	height: fit-content;
-	display: flex;
-	align-items: center;
-	border: 1px solid var(--borderColor);
-}
-
-.list-user-info {
-	width: 100%;
-	display: flex;
-	align-items: center;
-}
-
-.list-user-pic {
-	width: 7rem;
-	height: 7rem;
-	object-fit: cover;
-	cursor: pointer;
-	border: 1px solid var(--borderColor);
-	margin-right: 1rem;
-	border-radius: 50%;
-}
-
-.users-list-tab .list-user-pic {
+.users-list-tab .user-list-pic {
 	min-width: 4rem;
 	min-height: 4rem;
 	width: 4rem;
 	height: 4rem;
 }
 
-.users-list-tab .list-user-description {
+.users-list-tab .user-list-description {
 	display: none;
-}
-
-.list-name-container {
-	display: flex;
-	flex-direction: column;
-}
-
-.list-user-username {
-	text-decoration: none;
-	color: var(--colorText);
-	font-size: var(--bigFS);
-	width: 100%;
-	font-weight: bold;
-}
-
-.list-user-name {
-	width: 100%;
-	white-space: initial;
-	font-size: var(--normalFS);
-}
-
-.list-user-description {
-	display: none;
-	overflow: hidden;
-	height: fit-content;
-	max-height: 7rem;
-	font-size: var(--smallFS);
-}
-
-.box-container {
-	justify-content: center;
-}
-
-@media only screen and (min-width: 490px) {
-	.list-user-info {
-		width: 40%;
-		margin-right: 5%;
-	}
-
-	.list-user-name {
-		white-space: nowrap;
-	}
-
-	.list-user-description {
-		display: block;
-		width: 55%;
-	}
-}
-
-@media only screen and (min-width: 810px) {
-	.list-user-container {
-		padding-left: 5%;
-	}
-
-	.list-user-info {
-		width: 35%;
-	}
-
-	.users-table {
-		width: 90%;
-	}
-}
-
-@media only screen and (min-width: 1000px) {
-	.users-table {
-		width: 75%;
-	}
 }

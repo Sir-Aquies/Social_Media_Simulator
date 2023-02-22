@@ -59,17 +59,17 @@ using (var scope = app.Services.CreateScope())
 	//RandomUsers randomUsers = new(ClientFactory, UserManager, ServiceFactory);
 	//await randomUsers.StartAsync(new CancellationToken());
 
-	RandomFollowers randomFollowers = new(ServiceFactory);
-	await randomFollowers.StartAsync(new CancellationToken());
+	//RandomFollowers randomFollowers = new(ServiceFactory);
+	//await randomFollowers.StartAsync(new CancellationToken());
 
 	//RandomPosts randomPost = new(ClientFactory, ServiceFactory);
 	//await randomPost.StartAsync(new CancellationToken());
 
-	RandomComments randomComments = new(ServiceFactory, ClientFactory);
-	await randomComments.StartAsync(new CancellationToken());
+	//RandomComments randomComments = new(ServiceFactory, ClientFactory);
+	//await randomComments.StartAsync(new CancellationToken());
 
-	RandomLikes randomLikes = new(ServiceFactory);
-	await randomLikes.StartAsync(new CancellationToken());
+	//RandomLikes randomLikes = new(ServiceFactory);
+	//await randomLikes.StartAsync(new CancellationToken());
 
 	ITendency tendency = services.GetRequiredService<ITendency>();
 	await tendency.UpdateStats(context);

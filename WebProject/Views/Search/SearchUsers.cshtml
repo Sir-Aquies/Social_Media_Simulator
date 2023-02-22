@@ -8,30 +8,24 @@
 <link rel="stylesheet" href="~/css/HomePageCSS.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/UserCSS.css" asp-append-version="true"/>
 
-<div class="search-bar-box">
-	<input class="search-user-bar" type="text" onkeyup="SearchUserName(this)"/>
-</div>
-
 <style>
 	#random-users {
 		border-bottom: 3px solid var(--borderColor);
 	}
-
-	.explore-navigation-bar {
-		border: 1px solid var(--borderColor);
-		max-width: 60rem;
-		margin: 0 auto;
-	}
 </style>
 
-<div class="explore-navigation-bar">
-	<span id="random-users" onclick="SwitchSearchUsersTab(@startFromRow, @rowsPerLoad)">Random</span>
-	<span id="top-liked-users" onclick="SwitchSearchUsersTab(@startFromRow, @rowsPerLoad)">Top likes</span>
-	<span id="top-followers-users" onclick="SwitchSearchUsersTab(@startFromRow, @rowsPerLoad)">Top followers</span>
-	<span id="top-commented-users" onclick="SwitchSearchUsersTab(@startFromRow, @rowsPerLoad)">Top commented</span>
-</div>
-
 <section class="box-container">
+	<div class="search-bar-box">
+		<input class="search-user-bar" type="text" onkeyup="SearchUserName(this)"/>
+	</div>
+
+	<div class="search-navigation-bar">
+		<span id="random-users" onclick="SwitchSearchUsersTab(@startFromRow, @rowsPerLoad)">Random</span>
+		<span id="top-liked-users" onclick="SwitchSearchUsersTab(@startFromRow, @rowsPerLoad)">Top likes</span>
+		<span id="top-followers-users" onclick="SwitchSearchUsersTab(@startFromRow, @rowsPerLoad)">Top followers</span>
+		<span id="top-commented-users" onclick="SwitchSearchUsersTab(@startFromRow, @rowsPerLoad)">Top commented</span>
+	</div>
+
 	<div class="users-table"></div>
 </section>
 

@@ -1,25 +1,36 @@
 ﻿@model List<UserModel>
 
-@foreach(UserModel user in Model){
-	<div class="list-user-container">
-		<div class="list-user-info">
+@foreach (UserModel user in Model)
+{
+	<div class="user-list-container">
+		<div class="user-list-info">
 			@if (user.ProfilePicture != null)
 			{
-				<img class="list-user-pic" onclick="location = '/@user.UserName'; event.stopPropagation()"
+				<img class="user-list-pic" onclick="location = '/@user.UserName'; event.stopPropagation()"
 				src="@(user.ProfilePicture.StartsWith("https") ? "" : "data:image/png;base64,")@user.ProfilePicture" alt="@user.UserName" />
 			}
 			else
 			{
-				<img class="list-user-pic" src="~/NullProfilePic.png" 
+				<img class="user-list-pic" src="~/NullProfilePic.png"
 				onclick="location = '/@user.UserName'; event.stopPropagation()" />
 			}
 			<div class="list-name-container">
-				<a asp-action="UserPage" asp-controller="User" asp-route-UserName="@user?.UserName" class="list-user-username">@user?.UserName</a>
-				<div class="list-user-name">@user?.Name</div>
+				<a asp-action="UserPage" asp-controller="User" asp-route-UserName="@user?.UserName" class="user-list-username">@user?.UserName</a>
+				<div class="user-list-name">@user?.Name</div>
 			</div>
 		</div>
 
-		<div class="list-user-description">@user?.Description</div>
+		<div class="user-list-content">
+			<div class="user-list-description">@user?.Description</div>
+
+			@if (ViewData["userListStatName"] != null)
+			{
+				<div class="user-list-stats-box">
+					<h5 class="user-list-stats-name">@ViewData["userListStatName"]</h5>
+					<div class="user-list-stats">@user?.Total</div>
+				</div>
+			}
+		</div>
 	</div>
 }
 

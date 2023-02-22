@@ -83,6 +83,7 @@ img.user-info-mobile {
 	flex-direction: column;
 	right: 0;
 	top: 5rem;
+	padding: 0.5rem;
 }
 
 .tab-list a {
