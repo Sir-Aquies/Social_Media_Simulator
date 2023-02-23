@@ -1,6 +1,6 @@
 ﻿//When a post is clicked, it shows the post and all its comments.
 function ShowCompletePost(postId) {
-	if (!postId)
+	if (Number.isNaN(postId))
 		return
 
 	$.ajax(
@@ -9,15 +9,14 @@ function ShowCompletePost(postId) {
 			url: "/Post/ViewPost",
 			data: { postId },
 			success: function (data) {
-
 				const tab = document.createElement("div");
 				tab.id = 'view-black-background';
 				tab.className = 'view-post-black-background';
-				tab.addEventListener("dblclick", () => { RemoveViewPostTab() });
+				tab.addEventListener('dblclick', () => { RemoveViewPostTab() });
 				document.body.appendChild(tab);
 
 				tab.innerHTML = data;
-				document.body.style.overflow = "hidden";
+				document.body.style.overflow = 'hidden';
 			},
 			error: function (details) {
 				Message(details.responseText);
@@ -33,20 +32,23 @@ function RemoveViewPostTab() {
 
 //Get CreatePost.cshtml partial view (from LookForCreatePost) and display it in a background.
 function CreatePostTab() {
-	$.get("/Post/LookForCreatePost", function (data, status) {
-		if (status === "success") {
+	$.get('/Post/LookForCreatePost', function (data, status) {
+		if (status === 'success') {
 			const background = Background();
 			//Insert the partial view.
 			background.insertAdjacentHTML('beforeend', data);
 			//focus the textarea element.
 			document.getElementById('content-text').focus();
-			document.body.style.overflow = "hidden";
+			document.body.style.overflow = 'hidden';
 		}
 	});
 }
 
 //Passes the content and media (if there is) to CreatePost action method who will create the post.
 function CreatePost(input) {
+	if (input === undefined)
+		return;
+
 	const content = input.parentElement.parentElement.children[0].value;
 	const [file] = input.parentElement.children[2].files;
 	//Get the token for request verification token.
@@ -83,11 +85,11 @@ function CreatePost(input) {
 
 //Get EditPost.cshtml partial view (from LookforPost) and display it in a background.
 function EditPostTab(postId, input) {
+	if (Number.isNaN(postId) || input === undefined)
+		return;
+
 	//Undisplay the post option button parent element.
 	input.parentElement.style.display = "none";
-
-	if (!postId)
-		return;
 
 	$.ajax(
 		{
@@ -122,6 +124,9 @@ function EditPostTab(postId, input) {
 
 //Passes the new content and new media (if there is) to EditPost action method who will edit the post.
 function EditPost(input) {
+	if (input === undefined)
+		return;
+
 	const content = input.parentElement.parentElement.children[0].value;
 	const [file] = input.parentElement.children[2].files;
 	//Get the token for request verification token.
@@ -169,70 +174,145 @@ function EditPost(input) {
 
 //DeletPost passes the id of the post to DeletePost action method who will delete the post and removes the post container from the DOM.
 function DeletePost(postId, input) {
+	if (Number.isNaN(postId) || input === undefined)
+		return;
+
 	//Undisplay the post option button parent element.
 	input.parentElement.style.display = "none";
 	//Get the token for request verification token.
 	const token = $('input[name="__RequestVerificationToken"]').val();
 
-	if (postId != undefined) {
-		$.post("/Post/DeletePost", { __RequestVerificationToken: token, PostId: postId }, function (data, status) {
-			//the data variable consist of a boolean return from the action method (true for deleted, false for error).
-			if (status === "success" && data) {
-				//Remove the post container.
-				RemovePostFromContainer(postId);
-			}
-		});
-	}
+	$.post("/Post/DeletePost", { __RequestVerificationToken: token, PostId: postId }, function (data, status) {
+		//the data variable consist of a boolean return from the action method (true for deleted, false for error).
+		if (status === "success" && data) {
+			//Remove the post container.
+			RemovePostFromContainer(postId);
+		}
+	});
 }
 
 //Function that handles when a user likes or dislikes a post.
 function LikePost(postId) {
+	if (Number.isNaN(postId))
+		return;
 
-	if (postId != undefined) {
-		$.post("/Post/LikePost", { PostId: postId }, function (data, status) {
-			if (status === "success") {
-				//the response (data) consist of a string, "+" for like, "-" for dislike and "0" for errors.
-				if (data === "+" || data === "-") {
-					AlterPostLikes(postId, data);
-				}
-				else if (data === "0") {
-					Message("Somethig went wrong");
-				}
+	$.post("/Post/LikePost", { PostId: postId }, function (data, status) {
+		if (status === "success") {
+			//the response (data) consist of a string, "+" for like, "-" for dislike and "0" for errors.
+			if (data === "+" || data === "-") {
+				AlterPostLikes(postId, data);
 			}
-		});
-	}
+			else if (data === "0") {
+				Message("Somethig went wrong");
+			}
+		}
+	});
 }
 
 function LikesTab(postId) {
-	if (postId != undefined) {
-		$.get('/Post/PostLikesTab', { postId }, (data, status) => {
-			if (status === 'success') {
-				const background = Background();
+	if (Number.isNaN(postId))
+		return;
 
-				document.body.style.overflow = 'hidden';
+	$.get('/Post/PostLikesTab', { postId }, (data, status) => {
+		if (status === 'success') {
+			const background = Background();
 
-				const tabContainer = document.createElement('div');
-				tabContainer.className = 'users-list-tab';
-				tabContainer.innerHTML = data;
+			document.body.style.overflow = 'hidden';
 
-				background.appendChild(tabContainer);
+			const tabContainer = document.createElement('div');
+			tabContainer.className = 'users-list-tab';
+			tabContainer.innerHTML = data;
+
+			background.appendChild(tabContainer);
+		}
+	});
+}
+
+const actionMethods = {
+	FollowingPosts: 'LoadMoreFollowingUsersPosts',
+	UserPagePosts: 'LoadMorePosts',
+	LikedPosts: 'LoadMoreLikedPosts',
+	LikedComments: 'LoadMoreLikedComments',
+	CommentedPosts: 'LoadMoreCommentedPosts'
+};
+
+let loadingPosts = false;
+
+function SelectActionMethod(tabName) {
+	if (!IsString(tabName))
+		return;
+
+	let methodToUse = '';
+
+	switch (tabName) {
+		case '#pageuser-posts':
+			methodToUse = actionMethods.UserPagePosts;
+			break;
+		case '#pageuser-media':
+			methodToUse = actionMethods.UserPagePosts;
+			break;
+		case '#pageuser-likes':
+			methodToUse = actionMethods.LikedPosts;
+			break;
+		case 'liked-comments':
+			methodToUse = actionMethods.LikedComments;
+			break;
+		case '#pageuser-comments':
+			methodToUse = actionMethods.CommentedPosts;
+			break;
+		case '#following-posts':
+			methodToUse = actionMethods.FollowingPosts;
+			break;
+	}
+
+	return methodToUse;
+}
+
+function SetScrollEvent(userId, startFromRow, rowsPerLoad, tabName, onlyMediaPosts = false) {
+	if (Number.isNaN(startFromRow) || Number.isNaN(rowsPerLoad) || !IsString(tabName) || !IsString(userId))
+		return;
+
+	const actionMethod = SelectActionMethod(tabName)
+
+	if (actionMethod === undefined)
+		return;
+
+	if (tabName === '#pageuser-media')
+		onlyMediaPosts = true;
+
+	window.onscroll = function () {
+		if (!loadingPosts && this.window.scrollY > (mainContainer.clientHeight * (70 / 100))) {
+			loadingPosts = true;
+
+			if (onlyMediaPosts) {
+				LoadMorePostsGlobal(startFromRow, actionMethod, userId, onlyMediaPosts);
 			}
-		});
+			else {
+				LoadMorePostsGlobal(startFromRow, actionMethod, userId);
+			}
+
+			startFromRow += rowsPerLoad;
+		}
 	}
 }
 
-function LoadMorePosts(userId, startFromRow, amountOfRows) {
-	if (!userId || !startFromRow || !amountOfRows)
+function LoadMorePostsGlobal(startFromRow, actionMethod, userId = null, onlyMediaPosts = false) {
+	if (Number.isNaN(startFromRow) || !IsString(actionMethod))
 		return;
+
+	const sendData = { userId, startFromRow };
+
+	if (onlyMediaPosts)
+		sendData.onlyMedia = onlyMediaPosts;
 
 	$.ajax(
 		{
 			type: "GET",
-			url: "/User/LoadMorePosts",
-			data: { userId, startFromRow, amountOfRows },
-			success: function (data) {
-				if (data) {
-					AddRangePost(data);
+			url: `/User/${actionMethod}`,
+			data: sendData,
+			success: function (response) {
+				if (response) {
+					AddRangePost(response);
 					loadingPosts = false;
 				}
 			},
@@ -243,103 +323,36 @@ function LoadMorePosts(userId, startFromRow, amountOfRows) {
 	);
 }
 
-function LoadMorePostsMedia(userId, startFromRow, amountOfRows) {
-	if (!userId || !startFromRow || !amountOfRows)
+function SwitchTabLikedPostsAndComments(userId, startingRow, rowsPerLoad) {
+	if (!IsString(userId) || Number.isNaN(startingRow) || Number.isNaN(rowsPerLoad))
 		return;
 
-	onlyMedia = true;
+	let tabName = event.target.id;
+	let actionMethodName = actionMethods.LikedPosts;
+
+	if (tabName === 'switch-comment-tab') {
+		actionMethodName = actionMethods.LikedComments;
+	}
 
 	$.ajax(
 		{
 			type: "GET",
-			url: "/User/LoadMorePosts",
-			data: { userId, startFromRow, amountOfRows, onlyMedia },
+			url: `/User/${actionMethodName}`,
+			data: { userId, startFromRow: 0 },
 			success: function (data) {
 				if (data) {
-					AddRangePost(data);
-					loadingPosts = false;
-				}
-			},
-			error: function (details) {
-				Message(details.responseText);
-			}
-		}
-	);
-}
-
-function LoadMorePostsLikes(userId, startFromRow, amountOfRows) {
-	if (!userId || !startFromRow || !amountOfRows)
-		return;
-
-	$.ajax(
-		{
-			type: "GET",
-			url: "/User/LoadMorePostsLikes",
-			data: { userId, startFromRow, amountOfRows },
-			success: function (data) {
-				if (data) {
-					AddRangePost(data);
-					loadingPosts = false;
-				}
-			},
-			error: function (details) {
-				Message(details.responseText);
-			}
-		}
-	);
-}
-
-function SwitchToPosts(userId, inicialAmountToLoad) {
-	if (!userId || !inicialAmountToLoad)
-		return;
-
-	$.ajax(
-		{
-			type: "GET",
-			url: "/User/LoadMorePostsLikes",
-			data: { userId, startFromRow: 0, amountOfRows: inicialAmountToLoad },
-			success: function (data) {
-				if (data) {
-					//Remove all posts from the main container and add the liked posts.
+					//Remove all posts from the main container and add the new posts.
 					EmptyMainContainer();
 					AddRangePost(data);
 
-					//Change event to load liked post.
-					SetScrollEvent(userId, inicialAmountToLoad, LoadMorePostsLikes);
+					//Change the scroll event.
+					let postLoader = tabName === 'switch-comment-tab' ? 'liked-comments' : '#pageuser-likes';
+					SetScrollEvent(userId, startingRow, rowsPerLoad, postLoader);
 
-					//Visual change to indicate the user witch is on.
-					document.getElementById('switch-post-tab').style.borderBottom = '3px solid var(--BorderColor)';
-					document.getElementById('switch-comment-tab').style.borderBottom = 'none';
-				}
-			},
-			error: function (details) {
-				Message(details.responseText);
-			}
-		}
-	);
-}
-
-function SwitchToComments(userId, inicialAmountToLoad) {
-	if (!userId || !inicialAmountToLoad)
-		return;
-
-	$.ajax(
-		{
-			type: "GET",
-			url: "/User/LoadMoreLikedComments",
-			data: { userId, startFromRow: 0, amountOfRows: inicialAmountToLoad },
-			success: function (data) {
-				if (data) {
-					//Remove all the posts from the main container and add the liked comments's posts.
-					EmptyMainContainer();
-					AddRangePost(data);
-
-					//Change event to load liked comments along with its post.
-					SetScrollEvent(userId, inicialAmountToLoad, LoadMoreLikedComments);
-
-					//Visual change to indicate the user witch is on.
+					//Visual change to indicate the user which tab is on.
 					document.getElementById('switch-post-tab').style.borderBottom = 'none';
-					document.getElementById('switch-comment-tab').style.borderBottom = '3px solid var(--BorderColor)';
+					document.getElementById('switch-comment-tab').style.borderBottom = 'none';
+					document.getElementById(tabName).style.borderBottom = '3px solid var(--borderColor)';
 				}
 			},
 			error: function (details) {
@@ -349,41 +362,79 @@ function SwitchToComments(userId, inicialAmountToLoad) {
 	);
 }
 
-function LoadMoreLikedComments(userId, startFromRow, amountOfRows) {
-	if (!userId || !startFromRow || !amountOfRows)
+//Observer use to detect if a post is in the viewport.
+let postObserver;
+window.addEventListener('load', () => {
+	postObserver = new IntersectionObserver(DetectPostInViewport, {
+		rootMargin: '50px',
+		threshold: 0.4
+	});
+
+	//The containers varible is in AsyncCRUD.js, 
+	//and at this moment only holds the first posts loaded.
+	for (let i = 0; i < containers.length; i++) {
+		postObserver.observe(containers[i]);
+	}
+});
+
+function DetectPostInViewport(entries, observer) {
+	if (entries === undefined || observer === undefined)
 		return;
 
-	$.ajax(
-		{
-			type: "GET",
-			url: "/User/LoadMoreLikedComments",
-			data: { userId, startFromRow, amountOfRows },
-			success: function (data) {
-				if (data) {
-					AddRangePost(data);
-					loadingPosts = false;
-				}
-			},
-			error: function (details) {
-				Message(details.responseText);
-			}
+	//Loop beacause there could be multiple post in the viewport at the same time.
+	for (let i = 0; i < entries.length; i++) {
+		if (!entries[i].isIntersecting) {
+			//entries[i].target.style.backgroundColor = 'white';
+			//If the post is out of the viewport clear its timer.
+			clearInterval(entries[i].target.updatePostTimer);
+			continue;
 		}
-	);
+
+		const post = entries[i].target;
+		//post.style.backgroundColor = 'red';
+
+		post.updatePostTimer = setInterval(() => {
+			UpdatePostInfo(entries[i].target.id);
+		}, 10000);
+	}
 }
 
-function LoadMorePostsComments(userId, startFromRow, amountOfRows) {
-	if (!userId || !startFromRow || !amountOfRows)
+function UpdatePostInfo(postId) {
+	if (Number.isNaN(postId))
 		return;
 
 	$.ajax(
 		{
-			type: "GET",
-			url: "/User/LoadMorePostsComments",
-			data: { userId, startFromRow, amountOfRows },
-			success: function (data) {
-				if (data) {
-					AddRangePost(data);
-					loadingPosts = false;
+			type: 'GET',
+			url: '/Post/UpdatePostInfo',
+			dataType: 'json',
+			data: { postId },
+			success: function (postInfo) {
+				if (postInfo === undefined)
+					return;
+
+				//User arrays because there could be 2 of the same post if view post tab is open.
+				const likeButtons = [...document.querySelectorAll(`[data-post-likes-${postId}]`)];
+				const commentButtons = [...document.querySelectorAll(`[data-post-comments-${postId}]`)];
+
+				for (let i = 0; i < likeButtons.length; i++) {
+					//The first children contains amount of likes.
+					const likesSpan = likeButtons[i].children[0];
+
+					if (postInfo.likes > parseInt(likesSpan.innerHTML))
+						SparklingLikeEffect(likeButtons[i]);
+
+					likesSpan.innerHTML = postInfo.likes;
+				}
+
+				for (let i = 0; i < commentButtons.length; i++) {
+					//The first children contains amount of comments.
+					const commentSpan = commentButtons[i].children[0];
+
+					if (postInfo.comments > parseInt(commentSpan.innerHTML))
+						SparklingLikeEffect(commentButtons[i]);
+
+					commentSpan.innerHTML = postInfo.comments;
 				}
 			},
 			error: function (details) {
@@ -394,6 +445,9 @@ function LoadMorePostsComments(userId, startFromRow, amountOfRows) {
 }
 
 function UnblurImage(cover) {
+	if (cover === undefined)
+		return;
+
 	const imageContainer = cover.parentElement;
 	const image = imageContainer.children[0];
 	const button = cover.children[0];
@@ -424,6 +478,9 @@ function RemoveTab() {
 
 //OptionButton displays and indisplays the options inside the option button from the posts.
 function OptionButton(post) {
+	if (post === undefined)
+		return;
+
 	//Get the post-form.
 	const option = post.children[0];
 
@@ -440,22 +497,6 @@ function OptionButton(post) {
 		option.style.display = "none";
 		this.removeEventListener("mousedown", handler);
 	});
-}
-
-function Message(message) {
-	const messageContainer = document.createElement('aside');
-	messageContainer.className = 'alert-message';
-
-	messageContainer.innerHTML = message;
-
-	const deleteButton = document.createElement('button');
-	deleteButton.className = 'close-button';
-	deleteButton.onclick = function() {
-		this.parentElement.style.display = 'none';
-	}
-	messageContainer.appendChild(deleteButton);
-
-	document.getElementById('main-header').appendChild(messageContainer);
 }
 
 //This creates and returns a semi transparent black brackground, any element appended will be centered.

@@ -15,7 +15,7 @@
 		<a onclick="event.stopPropagation()" class="post-info-username" 
 		asp-action="UserPage" asp-controller="User" asp-route-UserName="@Model.User.UserName">@Model.User.UserName</a>
 
-		<span style="font-size: var(--SmallTextsize)">@(Model.PostDate.ToString("MM/dd/yyyy") == DateTime.Today.ToString("MM/dd/yyyy") ? Model.PostDate.ToString("hh:mm tt") : Model.PostDate.ToString("MM/dd/yyyy"))</span>
+		<span style="font-size: var(--smallFS)">@(Model.Date.ToString("MM/dd/yyyy") == DateTime.Today.ToString("MM/dd/yyyy") ? Model.Date.ToString("hh:mm tt") : Model.Date.ToString("MM/dd/yyyy"))</span>
 
 		@if (Model.IsEdited)
 		{
@@ -26,7 +26,7 @@
 			</i>
 		}
 
-		@if (ViewData["LoggedUserId"]?.ToString() == Model.User.Id)
+		@if (ViewData["LoggedUserId"]?.ToString() == Model.UserId)
 		{
 			<div class="post-option-button" onclick="OptionButton(this); event.stopPropagation()" onmousedown="event.stopPropagation()">
 				<div onmousedown="event.stopPropagation()" onclick="event.stopPropagation();" class="post-form">
@@ -69,10 +69,10 @@
 	}
 	<div class="post-stats">
 		<button type="button" onclick="LikePost(@Model.Id); event.stopPropagation()"
-				title="@(Model.UsersLikes.Any(u => u.Id == ViewData["LoggedUserId"]?.ToString()) ? "Disliked post" : "Like post")" @likesAmountDataset>
+				title="@(Model.UserLikes.Any(u => u.UserId == ViewData["LoggedUserId"]?.ToString()) ? "Disliked post" : "Like post")" @likesAmountDataset>
 			<span onclick="LikesTab(@Model.Id); event.stopPropagation()">@Model.Likes</span>
 
-			<svg version="1.1" class="like-button @(Model.UsersLikes.Any(u => u.Id == ViewData["LoggedUserId"]?.ToString()) ? "liked" : "")" 
+			<svg version="1.1" class="like-button @(Model.UserLikes.Any(u => u.UserId == ViewData["LoggedUserId"]?.ToString()) ? "liked" : "")" 
 				id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 122.88 106.16" xml:space="preserve">
 				<g>
 					<path class="like-button-bg" d="M4.02,44.6h27.36c2.21,0,4.02,1.81,4.02,4.03v53.51c0,2.21-1.81,4.03-4.02,4.03H4.02 c-2.21,0-4.02-1.81-4.02-4.03V48.63C0,46.41,1.81,44.6,4.02,44.6L4.02,44.6z M63.06,4.46c2.12-10.75,19.72-0.85,20.88,16.48 c0.35,5.3-0.2,11.47-1.5,18.36l25.15,0c10.46,0.41,19.59,7.9,13.14,20.2c1.47,5.36,1.69,11.65-2.3,14.13 c0.5,8.46-1.84,13.7-6.22,17.84c-0.29,4.23-1.19,7.99-3.23,10.88c-3.38,4.77-6.12,3.63-11.44,3.63H55.07 c-6.73,0-10.4-1.85-14.8-7.37V51.31c12.66-3.42,19.39-20.74,22.79-32.11V4.46L63.06,4.46z" />
@@ -84,7 +84,7 @@
 			<span>@Model.Comments.Count()</span>
 
 			<svg class="comment-button" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 121.86 122.88">
-				<path fill="var(--BorderColor)" d="M30.28,110.09,49.37,91.78A3.84,3.84,0,0,1,52,90.72h60a2.15,2.15,0,0,0,2.16-2.16V9.82a2.16,2.16,0,0,0-.64-1.52A2.19,2.19,0,0,0,112,7.66H9.82A2.24,2.24,0,0,0,7.65,9.82V88.55a2.19,2.19,0,0,0,2.17,2.16H26.46a3.83,3.83,0,0,1,3.82,3.83v15.55ZM28.45,63.56a3.83,3.83,0,1,1,0-7.66h53a3.83,3.83,0,0,1,0,7.66Zm0-24.86a3.83,3.83,0,1,1,0-7.65h65a3.83,3.83,0,0,1,0,7.65ZM53.54,98.36,29.27,121.64a3.82,3.82,0,0,1-6.64-2.59V98.36H9.82A9.87,9.87,0,0,1,0,88.55V9.82A9.9,9.9,0,0,1,9.82,0H112a9.87,9.87,0,0,1,9.82,9.82V88.55A9.85,9.85,0,0,1,112,98.36Z" />
+				<path fill="var(--borderColor)" d="M30.28,110.09,49.37,91.78A3.84,3.84,0,0,1,52,90.72h60a2.15,2.15,0,0,0,2.16-2.16V9.82a2.16,2.16,0,0,0-.64-1.52A2.19,2.19,0,0,0,112,7.66H9.82A2.24,2.24,0,0,0,7.65,9.82V88.55a2.19,2.19,0,0,0,2.17,2.16H26.46a3.83,3.83,0,0,1,3.82,3.83v15.55ZM28.45,63.56a3.83,3.83,0,1,1,0-7.66h53a3.83,3.83,0,0,1,0,7.66Zm0-24.86a3.83,3.83,0,1,1,0-7.65h65a3.83,3.83,0,0,1,0,7.65ZM53.54,98.36,29.27,121.64a3.82,3.82,0,0,1-6.64-2.59V98.36H9.82A9.87,9.87,0,0,1,0,88.55V9.82A9.9,9.9,0,0,1,9.82,0H112a9.87,9.87,0,0,1,9.82,9.82V88.55A9.85,9.85,0,0,1,112,98.36Z" />
 			</svg>
 		</button>
 	</div>

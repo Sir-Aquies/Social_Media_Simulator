@@ -1,45 +1,35 @@
 ﻿/* Default variables for color an text size, every other CSS file depends on them */
 :root {
-    --BackgroundColor: #222831;
-    --LayoutColor: #393E46;
+    --bgColor: #222831;
+    --layoutColor: #393E46;
     --ShadowColor: #393E46;
-    --BorderColor: #EEEEEE; 
-    --colortext: white;
-    --postBorder: rgb(128, 128, 128);
-    --SmallTextsize: 1.05rem;
-    --textsize: 1.25rem;
-    --BigTextsize: 1.5rem;
+    --borderColor: #EEEEEE; 
+    --colorText: white;
+    --smallFS: 1.05rem;
+    --normalFS: 1.25rem;
+    --bigFS: 1.5rem;
 }
 
 @media only screen and (min-width: 768px){
     :root {
-        --SmallTextsize: 0.95rem;
-        --textsize: 1.1rem;
-        --BigTextsize: 1.4rem;
+        --smallFS: 0.95rem;
+        --normalFS: 1.1rem;
+        --bigFS: 1.4rem;
     }
 }
 
 /* When Lightmode is triggered, the document gets the data-theme attribute equalt to "light" 
 and changes the values of the main variables*/
 [data-theme="light"] {
-    --BackgroundColor: rgb(255, 255, 255);
-    --LayoutColor: rgb(200,200,200);
+    --bgColor: rgb(255, 255, 255);
+    --layoutColor: rgb(200,200,200);
     --ShadowColor: rgb(200,200,200);
-    --BorderColor: rgb(0, 0, 0);
-    --colortext: black;
+    --borderColor: rgb(0, 0, 0);
+    --colorText: black;
 }
 
 body {
-    background-color: var(--BackgroundColor) !important;
-    color: var(--colortext) !important;
-    font-size: var(--textsize) !important;
+    background-color: var(--bgColor) !important;
+    color: var(--colorText) !important;
+    font-size: var(--normalFS) !important;
 }
-
-/*
-    Old color values.
-    --BackgroundColor: #121212;
-    --LayoutColor: #0f0f0f;
-    --ShadowColor: #1b1b1b;
-    --BorderColor: #ffffff;
-    --colortext: #ffffff;
-*/

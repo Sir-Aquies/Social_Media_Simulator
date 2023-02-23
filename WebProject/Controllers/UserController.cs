@@ -6,8 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using WebProject.Services;
-using Microsoft.Extensions.Hosting;
-using System.Text;
+using Newtonsoft.Json;
 
 namespace WebProject.Controllers
 {
@@ -22,7 +21,7 @@ namespace WebProject.Controllers
 
 		private readonly int inicialAmountPostsToLoad = 10;
 		private readonly int showCommentsPerPost = 3;
-		private const int AmountPostsToLoad = 5;
+		private const int AmountPostsPerLoad = 5;
 
 		public UserController(WebProjectContext models, UserManager<UserModel> userManager, 
 			ILogger<UserController> logger, ITendency tendency, ModelLogic modelLogic)
@@ -34,19 +33,65 @@ namespace WebProject.Controllers
 			_Logic = modelLogic;
 		}
 
-		//Eliot09   9a0a92b8-2c82-4199-9972-d1731a300f0c
-		//lazycat381   fbf54244-51e6-4f57-badb-c75ff5742cb4
-		public async Task<IActionResult> SearchUser(string userName)
+		//Loads all the following user's posts of the loggedUser. 
+		public async Task<IActionResult> Home()
 		{
 			UserModel loggedUser = await _UserManager.GetUserAsync(HttpContext.User);
 
-			return !string.IsNullOrEmpty(userName) ? 
-				RedirectToAction("UserPage", new { userName }) : 
-				RedirectToAction("UserPage", new { loggedUser.UserName });
+			if (loggedUser == null)
+				return RedirectToAction("Login", "Account");
+
+			loggedUser.Posts = await GetFollowingUsersPosts(loggedUser.Id, 0, inicialAmountPostsToLoad);
+
+			//Use to pass the variables to a javascript methods (SetScrollEvent and SwitchTo...).
+			ViewData["startFromPost"] = inicialAmountPostsToLoad;
+			ViewData["PostsPerLoad"] = AmountPostsPerLoad;
+			ViewData["profileTabName"] = "#following-posts";
+
+			loggedUser.Followers = await _Logic.GetFollowers(loggedUser.Id);
+			loggedUser.Following = await _Logic.GetFollowingUsers(loggedUser.Id);
+
+			await LoadPageUserStats(loggedUser.Id);
+
+			return View(loggedUser);
 		}
 
-		//TODO - delete DynamicUser.
-		//PageUser home page that shows all his/her posts.
+		private async Task<List<PostModel>> GetFollowingUsersPosts(string userId, int startFromRow, int amountOfRows)
+		{
+			List<PostModel> posts = await _Models.Posts
+				.FromSqlRaw("SELECT * FROM Posts WHERE UserId IN " +
+				"(SELECT CreatorId FROM Followers WHERE FollowerId = {0}) " +
+				"ORDER BY Date DESC OFFSET {1} ROWS FETCH NEXT {2} ROWS ONLY;", userId, startFromRow, amountOfRows)
+				.AsNoTracking().ToListAsync();
+
+			posts = await _Logic.FillPostsProperties(posts);
+
+			return posts;
+		}
+
+		public async Task<IActionResult> LoadMoreFollowingUsersPosts(int startFromRow, int amountOfRows = AmountPostsPerLoad)
+		{
+			UserModel loggedUser = await _UserManager.GetUserAsync(HttpContext.User);
+
+			if (loggedUser == null)
+				return NotFound("User not found.");
+
+			List<PostModel> posts = await GetFollowingUsersPosts(loggedUser.Id, startFromRow, amountOfRows);
+
+			if (posts == null)
+				return NotFound("Posts not found.");
+
+			//If no posts are return from the database.
+			//NoContent stops future calls.
+			if (posts.Count == 0)
+				return NoContent();
+
+			await LoadPostListInfo(loggedUser);
+
+			return PartialView("PostList", posts);
+		}
+
+		//PageUser profile page that shows all his/her posts.
 		public async Task<IActionResult> UserPage(string userName)
 		{
 			UserModel loggedUser = await _UserManager.GetUserAsync(HttpContext.User);
@@ -60,17 +105,24 @@ namespace WebProject.Controllers
 			if (pageUser == null)
 			{
 				ViewBag.unexistingUserName = userName;
-				return View(new DynamicUser { User = loggedUser, PageUser = pageUser });
+				return View("Profile", pageUser);
 			}
 
 			//Load the first posts with the comments from the database, from 0 to inicialAmountPostsToLoad.
 			pageUser.Posts = await GetPosts(pageUser, 0, inicialAmountPostsToLoad);
-			//Use to pass the number to a javascript method.
-			ViewData["startFromPost"] = inicialAmountPostsToLoad.ToString();
+
+			//Use to pass the variables to a javascript methods (SetScrollEvent and SwitchTo...).
+			ViewData["startFromPost"] = inicialAmountPostsToLoad;
+			ViewData["PostsPerLoad"] = AmountPostsPerLoad;
+			ViewData["profileTabName"] = "#pageuser-posts";
+
+			pageUser.Followers = await _Logic.GetFollowers(pageUser.Id);
+			pageUser.Following = await _Logic.GetFollowingUsers(pageUser.Id);
 
 			await LoadPageUserStats(pageUser.Id);
+			await LoadPostListInfo(loggedUser);
 
-			return View(new DynamicUser { User = loggedUser, PageUser = pageUser });
+			return View("Profile", pageUser);
 		}
 
 		//Page that shows all the posts with media (images).
@@ -87,17 +139,23 @@ namespace WebProject.Controllers
 			if (pageUser == null)
 			{
 				ViewBag.unexistingUserName = userName;
-				return View(new DynamicUser { User = loggedUser, PageUser = pageUser });
+				return View("Profile", pageUser);
 			}
 
 			//Load the first posts with the comments from the database, from 0 to inicialAmountPostsToLoad.
 			pageUser.Posts = await GetPosts(pageUser, 0, inicialAmountPostsToLoad, true);
-			//Use to pass the number to a javascript method.
-			ViewData["startFromPost"] = inicialAmountPostsToLoad.ToString();
+			//Use to pass the variables to a javascript methods (SetScrollEvent and SwitchTo...).
+			ViewData["startFromPost"] = inicialAmountPostsToLoad;
+			ViewData["PostsPerLoad"] = AmountPostsPerLoad;
+			ViewData["profileTabName"] = "#pageuser-media";
+
+			pageUser.Followers = await _Logic.GetFollowers(pageUser.Id);
+			pageUser.Following = await _Logic.GetFollowingUsers(pageUser.Id);
 
 			await LoadPageUserStats(pageUser.Id);
+			await LoadPostListInfo(loggedUser);
 
-			return View(new DynamicUser { User = loggedUser, PageUser = pageUser });
+			return View("Profile", pageUser);
 		}
 
 		//Get posts from the database using a range and can also fetch the posts where media is not null.
@@ -105,8 +163,8 @@ namespace WebProject.Controllers
 		{
 			//The only different is the "AND Media IS NOT NULL" on the first string.
 			string sql = onlyMedia ? 
-				"SELECT * FROM Posts WHERE UserId = {0} AND Media IS NOT NULL ORDER BY PostDate DESC OFFSET {1} ROWS FETCH NEXT {2} ROWS ONLY;"
-				: "SELECT * FROM Posts WHERE UserId = {0} ORDER BY PostDate DESC OFFSET {1} ROWS FETCH NEXT {2} ROWS ONLY;";
+				"SELECT * FROM Posts WHERE UserId = {0} AND Media IS NOT NULL ORDER BY Date DESC OFFSET {1} ROWS FETCH NEXT {2} ROWS ONLY;"
+				: "SELECT * FROM Posts WHERE UserId = {0} ORDER BY Date DESC OFFSET {1} ROWS FETCH NEXT {2} ROWS ONLY;";
 
 			List<PostModel> posts = await _Models.Posts
 				.FromSqlRaw(sql, user.Id, startFromRow, amountOfRows)
@@ -118,7 +176,7 @@ namespace WebProject.Controllers
 		}
 
 		//Use to fetch more posts in UserPage as the user scrolls down.
-		public async Task<IActionResult> LoadMorePosts(string userId, int startFromRow, int amountOfRows, bool onlyMedia = false)
+		public async Task<IActionResult> LoadMorePosts(string userId, int startFromRow, int amountOfRows = AmountPostsPerLoad, bool onlyMedia = false)
 		{
 			UserModel pageUser = await _UserManager.FindByIdAsync(userId);
 
@@ -132,44 +190,12 @@ namespace WebProject.Controllers
 
 			//If no posts are return from the database.
 			//NoContent stops future calls.
-
 			if (posts.Count == 0)
 				return NoContent();
 
 			await LoadPostListInfo();
 
 			return PartialView("PostList", posts);
-		}
-
-		//Page to show one post with all its comments.
-		public async Task<IActionResult> CompletePost(string userName, int postId)
-		{
-			UserModel loggedUser = await _UserManager.GetUserAsync(HttpContext.User);
-
-			if (loggedUser == null) 
-				return RedirectToAction("Login", "Account");
-
-			UserModel pageUser = (!string.IsNullOrEmpty(userName) && userName != loggedUser.UserName)
-									? await _UserManager.FindByNameAsync(userName) : loggedUser;
-
-			if (pageUser == null)
-			{
-				ViewBag.unexistingUserName = userName;
-				return View("UserPage", new DynamicUser { User = loggedUser, PageUser = pageUser });
-			}
-
-			PostModel post = await _Models.Posts.FromSqlRaw("SELECT * FROM Posts WHERE Id = {0} AND UserId = {1}", postId, pageUser.Id).AsNoTracking().FirstOrDefaultAsync();
-
-			if (post != null)
-			{
-				post = await _Logic.SingleFillPostProperties(post, pageUser);
-			}
-
-			pageUser.Posts = new List<PostModel> { post };
-
-			await LoadPageUserStats(pageUser.Id);
-
-			return View(new DynamicUser { User = loggedUser, PageUser = pageUser });
 		}
 
 		//Loads and shows all the posts the page user has liked.
@@ -186,27 +212,31 @@ namespace WebProject.Controllers
 			if (pageUser == null)
 			{
 				ViewBag.unexistingUserName = userName;
-				return View("UserPage", new DynamicUser { User = loggedUser, PageUser = pageUser });
+				return View("Profile", pageUser);
 			}
 
 			//Load the first posts with the comments from the databas (from 0 to inicialAmountPostsToLoad).
-			pageUser.LikedPost = await GetLikedPost(pageUser.Id, 0, inicialAmountPostsToLoad);
-			//Use to pass the number to a javascript method.
+			pageUser.Posts = await GetLikedPosts(pageUser.Id, 0, inicialAmountPostsToLoad);
+			//Use to pass the variables to a javascript methods (SetScrollEvent and SwitchTo...).
 			ViewData["startFromPost"] = inicialAmountPostsToLoad;
-			ViewData["inicialAmountPostsToLoad"] = inicialAmountPostsToLoad;
+			ViewData["PostsPerLoad"] = AmountPostsPerLoad;
+			ViewData["profileTabName"] = "#pageuser-likes";
+
+			pageUser.Followers = await _Logic.GetFollowers(pageUser.Id);
+			pageUser.Following = await _Logic.GetFollowingUsers(pageUser.Id);
 
 			await LoadPageUserStats(pageUser.Id);
+			await LoadPostListInfo(loggedUser);
 
-			return View(new DynamicUser { User = loggedUser, PageUser = pageUser});
+			return View("Profile", pageUser);
 		}
 
-		//TODO - fix the order.
-		private async Task<List<PostModel>> GetLikedPost(string userId, int startFromRow, int amountOfRows)
+		private async Task<List<PostModel>> GetLikedPosts(string userId, int startFromRow, int amountOfRows)
 		{
 			List<PostModel> posts = await _Models.Posts
 				.FromSqlRaw("SELECT * FROM Posts WHERE Id IN " +
-				"(SELECT PostId FROM PostLikes WHERE UserId = {0}) " +
-				"ORDER BY Id DESC OFFSET {1} ROWS FETCH NEXT {2} ROWS ONLY", userId, startFromRow, amountOfRows)
+				"(SELECT PostId FROM PostLikes WHERE UserId = {0} " +
+				"ORDER BY LikedDate DESC OFFSET {1} ROWS FETCH NEXT {2} ROWS ONLY)", userId, startFromRow, amountOfRows)
 				.AsNoTracking().ToListAsync();
 
 			posts = await _Logic.FillPostsProperties(posts);
@@ -214,9 +244,9 @@ namespace WebProject.Controllers
 			return posts;
 		}
 
-		public async Task<IActionResult> LoadMorePostsLikes(string userId, int startFromRow, int amountOfRows)
+		public async Task<IActionResult> LoadMoreLikedPosts(string userId, int startFromRow, int amountOfRows = AmountPostsPerLoad)
 		{
-			List<PostModel> posts = await GetLikedPost(userId, startFromRow, amountOfRows);
+			List<PostModel> posts = await GetLikedPosts(userId, startFromRow, amountOfRows);
 
 			if (posts == null)
 				return NotFound("Posts not found.");
@@ -241,7 +271,7 @@ namespace WebProject.Controllers
 
 			foreach (CommentModel comment in comments)
 			{
-				comment.UsersLikes = await _Logic.GetCommentLikesSelective(comment.Id);
+				comment.UserLikes = await _Logic.GetCommentLikesSelective(comment.Id);
 				comment.User = await _Models.Users
 				.Select(u => new UserModel { Id = u.Id, UserName = u.UserName, ProfilePicture = u.ProfilePicture })
 				.Where(u => u.Id == comment.UserId).AsNoTracking().FirstOrDefaultAsync();
@@ -250,7 +280,7 @@ namespace WebProject.Controllers
 				comment.Post.User = await _Models.Users
 					.Select(u => new UserModel { Id = u.Id, UserName = u.UserName, ProfilePicture = u.ProfilePicture })
 					.Where(u => u.Id == comment.Post.UserId).AsNoTracking().FirstOrDefaultAsync();
-				comment.Post.UsersLikes = await _Logic.GetPostLikesSelective(comment.Post.Id);
+				comment.Post.UserLikes = await _Logic.GetPostLikesSelective(comment.Post.Id);
 				comment.Post.Comments = new List<CommentModel>() { comment };
 
 				posts.Add(comment.Post);
@@ -259,7 +289,7 @@ namespace WebProject.Controllers
 			return posts;
 		}
 
-		public async Task<IActionResult> LoadMoreLikedComments(string userId, int startFromRow, int amountOfRows)
+		public async Task<IActionResult> LoadMoreLikedComments(string userId, int startFromRow, int amountOfRows = AmountPostsPerLoad)
 		{
 			List<PostModel> posts = await GetLikedCommentsPost(userId, startFromRow, amountOfRows);
 
@@ -290,17 +320,24 @@ namespace WebProject.Controllers
 			if (pageUser == null)
 			{
 				ViewBag.unexistingUserName = userName;
-				return View("UserPage", new DynamicUser { User = loggedUser, PageUser = pageUser });
+				return View("Profile", pageUser);
 			}
 
 			//Load the first posts with the comments from the database, from 0 to inicialAmountPostsToLoad.
 			pageUser.Posts = await GetCommentedPosts(pageUser, 0, inicialAmountPostsToLoad);
-			//Use to pass the number to a javascript method.
-			ViewData["startFromPost"] = inicialAmountPostsToLoad.ToString();
+
+			//Use to pass the variables to a javascript methods (SetScrollEvent and SwitchTo...).
+			ViewData["startFromPost"] = inicialAmountPostsToLoad;
+			ViewData["PostsPerLoad"] = AmountPostsPerLoad;
+			ViewData["profileTabName"] = "#pageuser-comments";
+
+			pageUser.Followers = await _Logic.GetFollowers(pageUser.Id);
+			pageUser.Following = await _Logic.GetFollowingUsers(pageUser.Id);
 
 			await LoadPageUserStats(pageUser.Id);
+			await LoadPostListInfo(loggedUser);
 
-			return View(new DynamicUser { User = loggedUser, PageUser = pageUser });
+			return View("Profile", pageUser);
 		}
 
 		private async Task<List<PostModel>> GetCommentedPosts(UserModel user, int startFromRow, int amountOfRows)
@@ -313,7 +350,7 @@ namespace WebProject.Controllers
 
 			foreach (CommentModel comment in comments)
 			{
-				comment.UsersLikes = await _Logic.GetCommentLikesSelective(comment.Id);
+				comment.UserLikes = await _Logic.GetCommentLikesSelective(comment.Id);
 				comment.User = user;
 
 				PostModel post = await _Models.Posts
@@ -336,7 +373,7 @@ namespace WebProject.Controllers
 
 				foreach (CommentModel c in samePostComments)
 				{
-					c.UsersLikes = await _Logic.GetCommentLikesSelective(c.Id);
+					c.UserLikes = await _Logic.GetCommentLikesSelective(c.Id);
 					c.User = user;
 					//In the case that the comment was already fetch in comments.
 					comments.Remove(c);
@@ -346,7 +383,7 @@ namespace WebProject.Controllers
 
 				post.Comments.Add(comment);
 
-				post.UsersLikes = await _Logic.GetPostLikesSelective(post.Id);
+				post.UserLikes = await _Logic.GetPostLikesSelective(post.Id);
 
 				post.User = await _Models.Users
 						.Select(u => new UserModel { Id = u.Id, UserName = u.UserName, ProfilePicture = u.ProfilePicture })
@@ -358,7 +395,7 @@ namespace WebProject.Controllers
 			return posts;
 		}
 
-		public async Task<IActionResult> LoadMorePostsComments(string userId, int startFromRow, int amountOfRows)
+		public async Task<IActionResult> LoadMoreCommentedPosts(string userId, int startFromRow, int amountOfRows = AmountPostsPerLoad)
 		{
 			UserModel pageUser = await _UserManager.FindByIdAsync(userId);
 
@@ -390,54 +427,142 @@ namespace WebProject.Controllers
 
 		private async Task LoadPageUserStats(string userId)
 		{
-			//Total likes the page user has received in his/her posts.
-			List<int> totalLikes = await _Models.Database
-				.SqlQueryRaw<int>("SELECT SUM(Likes) FROM Posts WHERE UserId = {0}", userId).ToListAsync();
-			TempData["TotalLikes"] = totalLikes.First();
+			if (string.IsNullOrEmpty(userId))
+				return;
 
-			//Number of posts the page user has made.
-			List<int> totalPosts = await _Models.Database
-				.SqlQueryRaw<int>("SELECT COUNT(Id) FROM Posts WHERE UserId = {0}", userId).ToListAsync();
-			TempData["TotalPosts"] = totalPosts.First();
+			string[] queries = {
+				//Total likes the page user has received in his/her posts.
+				"SELECT SUM(Likes) FROM Posts WHERE UserId = {0}",
+				//Number of posts the page user has made.
+				"SELECT COUNT(Id) FROM Posts WHERE UserId = {0}",
+				//Number of comments the page user has made.
+				"SELECT COUNT(Id) FROM Comments WHERE UserId = {0}"
+			};
 
-			//Number of comments the page user has made.
-			List<int> totalComments = await _Models.Database
-				.SqlQueryRaw<int>("SELECT COUNT(Id) FROM Comments WHERE UserId = {0}", userId).ToListAsync();
-			TempData["TotalComments"] = totalComments.First();
+			int[] counts = new int[queries.Length];
+
+			for (int i = 0; i < queries.Length; i++)
+			{
+				//The try catch are in case the query retruns null when there are no records.
+				try
+				{
+					List<int> total = await _Models.Database
+					.SqlQueryRaw<int>(queries[i], userId).ToListAsync();
+					counts[i] = total.FirstOrDefault();
+				}
+				catch{ }
+			}
+
+			TempData["TotalLikes"] = counts[0];
+			TempData["TotalPosts"] = counts[1];
+			TempData["TotalComments"] = counts[2];
 		}
 
-		public async Task<IActionResult> SearchUsers()
+		public async Task<string> Follow(string userId)
 		{
+			if (string.IsNullOrEmpty(userId))
+				return "0";
+
 			UserModel loggedUser = await _UserManager.GetUserAsync(HttpContext.User);
 
-			return View(loggedUser);
-		}
+			if (loggedUser.Id == userId)
+				return "0";
 
-		public async Task<IActionResult> LookUsersByUserName(string userName)
-		{
-			List<UserModel> users = await _Models.Users
-				.FromSqlRaw("SELECT * FROM AspNetUsers WHERE UserName LIKE {0};", userName + "%")
+			List<string> creatorId = await _Models.Database
+				.SqlQueryRaw<string>("SELECT CreatorId FROM Followers WHERE CreatorId = {0} AND FollowerId = {1}", userId, loggedUser.Id)
 				.AsNoTracking().ToListAsync();
 
-			return PartialView("UsersList", users);
+			//Row exist that means the user wants to unfollow.
+			if (creatorId.Count == 1)
+			{
+				int result = await _Models.Database
+					.ExecuteSqlRawAsync("DELETE FROM Followers WHERE CreatorId = {0} AND FollowerId = {1}", creatorId[0], loggedUser.Id);
+
+				return result == 1 ? "-" : "0";
+			}
+			else
+			{
+				//If row doesn't exist the user wants to follow.
+				List<string> userIdExist = await _Models.Database.SqlQueryRaw<string>("SELECT Id FROM Users WHERE Id = {0}", userId).AsNoTracking().ToListAsync();
+
+				if (userIdExist.Count == 1)
+				{
+					int result = await _Models.Database
+					.ExecuteSqlRawAsync("INSERT INTO Followers (CreatorId, FollowerId, FollowedDate) VALUES ({0}, {1}, {2})", userIdExist[0], loggedUser.Id, DateTime.Now);
+
+					return result == 1 ? "+" : "0";
+				}
+				else
+					return "0";
+			}
 		}
 
-		public async Task<IActionResult> GetRandomUsersView(int amountOfUsers)
+		public async Task<IActionResult> FollowersUsersTab(string userId)
 		{
-			List<UserModel> users = await _Models.Users.FromSqlRaw($"SELECT TOP { amountOfUsers } * FROM AspNetUsers ORDER BY NEWID();")
+			List<UserModel> followers = new();
+			try
+			{
+				followers = await _Models.Users
+				.FromSqlRaw("SELECT * FROM Users WHERE Id IN(SELECT FollowerId FROM Followers WHERE CreatorId = {0} ORDER BY FollowedDate DESC OFFSET 0 ROWS);", userId)
 				.AsNoTracking().ToListAsync();
+			}
+			catch
+			{
+				return NotFound("Followers could not be loaded from the database.");
+			}
 
-			return PartialView("UsersList", users);
+			if (followers.Count == 0)
+				return NoContent();
+
+			return PartialView("UsersList", followers);
+		}
+		
+		public async Task<IActionResult> FollowingUsersTab(string userId)
+		{
+			List<UserModel> followingUsers = new();
+			try
+			{
+				followingUsers = await _Models.Users
+				.FromSqlRaw("SELECT * FROM Users WHERE Id IN(SELECT CreatorId FROM Followers WHERE FollowerId = {0} ORDER BY FollowedDate DESC OFFSET 0 ROWS);", userId)
+				.AsNoTracking().ToListAsync();
+			}
+			catch
+			{
+				return NotFound("Following users could not be loaded from the database.");
+			}
+
+			if (followingUsers.Count == 0)
+				return NoContent();
+
+			return PartialView("UsersList", followingUsers);
 		}
 
-		public IActionResult UsersWithMostLikesView()
+		public string UpdateUserStats(string userId)
 		{
-			return PartialView("UsersList", _Tendency.UsersWithMostLikes);
-		}
+			string[] sqlQueries = { 
+				"SELECT SUM(Likes) FROM Posts WHERE UserId = {0}",
+				"SELECT COUNT(Id) FROM Posts WHERE UserId = {0}",
+				"SELECT COUNT(Id) FROM Comments WHERE UserId = {0}",
+				"SELECT COUNT(FollowerId) FROM Followers WHERE CreatorId = {0}",
+				"SELECT COUNT(CreatorId) FROM Followers WHERE FollowerId = {0}"
+			};
 
-		public IActionResult UsersWithMostPostsView()
-		{
-			return PartialView("UsersList", _Tendency.UsersWithMostPost);
+			int[] stats = new int[sqlQueries.Length];
+
+			for (int i = 0; i < sqlQueries.Length; i++)
+			{
+				//The try catch is in case it returns null which throws an exception.
+				try
+				{
+					stats[i] = _Models.Database.SqlQueryRaw<int>(sqlQueries[i], userId).ToListAsync().Result[0];
+				}
+				catch { }
+			}
+
+			return JsonConvert.SerializeObject(new { 
+				totalLikes = stats[0], totalPosts = stats[1], 
+				totalComments = stats[2], followersCount = stats[3], 
+				followingCount = stats[4] });
 		}
 	}
 }

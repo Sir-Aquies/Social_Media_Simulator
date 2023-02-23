@@ -21,7 +21,7 @@
 				}
 				else
 				{
-					<a class="complete-post-button" href="/@post.User.UserName/hop/@post.Id">View all the Comments</a>
+					<a class="complete-post-button" onclick="ShowCompletePost(@post.Id)" >View all the Comments</a>
 					break;
 				}
 			}
@@ -33,4 +33,5 @@
 	</article>
 
 	@*onclick="location = '/@post.User.UserName/hop/@post.Id'"*@
+	@*href = "/@post.User.UserName/hop/@post.Id"*@
 }

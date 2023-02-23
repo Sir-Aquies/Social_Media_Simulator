@@ -56,20 +56,23 @@ using (var scope = app.Services.CreateScope())
 	IHttpClientFactory ClientFactory = services.GetRequiredService<IHttpClientFactory>();
 	UserManager<UserModel> UserManager = services.GetRequiredService<UserManager<UserModel>>();
 
-	ITendency tendency = services.GetRequiredService<ITendency>();
-	await tendency.UpdateStats(context);
-
 	//RandomUsers randomUsers = new(ClientFactory, UserManager, ServiceFactory);
 	//await randomUsers.StartAsync(new CancellationToken());
+
+	//RandomFollowers randomFollowers = new(ServiceFactory);
+	//await randomFollowers.StartAsync(new CancellationToken());
 
 	//RandomPosts randomPost = new(ClientFactory, ServiceFactory);
 	//await randomPost.StartAsync(new CancellationToken());
 
+	//RandomComments randomComments = new(ServiceFactory, ClientFactory);
+	//await randomComments.StartAsync(new CancellationToken());
+
 	//RandomLikes randomLikes = new(ServiceFactory);
 	//await randomLikes.StartAsync(new CancellationToken());
 
-	//RandomComments randomComments = new(ServiceFactory, ClientFactory);
-	//await randomComments.StartAsync(new CancellationToken());
+	ITendency tendency = services.GetRequiredService<ITendency>();
+	await tendency.UpdateStats(context);
 }
 
 app.UseHttpsRedirection();
@@ -98,14 +101,12 @@ app.MapControllerRoute(
 	defaults: new { controller = "User", action = "MediaPosts" });
 
 app.MapControllerRoute(
-	name: "Posts",
-	pattern: "{username}/hop/{PostId}",
-	defaults: new { controller = "User", action = "CompletePost" });
-
-app.MapControllerRoute(name: "Users", pattern: "{userName}", defaults: new { controller = "User", action = "UserPage"});
+	name: "Users", 
+	pattern: "{userName}", 
+	defaults: new { controller = "User", action = "UserPage"});
 
 app.MapControllerRoute(
 	name: "default",
-	pattern: "{controller=User}/{action=SearchUser}/{id?}");
+	pattern: "{controller=User}/{action=UserPage}/{id?}");
 
 app.Run();

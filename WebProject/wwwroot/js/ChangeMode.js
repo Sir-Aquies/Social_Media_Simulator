@@ -44,10 +44,10 @@ function CostumAppareance() {
 //these variables are the colors of every color declaration in other CSS files (very important).
 //It also saves the values in localStorage.
 function SetAppearance(ColorBackground, ColorLayout, ColorText, ColorBorder, ColorShadow) {
-    document.documentElement.style.setProperty('--BackgroundColor', ColorBackground);
-    document.documentElement.style.setProperty('--LayoutColor', ColorLayout);
-    document.documentElement.style.setProperty('--colortext', ColorText);
-    document.documentElement.style.setProperty('--BorderColor', ColorBorder);
+    document.documentElement.style.setProperty('--bgColor', ColorBackground);
+    document.documentElement.style.setProperty('--layoutColor', ColorLayout);
+    document.documentElement.style.setProperty('--colorText', ColorText);
+    document.documentElement.style.setProperty('--borderColor', ColorBorder);
     document.documentElement.style.setProperty('--ShadowColor', ColorShadow);
 
     localStorage.setItem("ColorBackground", ColorBackground);

@@ -1,16 +1,8 @@
 ﻿#nullable disable
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Net.Http;
 using WebProject.Models;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.Identity;
-using System.Reflection;
 using Microsoft.EntityFrameworkCore;
-using WebProject.Data;
-using System.Reflection.Metadata;
-using System.Security.Policy;
 
 namespace WebProject.Services
 {
@@ -20,13 +12,24 @@ namespace WebProject.Services
 		private readonly UserManager<UserModel> _userManager;
 		private readonly IServiceScopeFactory _serviceScopeFactory;
 
-		private readonly PeriodicTimer _userTimer = new(TimeSpan.FromSeconds(60));
+		private readonly PeriodicTimer _userTimer = new(TimeSpan.FromSeconds(30));
 
 		public RandomUsers(IHttpClientFactory httpClientFactory, UserManager<UserModel> manager, IServiceScopeFactory factory)
 		{
 			_httpClientFactory = httpClientFactory;
 			_userManager = manager;
 			_serviceScopeFactory = factory;
+		}
+
+		private async Task InitialSeed()
+		{
+			if (_userManager.Users.AsNoTracking().Count() < 10)
+			{
+				for (int i = 0; i < 50; i++)
+				{
+					await CreateRandomUser();
+				}
+			}
 		}
 
 		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -123,9 +126,16 @@ namespace WebProject.Services
 				Email = normalUser.results[0].email,
 
 				Name = $"{normalUser.results[0].name.first} {normalUser.results[0].name.last}",
-				ProfilePicture = normalUser.results[0].picture.large,
-				Description = $"Age: {normalUser.results[0].dob.age} \nGender: {normalUser.results[0].gender} \nCity: {normalUser.results[0].location.country}, {normalUser.results[0].location.city}"
+				ProfilePicture = normalUser.results[0].picture.large
 			};
+
+			if (normalUser.results[0].dob.age > 50)
+			{
+				Random newAge = new();
+				normalUser.results[0].dob.age = newAge.Next(16, 45);
+			} 
+
+			newUser.Description = $"Age: {normalUser.results[0].dob.age} \nGender: {normalUser.results[0].gender} \nCity: {normalUser.results[0].location.country}, {normalUser.results[0].location.city}";
 
 			using (var scope = _serviceScopeFactory.CreateScope())
 			{
@@ -135,7 +145,7 @@ namespace WebProject.Services
 				//If there is don't save the new user in the database
 				foreach (UserModel u in userManager.Users.AsNoTracking())
 				{
-					if (u.ProfilePicture == u.ProfilePicture || u.UserName == u.UserName)
+					if (newUser.ProfilePicture == u.ProfilePicture || newUser.UserName == u.UserName)
 					{
 						return;
 					}
@@ -175,18 +185,6 @@ namespace WebProject.Services
 			string apiResponse = await response.Content?.ReadAsStringAsync();
 
 			return JsonConvert.DeserializeObject<Waifu>(apiResponse).images[0].url;
-		}
-
-		public async Task InitialSeed()
-		{
-			if (_userManager.Users.AsNoTracking().Count() < 10)
-			{
-				for (int i = 0; i < 25; i++)
-				{
-					await CreateNormalUser();
-				}
-			}
-			
 		}
 	}
 }

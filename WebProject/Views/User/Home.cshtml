@@ -1,0 +1,49 @@
+﻿@model UserModel
+
+@{
+	ViewData["Title"] = "Home";
+	ViewData["commentsAmount"] = "3";
+	ViewData["LoggedUserId"] = Model.Id;
+	ViewBag.blur = Model.ShowImages ? "1" : "0";
+}
+
+<link rel="stylesheet" href="~/css/UserCSS.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/HomePageCSS.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/PostContainer.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/PostForms.css" asp-append-version="true" />
+
+<section class="box-container">
+	<section class="left-box">
+		<partial name="PageUserInfo" model="Model"></partial>
+	</section>
+
+	<section class="center-box" id="UserPostContainer">
+		@if (Model.Posts != null)
+		{
+			if (Model.Posts.Count > 0)
+			{
+				<partial name="PostList" model="Model.Posts"></partial>
+			}
+			else
+			{
+				<section class="empty-post-list">
+					You don't follow any creator, <a asp-controller="User" asp-action="SearchUsers">find creators</a>.
+				</section>
+			}
+		}
+	</section>
+
+	<section class="right-box small-user-list">
+		<partial name="Right-Box"></partial>
+	</section>
+</section>
+
+<script src="~/js/AsyncCRUD.js" asp-append-version="true"></script>
+<script src="~/js/PostsScript.js" asp-append-version="true"></script>
+<script src="~/js/CommentsScript.js" asp-append-version="true"></script>
+<script src="~/js/UserScript.js" asp-append-version="true"></script>
+
+<script>
+	SetScrollEvent("@Model?.Id", @ViewData["startFromPost"], @ViewData["PostsPerLoad"], "@ViewData["profileTabName"]")
+	setInterval(() => { UpdateUserStats('@Model?.Id') }, 10000);
+</script>

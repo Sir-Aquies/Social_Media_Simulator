@@ -31,13 +31,13 @@ namespace WebProject.Services
 				}
 
 				users = userIds.Length == 0 ? new() : await _Models.Users
-					.FromSqlRaw(string.Format("SELECT * FROM AspNetUsers WHERE Id IN({0});", userIds.ToString()))
+					.FromSqlRaw(string.Format("SELECT * FROM Users WHERE Id IN({0});", userIds.ToString()))
 					.AsNoTracking().ToListAsync();
 			}
 
 			foreach (PostModel post in posts)
 			{
-				post.UsersLikes = await GetPostLikesSelective(post.Id);
+				post.UserLikes = await GetPostLikesSelective(post.Id);
 
 				if (postOwner == null)
 				{
@@ -95,12 +95,12 @@ namespace WebProject.Services
 			}
 
 			List<UserModel> users = modelsIds.Length == 0 ? new() : await _Models.Users
-				.FromSqlRaw(string.Format("SELECT * FROM AspNetUsers WHERE Id IN({0});", modelsIds.ToString()))
+				.FromSqlRaw(string.Format("SELECT * FROM Users WHERE Id IN({0});", modelsIds.ToString()))
 				.AsNoTracking().ToListAsync();
 
 			foreach (CommentModel comment in comments)
 			{
-				comment.UsersLikes = await GetCommentLikesSelective(comment.Id);
+				comment.UserLikes = await GetCommentLikesSelective(comment.Id);
 				for (int i = 0; i < users.Count; i++)
 				{
 					if (comment.UserId == users[i].Id)
@@ -133,10 +133,10 @@ namespace WebProject.Services
 
 			return result.FirstOrDefault();
 		}
-
-		public async Task<List<UserModel>> GetPostLikesSelective(int postId)
+		
+		public async Task<List<PostLikes>> GetPostLikesSelective(int postId)
 		{
-			List<UserModel> users = new();
+			List<PostLikes> likes = new();
 
 			string[] userIds = await _Models.Database
 				.SqlQueryRaw<string>("SELECT UserId FROM PostLikes WHERE PostId = {0}", postId)
@@ -144,16 +144,18 @@ namespace WebProject.Services
 
 			for (int i = 0; i < userIds.Length; i++)
 			{
-				users.Add(new UserModel { Id = userIds[i] });
+				likes.Add(new PostLikes
+				{
+					UserId = userIds[i]
+				});
 			}
 
-			return users;
+			return likes;
 		}
-
-		//Gets the ids of the users who has liked a certain comment.
-		public async Task<List<UserModel>> GetCommentLikesSelective(int commentId)
+		
+		public async Task<List<CommentLikes>> GetCommentLikesSelective(int commentId)
 		{
-			List<UserModel> users = new();
+			List<CommentLikes> likes = new();
 
 			string[] userIds = await _Models.Database
 				.SqlQueryRaw<string>("Select UserId from CommentLikes where CommentId = {0}", commentId)
@@ -161,11 +163,43 @@ namespace WebProject.Services
 
 			for (int i = 0; i < userIds.Length; i++)
 			{
-				users.Add(new UserModel { Id = userIds[i] });
+				likes.Add(new CommentLikes 
+				{ 
+					UserId = userIds[i] 
+				});
 			}
 
-			return users;
+			return likes;
 		}
 
+		public async Task<List<Followers>> GetFollowers(string userId)
+		{
+			List<Followers> followers = new(); 
+			string[] followerIds = await _Models.Database
+				.SqlQueryRaw<string>("SELECT FollowerId FROM Followers WHERE CreatorId = {0}", userId)
+				.AsNoTracking().ToArrayAsync();
+
+			for (int i = 0; i < followerIds.Length; i++)
+			{
+				followers.Add(new Followers { FollowerId = followerIds[i] });
+			}
+
+			return followers;
+		}
+
+		public async Task<List<Followers>> GetFollowingUsers(string userId)
+		{
+			List<Followers> followingUsers = new();
+			string[] followingIds = await _Models.Database
+				.SqlQueryRaw<string>("SELECT CreatorId FROM Followers WHERE FollowerId = {0}", userId)
+				.AsNoTracking().ToArrayAsync();
+
+			for (int i = 0; i < followingIds.Length; i++)
+			{
+				followingUsers.Add(new Followers { FollowerId = followingIds[i] });
+			}
+
+			return followingUsers;
+		}
 	}
 }

@@ -1,12 +1,12 @@
 ﻿.post-container {
 	width: 100%;
 	padding: 0.8rem;
-	border-top: 1px solid var(--BorderColor);
+	border-top: 1px solid var(--borderColor);
 	cursor: pointer;
 }
 
 .post-container:last-of-type {
-	border-bottom: 1px solid var(--BorderColor);
+	border-bottom: 1px solid var(--borderColor);
 }
 
 .post-info {
@@ -19,7 +19,7 @@
 .post-info-username {
 	text-decoration: none;
 	color: inherit;
-	font-size: var(--BigTextsize);
+	font-size: var(--bigFS);
 	margin-right: 0.5rem;
 }
 
@@ -59,7 +59,7 @@
 .post-form input {
 	background-color: transparent;
 	border: 0;
-	font-size: var(--BigTextsize);
+	font-size: var(--bigFS);
 	width: 100%;
 }
 
@@ -79,7 +79,7 @@
 	border-radius: 50%;
 	margin-right: 0.5rem;
 	object-fit: cover;
-	border: 1px solid var(--BorderColor);
+	border: 1px solid var(--borderColor);
 	cursor: pointer;
 }
 
@@ -97,11 +97,32 @@
 	white-space: pre-wrap;
 }
 
+/* width */
+.content-text::-webkit-scrollbar {
+	width: 5px;
+}
+
+/* background */
+.content-text::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+/* Handle */
+.content-text::-webkit-scrollbar-thumb {
+	background: var(--borderColor);
+	border-radius: 4px;
+}
+
+/* Handle on hover */
+.content-text::-webkit-scrollbar-thumb:hover {
+	background: var(--layoutColor);
+}
+
 .flip-div {
 	width: 100%;
 	text-align: center !important;
 	background-color: var(--ShadowColor);
-	border: 1px solid var(--BorderColor);
+	border: 1px solid var(--borderColor);
 	cursor: pointer;
 }
 
@@ -161,9 +182,10 @@
 	background-color: Transparent;
 	width: 7rem;
 	padding: 0.4rem;
-	font-size: var(--textsize);
+	font-size: var(--normalFS);
 	border: 0;
 	border-radius: 0.4rem;
+	position: relative;
 }
 
 .post-stats > button:has(.liked) {
@@ -173,7 +195,7 @@
 .like-button {
 	width: 2.5rem;
 	height: 2.5rem;
-	stroke: var(--BorderColor);
+	stroke: var(--borderColor);
 	stroke-width: 5px;
 }
 
@@ -184,19 +206,23 @@
 }
 
 .liked .like-button-bg {
-	fill: var(--BorderColor);
+	fill: var(--borderColor);
 }
 
-.post-stats > button:hover {
-	background-color: rgb(128, 128, 128, 0.86);
+.sparkling-like {
+	width: 5rem;
+	height: 5rem;
+	position: absolute;
+	right: -7px;
 }
 
-.post-stats > button:hover:not(.liked) .like-button-bg {
-	fill: var(--BorderColor);
-}
-
-.post-stats > button:hover:has(.liked) .like-button-bg {
-	fill: transparent;
+.center-sparkling-like {
+	width: 4rem;
+	height: 4rem;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
 }
  
 .comment-button {
@@ -214,9 +240,27 @@
 		height: 1.8rem;
 	}
 
+	.sparkling-like {
+		width: 4rem;
+		height: 4rem;
+		right: -15px;
+	}
+
 	.comment-button {
 		width: 1.8rem;
 		height: 1.8rem;
+	}
+
+	.post-stats > button:hover {
+		background-color: rgb(128, 128, 128, 0.86);
+	}
+
+	.post-stats > button:hover:not(.liked) .like-button-bg {
+		fill: var(--borderColor);
+	}
+
+	.post-stats > button:hover:has(.liked) .like-button-bg {
+		fill: transparent;
 	}
 }
 
@@ -225,11 +269,11 @@
 	margin: 0 auto;
 	padding: 0.8rem;
 	background-color: var(--ShadowColor);
-	border-top: 1px solid var(--BorderColor);
+	border-top: 1px solid var(--borderColor);
 }
 
 .post-comments:last-of-type {
-	border-bottom: 1px solid var(--BorderColor);
+	border-bottom: 1px solid var(--borderColor);
 }
 
 .post-comments[user-profile-left] {
@@ -251,7 +295,7 @@
 	display: none;
 	width: 3.3rem;
 	height: 3.3rem;
-	border: 1px solid var(--BorderColor);
+	border: 1px solid var(--borderColor);
 	border-radius: 50%;
 	object-fit: cover;
 }
@@ -261,14 +305,14 @@
 	display: flex;
 	align-items: center;
 	margin-bottom: 0.5rem;
-	font-size: var(--SmallTextsize);
+	font-size: var(--smallFS);
 }
 
 .comment-user-pic {
 	cursor: pointer;
 	width: 3rem;
 	height: 3rem;
-	border: 1px solid var(--BorderColor);
+	border: 1px solid var(--borderColor);
 	border-radius: 50%;
 	margin-right: 0.8rem;
 	object-fit: cover;
@@ -276,8 +320,8 @@
 
 .post-commments-username {
 	text-decoration: none;
-	font-size: var(--BigTextsize);
-	color: var(--colortext);
+	font-size: var(--bigFS);
+	color: var(--colorText);
 	margin-right: 0.6rem;
 }
 
@@ -301,7 +345,7 @@
 	justify-content: space-evenly;
 	width: 7rem;
 	padding: 0.4rem;
-	font-size: var(--textsize);
+	font-size: var(--normalFS);
 	border: 0;
 	border-radius: 0.4rem;
 }
@@ -321,7 +365,7 @@
 }
 
 .post-comments-stats > button:hover:not(.liked) .like-button-bg {
-	fill: var(--BorderColor);
+	fill: var(--borderColor);
 }
 
 .post-comments-stats > button:hover:has(.liked) .like-button-bg {

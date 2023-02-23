@@ -12,17 +12,18 @@ using WebProject.Data;
 namespace WebProject.Migrations
 {
     [DbContext(typeof(WebProjectContext))]
-    [Migration("20221005203558_Migration1")]
-    partial class Migration1
+    [Migration("20230214213828_FixMediaBug")]
+    partial class FixMediaBug
     {
+        /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.9")
+                .HasAnnotation("ProductVersion", "7.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -57,7 +58,7 @@ namespace WebProject.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("nvarchar(max)");
@@ -82,7 +83,7 @@ namespace WebProject.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("nvarchar(max)");
@@ -157,16 +158,41 @@ namespace WebProject.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("WebProject.Models.CommentLikes", b =>
+                {
+                    b.Property<int>("CommentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("NVARCHAR(450)");
+
+                    b.Property<DateTime>("LikedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("DATETIME2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.HasKey("CommentId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("CommentLikes");
+                });
+
             modelBuilder.Entity("WebProject.Models.CommentModel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Date")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getdate()");
 
                     b.Property<int>("Likes")
                         .HasColumnType("int");
@@ -175,7 +201,7 @@ namespace WebProject.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("NVARCHAR(450)");
 
                     b.HasKey("Id");
 
@@ -186,16 +212,64 @@ namespace WebProject.Migrations
                     b.ToTable("Comments");
                 });
 
+            modelBuilder.Entity("WebProject.Models.Followers", b =>
+                {
+                    b.Property<string>("CreatorId")
+                        .HasColumnType("NVARCHAR(450)");
+
+                    b.Property<string>("FollowerId")
+                        .HasColumnType("NVARCHAR(450)");
+
+                    b.Property<DateTime>("FollowedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("DATETIME2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.HasKey("CreatorId", "FollowerId");
+
+                    b.HasIndex("FollowerId");
+
+                    b.ToTable("Followers");
+                });
+
+            modelBuilder.Entity("WebProject.Models.PostLikes", b =>
+                {
+                    b.Property<int>("PostId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("NVARCHAR(450)");
+
+                    b.Property<DateTime>("LikedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("DATETIME2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.HasKey("PostId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PostLikes");
+                });
+
             modelBuilder.Entity("WebProject.Models.PostModel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Date")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getdate()");
+
+                    b.Property<DateTime>("EditedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsEdited")
                         .HasColumnType("bit");
@@ -206,14 +280,8 @@ namespace WebProject.Migrations
                     b.Property<string>("Media")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("PostDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("getdate()");
-
                     b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("NVARCHAR(450)");
 
                     b.HasKey("Id");
 
@@ -238,8 +306,7 @@ namespace WebProject.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
+                        .HasColumnType("NVARCHAR(500)");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -255,7 +322,7 @@ namespace WebProject.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("NVARCHAR(255)");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -267,12 +334,6 @@ namespace WebProject.Migrations
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
 
                     b.Property<string>("ProfilePicture")
                         .HasColumnType("nvarchar(max)");
@@ -300,7 +361,7 @@ namespace WebProject.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.ToTable("AspNetUsers", (string)null);
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -354,6 +415,25 @@ namespace WebProject.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("WebProject.Models.CommentLikes", b =>
+                {
+                    b.HasOne("WebProject.Models.CommentModel", "Comment")
+                        .WithMany("UserLikes")
+                        .HasForeignKey("CommentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebProject.Models.UserModel", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Comment");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("WebProject.Models.CommentModel", b =>
                 {
                     b.HasOne("WebProject.Models.PostModel", "Post")
@@ -363,9 +443,47 @@ namespace WebProject.Migrations
                         .IsRequired();
 
                     b.HasOne("WebProject.Models.UserModel", "User")
-                        .WithMany("Comments")
+                        .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Post");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("WebProject.Models.Followers", b =>
+                {
+                    b.HasOne("WebProject.Models.UserModel", "Follower")
+                        .WithMany("Following")
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
+
+                    b.HasOne("WebProject.Models.UserModel", "Creator")
+                        .WithMany("Followers")
+                        .HasForeignKey("FollowerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Creator");
+
+                    b.Navigation("Follower");
+                });
+
+            modelBuilder.Entity("WebProject.Models.PostLikes", b =>
+                {
+                    b.HasOne("WebProject.Models.PostModel", "Post")
+                        .WithMany("UserLikes")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebProject.Models.UserModel", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Post");
 
@@ -377,20 +495,28 @@ namespace WebProject.Migrations
                     b.HasOne("WebProject.Models.UserModel", "User")
                         .WithMany("Posts")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.ClientCascade);
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("WebProject.Models.CommentModel", b =>
+                {
+                    b.Navigation("UserLikes");
                 });
 
             modelBuilder.Entity("WebProject.Models.PostModel", b =>
                 {
                     b.Navigation("Comments");
+
+                    b.Navigation("UserLikes");
                 });
 
             modelBuilder.Entity("WebProject.Models.UserModel", b =>
                 {
-                    b.Navigation("Comments");
+                    b.Navigation("Followers");
+
+                    b.Navigation("Following");
 
                     b.Navigation("Posts");
                 });

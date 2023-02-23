@@ -5,8 +5,8 @@ using WebProject.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.VisualBasic;
 using WebProject.Services;
+using Newtonsoft.Json;
 
 namespace WebProject.Controllers
 {
@@ -32,7 +32,7 @@ namespace WebProject.Controllers
 			if (post == null) 
 				return NotFound("Error, post was not found.");
 
-			post.UsersLikes = await _Logic.GetPostLikesSelective(postId);
+			post.UserLikes = await _Logic.GetPostLikesSelective(postId);
 			post = await _Logic.SingleLoadComments(post);
 			post.User = await _Models.Users
 				.Select(u => new UserModel { Id = u.Id, UserName = u.UserName, ProfilePicture = u.ProfilePicture })
@@ -68,7 +68,7 @@ namespace WebProject.Controllers
 
 			if (!string.IsNullOrEmpty(newPost.Content) || newPost.Media != null)
 			{
-				newPost.PostDate = DateTime.Now;
+				newPost.Date = DateTime.Now;
 				newPost.UserId = loggedUser.Id;
 				_Models.Posts.Add(newPost);
 				await _Models.SaveChangesAsync();
@@ -79,7 +79,7 @@ namespace WebProject.Controllers
 			}
 
 			//Initiate lists so they are not null.
-			newPost.UsersLikes = new List<UserModel>();
+			newPost.UserLikes = new List<PostLikes>();
 			newPost.Comments = new List<CommentModel>();
 			ViewData["loggedUserId"] = loggedUser.Id;
 
@@ -143,7 +143,7 @@ namespace WebProject.Controllers
 				return BadRequest("Error, post was not edited due to not having content");
 			}
 
-			post.UsersLikes = await _Logic.GetPostLikesSelective(post.Id);
+			post.UserLikes = await _Logic.GetPostLikesSelective(post.Id);
 			post = await _Logic.SingleLoadComments(post);
 			ViewData["loggedUserId"] = loggedUser.Id;
 
@@ -173,17 +173,17 @@ namespace WebProject.Controllers
 		public async Task<bool> DeletePost(int PostId)
 		{
 			UserModel loggedUser = await _UserManager.GetUserAsync(HttpContext.User);
-			PostModel post = await _Models.Posts.Include(p => p.Comments).ThenInclude(c => c.UsersLikes).Include(p => p.UsersLikes).FirstOrDefaultAsync(us => us.Id == PostId);
+			PostModel post = await _Models.Posts.Include(p => p.Comments).ThenInclude(c => c.UserLikes).Include(p => p.UserLikes).FirstOrDefaultAsync(p => p.Id == PostId);
 
 			if (loggedUser.Id != post.UserId || post == null)
 			{
 				return false;
 			}
 
-			post.UsersLikes.Clear();
+			post.UserLikes.Clear();
 			foreach (CommentModel comment in post.Comments)
 			{
-				comment.UsersLikes.Clear();
+				comment.UserLikes.Clear();
 			}
 
 			_Models.Remove(post);
@@ -231,11 +231,40 @@ namespace WebProject.Controllers
 				if (affectedRows == 1)
 					//Add a new row to PostLikes.
 					affectedRows += await _Models.Database
-						.ExecuteSqlRawAsync("INSERT INTO PostLikes (PostId, UserId) VALUES ({0}, {1});", postId, loggedUser.Id);
+						.ExecuteSqlRawAsync("INSERT INTO PostLikes (PostId, UserId, LikedDate) VALUES ({0}, {1}, {2});", postId, loggedUser.Id, DateTime.Now);
 
 				//If both action were successful affectedRows should be 2.
 				return affectedRows == 2 ? "+" : "0";
 			}
+		}
+
+		public async Task<string> UpdatePostInfo(int postId)
+		{
+			if (postId == 0)
+				return "0";
+
+			List<int> likes = new();
+
+			try
+			{
+				likes = await _Models.Database.SqlQueryRaw<int>("SELECT Likes FROM Posts Where Id = {0}", postId).ToListAsync();
+			}
+			catch
+			{
+				likes.Add(0);
+			}
+
+			List<int> comments = new();
+			try
+			{
+				comments = await _Models.Database.SqlQueryRaw<int>("SELECT COUNT(Id) FROM Comments WHERE PostId = {0}", postId).ToListAsync();
+			}
+			catch
+			{
+				comments.Add(0);
+			}
+
+			return JsonConvert.SerializeObject(new { likes = likes.FirstOrDefault(), comments = comments.FirstOrDefault() });
 		}
 
 		//Loads and returns in a partial view the users who like a certain post.
@@ -243,7 +272,7 @@ namespace WebProject.Controllers
 		public async Task<IActionResult> PostLikesTab(int postId)
 		{
 			List<UserModel> users = await _Models.Users
-				.FromSqlRaw($"Select * from AspNetUsers where Id in (Select UserId from PostLikes where PostId = {postId})")
+				.FromSqlRaw($"Select * from Users where Id in (Select UserId from PostLikes where PostId = {postId})")
 				.AsNoTracking().ToListAsync();
 
 			if (users.Count == 0)
@@ -259,7 +288,7 @@ namespace WebProject.Controllers
 		public async Task<IActionResult> CommentLikesTab(int commentId)
 		{
 			List<UserModel> users = await _Models.Users
-				.FromSqlRaw($"Select * from AspNetUsers where Id in (Select UserId from CommentLikes where CommentId = {commentId})")
+				.FromSqlRaw($"Select * from Users where Id in (Select UserId from CommentLikes where CommentId = {commentId})")
 				.AsNoTracking().ToListAsync();
 
 			if (users.Count == 0)
@@ -307,7 +336,7 @@ namespace WebProject.Controllers
 			}
 
 			//Initiate list so is not null.
-			comment.UsersLikes = new List<UserModel>();
+			comment.UserLikes = new List<CommentLikes>();
 
 			//Save info for the comment partial view.
 			ViewData["LoggedUserId"] = loggedUser.Id;
@@ -321,7 +350,7 @@ namespace WebProject.Controllers
 		{
 			UserModel loggedUser = await _UserManager.GetUserAsync(HttpContext.User);
 
-			CommentModel comment = await _Models.Comments.Include(c => c.UsersLikes)
+			CommentModel comment = await _Models.Comments.Include(c => c.UserLikes)
 					.Include(c => c.Post).FirstOrDefaultAsync(c => c.Id == CommentId);
 
 			if (loggedUser.Id != comment.UserId)
@@ -331,7 +360,7 @@ namespace WebProject.Controllers
 
 			if (comment != null)
 			{
-				comment.UsersLikes.Clear();
+				comment.UserLikes.Clear();
 				_Models.Comments.Remove(comment);
 				await _Models.SaveChangesAsync();
 
@@ -346,21 +375,21 @@ namespace WebProject.Controllers
 		[HttpPost]
 		public async Task<string> LikeComment(int CommentId)
 		{
-			UserModel userModel = await _UserManager.GetUserAsync(HttpContext.User);
+			UserModel loggedUser = await _UserManager.GetUserAsync(HttpContext.User);
 
 			if (CommentId < 1)
 			{
 				return "0";
 			}
 
-			if (userModel == null)
+			if (loggedUser == null)
 			{
 				return "0";
 			}
 
 			//Check if a row exists in CommentLikes, if it exists returns the comment's id.
 			List<int> commentIdExists = await _Models.Database
-				.SqlQueryRaw<int>("SELECT CommentId FROM CommentLikes WHERE CommentId = {0} AND UserId = {1};", CommentId, userModel.Id).ToListAsync();
+				.SqlQueryRaw<int>("SELECT CommentId FROM CommentLikes WHERE CommentId = {0} AND UserId = {1};", CommentId, loggedUser.Id).ToListAsync();
 
 			if (commentIdExists.Count == 1)
 			{
@@ -370,7 +399,7 @@ namespace WebProject.Controllers
 				if (affectedRows == 1)
 					//Delete the row from CommentLikes.
 					affectedRows += await _Models.Database
-						.ExecuteSqlRawAsync("DELETE FROM CommentLikes WHERE CommentId = {0} AND UserId = {1};", CommentId, userModel.Id);
+						.ExecuteSqlRawAsync("DELETE FROM CommentLikes WHERE CommentId = {0} AND UserId = {1};", CommentId, loggedUser.Id);
 
 				//If both action were successful affectedRows should be 2.
 				return affectedRows == 2 ? "-" : "0";
@@ -383,7 +412,7 @@ namespace WebProject.Controllers
 				if (affectedRows == 1)
 					//Add a new row to CommentLikes.
 					affectedRows += await _Models.Database
-						.ExecuteSqlRawAsync("INSERT INTO CommentLikes (CommentId, UserId) VALUES ({0}, {1});", CommentId, userModel.Id);
+						.ExecuteSqlRawAsync("INSERT INTO CommentLikes (CommentId, UserId, LikedDate) VALUES ({0}, {1}, {2});", CommentId, loggedUser.Id, DateTime.Now);
 
 				//If both action were successful affectedRows should be 2.
 				return affectedRows == 2 ? "+" : "0";

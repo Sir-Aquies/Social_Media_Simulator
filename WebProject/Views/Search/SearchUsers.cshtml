@@ -1,0 +1,32 @@
+﻿@model UserModel
+@{
+	ViewData["Title"] = "Search Users";
+	int.TryParse(ViewData["startFromRow"]?.ToString(), out int startFromRow);
+	int.TryParse(ViewData["rowsPerLoad"]?.ToString(), out int rowsPerLoad);
+}
+
+<link rel="stylesheet" href="~/css/HomePageCSS.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/UserCSS.css" asp-append-version="true"/>
+
+<style>
+	#random-users {
+		border-bottom: 3px solid var(--borderColor);
+	}
+</style>
+
+<section class="box-container">
+	<div class="search-bar-box">
+		<input class="search-user-bar" type="text" onkeyup="SearchUserName(this)"/>
+	</div>
+
+	<div class="search-navigation-bar">
+		<span id="random-users" onclick="SwitchSearchUsersTab(@startFromRow, @rowsPerLoad)">Random</span>
+		<span id="top-liked-users" onclick="SwitchSearchUsersTab(@startFromRow, @rowsPerLoad)">Top likes</span>
+		<span id="top-followers-users" onclick="SwitchSearchUsersTab(@startFromRow, @rowsPerLoad)">Top followers</span>
+		<span id="top-commented-users" onclick="SwitchSearchUsersTab(@startFromRow, @rowsPerLoad)">Top commented</span>
+	</div>
+
+	<div class="users-table"></div>
+</section>
+
+<script src="~/js/SearchUser.js" asp-append-version="true"></script>

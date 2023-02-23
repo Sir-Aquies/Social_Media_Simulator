@@ -21,11 +21,6 @@ namespace WebProject.Models
 		public string download_url { get; set; }
 	}
 
-	public class HipsterText
-	{
-		public List<string> paragraphs { get; set; }
-	}
-
 	public class Quote
 	{
 		public string author { get; set; }

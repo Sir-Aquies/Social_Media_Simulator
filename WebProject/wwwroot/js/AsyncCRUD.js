@@ -6,21 +6,6 @@ const posts = [...document.getElementsByClassName('post-container')];
 //Array that will contain all of the posts containers.
 const containers = [...document.querySelectorAll('[data-post-container]')];
 
-let loadingPosts = false;
-
-function SetScrollEvent(userId, startFrom, PostLoader) {
-    let startFromRow = parseInt(startFrom);
-    let amountOfRows = 5;
-
-    window.onscroll = function() {
-        if (!loadingPosts && this.window.scrollY > (mainContainer.clientHeight * (70 / 100))) {
-            loadingPosts = true;
-            PostLoader(userId, startFromRow, amountOfRows);
-            startFromRow += amountOfRows;
-        }
-    }
-}
-
 function AddPostToContainer(postString) {
     //Convert the string post into an object element.
     const newPost = ConvertToDOM(postString);
@@ -41,12 +26,21 @@ function AddPostToContainer(postString) {
     }
     postContainer.appendChild(newPost);
 
-    //Insert the container after the create post button.
+    //Insert the container after the PageUserNav.
     mainContainer.insertBefore(postContainer, mainContainer.children[2]);
 
     //Push the new post and his container to the arrays.
     posts.push(newPost);
     containers.push(postContainer);
+
+     //Add it to the observer so its info can be updated.
+    if (postObserver !== undefined)
+        postObserver.observe(postContainer);
+
+    //Update the page user stats.
+    const pageUserId = document.getElementById('page-user-id').innerHTML;
+    if (pageUserId != undefined)
+        UpdateUserStats(pageUserId);
 }
 
 function AddRangePost(postsString) {
@@ -56,6 +50,11 @@ function AddRangePost(postsString) {
     for (let i = 0; i < length; i++) {
         //Append post to the main container (center-box class) and push it in the containers array.
         containers.push(newPosts[0]);
+
+        //Add it to the observer so its info can be updated.
+        if (postObserver !== undefined)
+            postObserver.observe(newPosts[0]);
+
         mainContainer.append(newPosts[0]);
     }
 }
@@ -68,8 +67,10 @@ function AlterPostLikes(postId, action) {
         const likesSpan = likesAmountSpans[i].children[0];
         let likes = parseInt(likesSpan.innerHTML);
 
-        if (action === '+')
+        if (action === '+') {
             likesSpan.innerHTML = ++likes;
+            SparklingLikeEffect(likesAmountSpans[i]);
+        }
 
         if (action === '-')
             likesSpan.innerHTML = --likes;
@@ -93,16 +94,52 @@ function AlterPostLikes(postId, action) {
             likesAmountSpans[i].title = 'Like post';
         }
     }
+
+    //Update the page user stats.
+    const pageUserId = document.getElementById('page-user-id').innerHTML;
+    if (pageUserId != undefined)
+        UpdateUserStats(pageUserId);
+}
+
+function SparklingLikeEffect(parent, center = false) {
+    if (parent === undefined)
+        return;
+
+    const img = document.createElement('img');
+    img.src = '/sparkling.gif';
+    if (center) {
+        img.className = 'center-sparkling-like';
+    }
+    else {
+        img.className = 'sparkling-like';
+    }
+    parent.appendChild(img);
+
+    setTimeout(() => {
+        parent.removeChild(img);
+    }, 900)
 }
 
 function RemovePostFromContainer(postId) {
     //Find the post container base on his id and remove it.
     const postContainer = containers.find(p => p.id == `${postId}`);
+
+    //Unobserve the post container and clear its inteval.
+    if (postObserver !== undefined) {
+        postObserver.unobserve(postContainer);
+        clearInterval(postContainer.updatePostTimer);
+    }
+
     postContainer.remove();
 
     //Get the index an remove it from containers;
     let index = containers.findIndex(p => p.id == `${postId}`);
     containers.splice(index, 1);
+
+    //Update the page user stats.
+    const pageUserId = document.getElementById('page-user-id').innerHTML;
+    if (pageUserId != undefined)
+        UpdateUserStats(pageUserId);
 
     //Function only defined in CompletePost that redirects the user to his page.
     RedirectToUserPage();
@@ -132,6 +169,11 @@ function UpdatePostFromContainer(postString) {
         //Add the updated post.
         viewPost.prepend(updatedPost.cloneNode(true));
     }
+
+    //Update the page user stats.
+    const pageUserId = document.getElementById('page-user-id').innerHTML;
+    if (pageUserId != undefined)
+        UpdateUserStats(pageUserId);
 }
 
 function AddCommentToPost(commentString) {
@@ -158,6 +200,11 @@ function AddCommentToPost(commentString) {
     if (viewPost) {
         viewPost.insertBefore(newComment.cloneNode(true), viewPost.children[1]);
     }
+
+    //Update the page user stats.
+    const pageUserId = document.getElementById('page-user-id').innerHTML;
+    if (pageUserId != undefined)
+        UpdateUserStats(pageUserId);
 }
 
 function AlterCommentLikes(commentId, action) {
@@ -193,6 +240,11 @@ function AlterCommentLikes(commentId, action) {
             likesAmountSpans[i].title = 'Like comment';
         }
     }
+
+    //Update the page user stats.
+    const pageUserId = document.getElementById('page-user-id').innerHTML;
+    if (pageUserId != undefined)
+        UpdateUserStats(pageUserId);
 }
 
 function RemoveCommentFromPost(postId, commentId) {
@@ -223,12 +275,22 @@ function RemoveCommentFromPost(postId, commentId) {
             }
         }
     }
+
+    //Update the page user stats.
+    const pageUserId = document.getElementById('page-user-id').innerHTML;
+    if (pageUserId != undefined)
+        UpdateUserStats(pageUserId);
 }
 
 function EmptyMainContainer() {
     let length = containers.length;
 
     for (let i = 0; i < length; i++) {
+        //Unobserve the post container and clear its inteval.
+        if (postObserver !== undefined) {
+            postObserver.unobserve(containers[i]);
+            clearInterval(containers[i].updatePostTimer);
+        }
         containers[i].remove();
     }
 

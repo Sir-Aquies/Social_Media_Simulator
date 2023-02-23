@@ -28,7 +28,7 @@
 	width: fit-content;
 	padding: 0 0 0.4rem 0;
 	margin: 0.5rem 0.5rem;
-	color: var(--colortext);
+	color: var(--colorText);
 	font-size: 16px;
 }
 
@@ -69,7 +69,7 @@
 	max-width: 15rem;
 	max-height: 15rem;
 	border-radius: 50%;
-	border: 1px solid var(--BorderColor);
+	border: 1px solid var(--borderColor);
 	display: block;
 	margin: 0 auto 0.5rem auto;
 }
@@ -85,12 +85,12 @@
 .button-edit {
 	display: block;
 	background-color: transparent;
-	border: 1px solid var(--BorderColor);
+	border: 1px solid var(--borderColor);
 	padding: 0.5rem;
 	height: fit-content;
 	width: fit-content;
 	border-radius: 0.7rem;
-	font-size: var(--textsize);
+	font-size: var(--normalFS);
 }
 
 /*AppearanceOptionsPage*/
@@ -119,7 +119,7 @@
 	left: 0;
 	right: 0;
 	bottom: 0;
-	background-color: var(--colortext);
+	background-color: var(--colorText);
 	-webkit-transition: .4s;
 	transition: .4s;
 }
@@ -131,7 +131,7 @@
 	width: 26px;
 	left: 4px;
 	bottom: 4px;
-	background-color: var(--BackgroundColor);
+	background-color: var(--bgColor);
 	-webkit-transition: .4s;
 	transition: .4s;
 }
@@ -141,7 +141,7 @@
 }
 
 .ToggleButton:focus + .BallButton {
-	box-shadow: 0 0 1px var(--colortext);
+	box-shadow: 0 0 1px var(--colorText);
 }
 
 .ToggleButton:checked + .BallButton:before {
