@@ -28,10 +28,14 @@
 }
 
 .users-table {
-	display: flex;
+	display: grid;
 	width: 100%;
-	flex-direction: column;
 	margin: 0 auto;
+	overflow-x: auto;
+}
+
+.users-table {
+	counter-reset: ranking;
 }
 
 .user-list-container {
@@ -41,6 +45,12 @@
 	align-items: center;
 	border: 1px solid var(--borderColor);
 	gap: 1rem;
+}
+
+.user-list-container:has(.user-list-stats-box)::before {
+	counter-increment: ranking;
+	content: counter(ranking) ")";
+	font-size: 1.6rem;
 }
 
 .user-list-info {
@@ -78,17 +88,21 @@
 .user-list-name {
 	width: 100%;
 	white-space: nowrap;
-	/*font-size: var(--normalFS);*/
 }
 
 .user-list-content {
 	width: 100%;
+	display: flex;
+	align-items: center;
+	gap: 0.7rem;
 	text-align: center;
 }
 
 .user-list-description {
 	display: none;
-	overflow: hidden;
+	width: 100%;
+	overflow-x: hidden;
+	overflow-y: auto;
 	height: fit-content;
 	/*max-height: 7rem;*/
 	font-size: var(--smallFS);
@@ -96,15 +110,16 @@
 }
 
 .user-list-stats-box {
-	width: 100%;
+	border-left: 1px solid var(--borderColor);
+	padding-left: 0.7rem;
+	width: fit-content;
 	font-size: var(--bigFS);
 	text-align: center;
-	margin-right: auto;
 }
 
 .user-list-stats-name {
 	white-space: nowrap;
-	margin: 0.5rem 0;
+	margin: 0 0 0.5rem;
 	text-align: inherit;
 }
 
@@ -119,7 +134,6 @@
 
 	.user-list-description {
 		display: block;
-		width: 100%;
 	}
 
 	.search-navigation-bar {
@@ -129,6 +143,10 @@
 }
 
 @media only screen and (min-width: 768px) {
+	.user-list-container:has(.user-list-stats-box)::before {
+		font-size: 2rem;
+	}
+
 	.users-table {
 		width: 90%;
 	}
@@ -166,6 +184,27 @@
 	flex-direction: column;
 	overflow: auto;
 	background-color: var(--bgColor);
+}
+
+/* width */
+.users-list-tab::-webkit-scrollbar {
+	width: 5px;
+}
+
+/* background */
+.users-list-tab::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+/* Handle */
+.users-list-tab::-webkit-scrollbar-thumb {
+	background: var(--borderColor);
+	border-radius: 4px;
+}
+
+/* Handle on hover */
+.users-list-tab::-webkit-scrollbar-thumb:hover {
+	background: var(--layoutColor);
 }
 
 .users-list-tab .user-list-pic {

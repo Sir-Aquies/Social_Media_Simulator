@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Text;
 using WebProject.Data;
 using WebProject.Models;
 #nullable disable
@@ -19,48 +20,61 @@ namespace WebProject.Services
 		private List<PostModel> postComments = new();
 
 		//TODO - Refactor all the CSS files.
-		public async Task UpdateStats(WebProjectContext _Models, int amount = 10)
+		public async Task UpdateStats(WebProjectContext _Models, int amountOfRows = 10)
 		{
-			userFollowers = await SqlQueryForUsers($"SELECT TOP {amount} U.Id, COUNT(Followers.FollowerId) AS Followers FROM " +
-				$"(Users AS U INNER JOIN Followers ON Followers.CreatorId = U.Id) " +
-				$"GROUP BY U.Id ORDER BY Followers DESC;", _Models);
+			StringBuilder usersQuery = new("SELECT * FROM Users WHERE Id IN " +
+				"(SELECT UserId FROM Posts GROUP BY UserId ORDER BY SUM(Likes) " +
+				"DESC OFFSET 0 ROWS FETCH NEXT {0} ROWS ONLY);");
+			StringBuilder statQuery = new("SELECT SUM(Likes) FROM Posts WHERE UserId = {0};");
 
-			userLikes = await SqlQueryForUsers($"SELECT TOP {amount} U.Id, SUM(Posts.Likes) AS Total " +
-				"FROM (Users AS U INNER JOIN Posts ON Posts.UserId = U.Id) " +
-				"GROUP BY U.Id ORDER BY Total DESC;", _Models);
+			userLikes = await UsersFromQuery(_Models, usersQuery, amountOfRows, statQuery);
 
-			userPosts = await SqlQueryForUsers($"SELECT TOP {amount} U.Id, Count(P.Id) AS Total " +
-				"FROM Users AS U INNER JOIN Posts AS P ON P.UserId = U.Id " +
-				"GROUP BY U.Id ORDER BY Total DESC;", _Models);
+			usersQuery.Clear();
+			statQuery.Clear();
+
+			usersQuery.Append("SELECT * FROM Users WHERE Id IN " +
+				"(SELECT CreatorId FROM Followers GROUP BY CreatorId ORDER BY " +
+				"COUNT(FollowerId) DESC OFFSET 0 ROWS FETCH NEXT {0} ROWS ONLY);");
+
+			statQuery.Append("SELECT COUNT(FollowerId) FROM Followers WHERE CreatorId = {0};");
+
+			userFollowers = await UsersFromQuery(_Models, usersQuery, amountOfRows, statQuery);
+
+			usersQuery.Clear();
+			statQuery.Clear();
+
+			usersQuery.Append("SELECT * FROM Users ORDER BY " +
+				"COALESCE((SELECT COUNT(Posts.Id) FROM Posts WHERE Posts.UserId = Users.Id), 1) " +
+				"DESC OFFSET 0 ROWS FETCH NEXT {0} ROWS ONLY;");
+
+			statQuery.Append("SELECT COUNT(Id) FROM Posts WHERE UserId = {0};");
+
+			userPosts = await UsersFromQuery(_Models, usersQuery, amountOfRows, statQuery);
 
 			postLikes = await _Models.Posts
-				.FromSqlRaw($"SELECT TOP {amount} * FROM Posts ORDER BY Likes DESC;")
+				.FromSqlRaw($"SELECT TOP {amountOfRows} * FROM Posts ORDER BY Likes DESC;")
 				.AsNoTracking().ToListAsync();
 
-			List<int> postCommenstIds = await _Models.Database
-				.SqlQueryRaw<int>($"SELECT TOP {amount} P.Id, COUNT(C.Id) AS total " +
-				$"FROM Posts AS P INNER JOIN Comments AS C ON C.PostId = P.Id " +
-				$"GROUP BY P.Id ORDER BY total DESC;").ToListAsync();
-
-			postComments = await _Models.Posts.Where(p => postCommenstIds.Contains(p.Id)).AsNoTracking().ToListAsync();
+			postComments = await _Models.Posts.FromSqlRaw("SELECT * FROM Posts ORDER BY " +
+				"COALESCE((SELECT COUNT(Comments.Id) FROM Comments WHERE Comments.PostId = Posts.Id), 0) " +
+				"DESC OFFSET 0 ROWS FETCH NEXT {0} ROWS ONLY;", amountOfRows).AsNoTracking().ToListAsync();
 		}
 
-		private async Task<List<UserModel>> SqlQueryForUsers(string sql, WebProjectContext _Models)
+		private async Task<List<UserModel>> UsersFromQuery(WebProjectContext _Models, StringBuilder usersQuery, int amountOfRows, StringBuilder statQuery = null)
 		{
-			List<string> idsForLikes = await _Models.Database
-				.SqlQueryRaw<string>(sql).AsNoTracking().ToListAsync();
+			List<UserModel> topUsers = await _Models.Users.FromSqlRaw(usersQuery.ToString(), amountOfRows).AsNoTracking().ToListAsync();
 
-			List<UserModel> users = new();
-
-			for (int i = 0; i < idsForLikes.Count; i++)
+			if (statQuery != null)
 			{
-				users.Add(await _Models.Users.Select(u =>
-				new UserModel { Id = u.Id, UserName = u.UserName, ProfilePicture = u.ProfilePicture })
-					.Where(u => u.Id == idsForLikes[i])
-					.AsNoTracking().FirstOrDefaultAsync());
+				for (int i = 0; i < topUsers.Count; i++)
+				{
+					List<int> total = await _Models.Database.SqlQueryRaw<int>(statQuery.ToString(), topUsers[i].Id).ToListAsync();
+
+					topUsers[i].Total = total.FirstOrDefault();
+				}
 			}
 
-			return users;
+			return topUsers;
 		}
 	}
 
